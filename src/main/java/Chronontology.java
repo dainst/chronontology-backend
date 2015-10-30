@@ -5,9 +5,8 @@ import static spark.Spark.*;
  */
 public class Chronontology {
 
-
-    private static Datastore store = new Datastore();
-
+    private static final String BASE_FOLDER = "src/test/resources/";
+    private static FileSystemDatastore store = new FileSystemDatastore(BASE_FOLDER);
 
     public static void main(String [] args) {
 
