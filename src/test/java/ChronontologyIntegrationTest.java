@@ -28,8 +28,8 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         final String json = "{\"a\":\"b\"}";
 
-        postJSON("/resource/1",json);
-        assertEquals(getJSON("/resource/1"),json);
+        postJSON("/period/1",json);
+        assertEquals(getJSON("/period/1"),json);
     }
 
     @Test
@@ -38,8 +38,8 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         final String json = "{\"a\":\"b\"}";
         final String json2 = "{\"b\":\"a\"}";
 
-        postJSON("/resource/1",json);
-        postJSON("/resource/2",json2);
-        assertEquals(getJSON("/resource/1"),json);
+        postJSON("/period/1",json);
+        postJSON("/period/2",json2);
+        assertEquals(getJSON("/period/1"),json);
     }
 }

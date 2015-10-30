@@ -11,12 +11,12 @@ public class Chronontology {
 
     public static void main(String [] args) {
 
-        get("/resource/:id", (req,res) -> {
+        get("/period/:id", (req,res) -> {
                     return store.get(req.params(":id"));
                 }
         );
 
-        post("/resource/:id", (req,res) -> {
+        post("/period/:id", (req,res) -> {
                     store.put(req.params(":id"),req.body());
                     return "acknowledged";
                 }
