@@ -11,24 +11,16 @@ import java.io.IOException;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ChronontologyIntegrationTest {
-
-    private static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
-    private static final String URL = "http://0.0.0.0:4567";
-
-    private static final OkHttpClient client = new OkHttpClient();
+public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
-        Chronontology.main(null);
-        Thread.sleep(200);
+        startServer();
     }
 
     @AfterClass
     public static void afterClass() throws InterruptedException {
-        Thread.sleep(200);
-        Spark.stop();
+       stopServer();
     }
 
     @Test
@@ -49,22 +41,5 @@ public class ChronontologyIntegrationTest {
         postJSON("/resource/1",json);
         postJSON("/resource/2",json2);
         assertEquals(getJSON("/resource/1"),json);
-    }
-
-    private void postJSON(String path,String json) throws IOException {
-        RequestBody body = RequestBody.create(JSON, json);
-        Request request = new Request.Builder()
-                .url(URL + path)
-                .post(body)
-                .build();
-        client.newCall(request).execute();
-    }
-
-    private String getJSON(String path) throws IOException {
-        Request request = new Request.Builder()
-                .url(URL+path)
-                .build();
-        Response response = client.newCall(request).execute();
-        return response.body().string();
     }
 }
