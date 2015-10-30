@@ -1,6 +1,3 @@
-import java.util.HashMap;
-import java.util.Map;
-
 import static spark.Spark.*;
 
 /**
@@ -8,7 +5,9 @@ import static spark.Spark.*;
  */
 public class Chronontology {
 
-    private static Map<String,String> store= new HashMap<String,String>();
+
+    private static Datastore store = new Datastore();
+
 
     public static void main(String [] args) {
 
