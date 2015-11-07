@@ -17,7 +17,9 @@ public class Chronontology {
 
         post("/period/:id", (req,res) -> {
                     store.put(req.params(":id"),req.body());
-                    return "acknowledged";
+                    res.header("location",req.params(":id"));
+                    res.status(200);
+                    return req.body();
                 }
         );
     }
