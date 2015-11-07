@@ -15,7 +15,7 @@ public class IntegrationTestBase {
     private static final OkHttpClient client = new OkHttpClient();
 
     protected static void startServer() throws InterruptedException {
-        Chronontology.main(null);
+        Chronontology.main(new String[]{"src/test/resources/"});
         Thread.sleep(200);
     }
 
