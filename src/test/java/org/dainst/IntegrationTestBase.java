@@ -21,9 +21,9 @@ public class IntegrationTestBase {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    protected static final ElasticSearchDatastoreConnector elasticSearchDatastore
+    protected static final ElasticSearchDatastoreConnector connectDatastore
             = new ElasticSearchDatastoreConnector("jeremy_test");
-    protected static final FileSystemDatastoreConnector fileSystemDatastore
+    protected static final FileSystemDatastoreConnector mainDatastore
             = new FileSystemDatastoreConnector(TEST_FOLDER);
 
     protected static final void cleanDatastores() {
@@ -31,15 +31,15 @@ public class IntegrationTestBase {
         new File(TEST_FOLDER + "1.txt").delete();
         new File(TEST_FOLDER + "2.txt").delete();
 
-        elasticSearchDatastore.delete("1");
-        elasticSearchDatastore.delete("2");
+        connectDatastore.delete("1");
+        connectDatastore.delete("2");
     }
 
     protected static void startServer() throws InterruptedException {
 
         new Router(
-                fileSystemDatastore,
-                elasticSearchDatastore
+                mainDatastore,
+                connectDatastore
         );
         Thread.sleep(200);
     }

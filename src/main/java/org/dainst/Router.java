@@ -32,24 +32,24 @@ public class Router {
     }
 
     public Router(
-            FileSystemDatastoreConnector store,
-            ElasticSearchDatastoreConnector esStore
+            FileSystemDatastoreConnector mainDatastore,
+            ElasticSearchDatastoreConnector connectDatastore
     ){
 
         get("/"+TYPE_NAME+"/:id", (req,res) -> {
 
                     if (shouldBeDirect(req))
-                        return store.get(req.params(":id"));
+                        return mainDatastore.get(req.params(":id"));
                     else
-                        return esStore.get(req.params(":id"));
+                        return connectDatastore.get(req.params(":id"));
                 }
         );
 
         post("/" + TYPE_NAME + "/:id", (req, res) -> {
 
                     JsonNode enrichedJSON = enrichJSON(req.body(), req.params(":id"));
-                    store.put(req.params(":id"), enrichedJSON);
-                    esStore.put(req.params(":id"), enrichedJSON);
+                    mainDatastore.put(req.params(":id"), enrichedJSON);
+                    connectDatastore.put(req.params(":id"), enrichedJSON);
 
                     res.header("location", req.params(":id"));
                     res.status(200);

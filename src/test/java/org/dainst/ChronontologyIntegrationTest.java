@@ -77,8 +77,8 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     @Test
     public void retrieveDocumentsFromDifferentSources() throws IOException {
 
-        elasticSearchDatastore.put("1",sampleJson("a"));
-        fileSystemDatastore.put("1",sampleJson("b"));
+        connectDatastore.put("1",sampleJson("a"));
+        mainDatastore.put("1",sampleJson("b"));
 
         assertEquals(
                 getJSON(route("1")),
