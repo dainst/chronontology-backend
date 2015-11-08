@@ -1,9 +1,12 @@
 package org.dainst;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
 
@@ -19,11 +22,16 @@ public class FileSystemDatastoreConnectorComponentTest {
         new File(BASE_FOLDER + "a.txt").delete();
     }
 
+    private JsonNode sampleJson(String sampleFieldValue) throws IOException {
+        return new ObjectMapper().readTree
+                ("{\"a\":\"" + sampleFieldValue + "\"}");
+    }
+
     @Test
-    public void putAndGet() {
+    public void putAndGet() throws IOException {
 
         FileSystemDatastoreConnector store = new FileSystemDatastoreConnector(BASE_FOLDER);
-        store.put("a","a");
-        assertEquals(store.get("a"),"a");
+        store.put("a",sampleJson("a"));
+        assertEquals(store.get("a"), sampleJson("a"));
     }
 }

@@ -17,12 +17,12 @@ import static spark.Spark.post;
 public class Router {
 
 
-    private static String enrichJSON(String body, String id) throws IOException {
+    private static JsonNode enrichJSON(String body, String id) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JsonNode jsonNode = mapper.readTree(body);
         ((ObjectNode) jsonNode).put("@id", "/"+TYPE_NAME+"/"+id);
         String json = mapper.writeValueAsString(jsonNode);
-        return json;
+        return mapper.readTree(json);
     }
 
     public Router(
@@ -52,7 +52,7 @@ public class Router {
 
         post("/" + TYPE_NAME + "/:id", (req, res) -> {
 
-                    String enrichedJSON = enrichJSON(req.body(), req.params(":id"));
+                    JsonNode enrichedJSON = enrichJSON(req.body(), req.params(":id"));
                     store.put(req.params(":id"), enrichedJSON);
                     esStore.put(req.params(":id"), enrichedJSON);
 

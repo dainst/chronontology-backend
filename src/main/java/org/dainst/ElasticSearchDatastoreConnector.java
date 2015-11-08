@@ -2,9 +2,13 @@ package org.dainst;
 
 import static org.dainst.C.*;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
+
+import java.io.IOException;
 
 
 /**
@@ -22,14 +26,18 @@ public class ElasticSearchDatastoreConnector {
         this.indexName= indexName;
     }
 
-    public String get(String key) {
+    public JsonNode get(String key) throws IOException {
         GetResponse res= client.prepareGet(indexName, TYPE_NAME,key).execute().actionGet();
-        return res.getSourceAsString();
+
+        ObjectMapper mapper = new ObjectMapper();
+        if (res.getSourceAsString()==null) return null;
+
+        return mapper.readTree(res.getSourceAsString());
     };
 
-    public void put(String key,String value) {
+    public void put(String key,JsonNode value) {
         IndexResponse ir= client.prepareIndex(indexName, TYPE_NAME)
-                .setSource(value).setId(key).execute().actionGet();
+                .setSource(value.toString()).setId(key).execute().actionGet();
     }
 
     public void delete(String key) {

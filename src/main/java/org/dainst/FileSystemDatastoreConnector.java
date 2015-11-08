@@ -1,5 +1,8 @@
 package org.dainst;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -16,7 +19,7 @@ public class FileSystemDatastoreConnector {
         this.baseFolder=baseFolder;
     }
 
-    public String get(String key) {
+    public JsonNode get(String key) throws IOException {
 
         String content="";
         try {
@@ -24,12 +27,14 @@ public class FileSystemDatastoreConnector {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return content;
+
+        ObjectMapper mapper = new ObjectMapper();
+        return mapper.readTree(content);
     };
 
-    public void put(String key,String value) {
+    public void put(String key,JsonNode value) {
         try {
-            Files.write(Paths.get(baseFolder + key + SUFFIX), value.getBytes());
+            Files.write(Paths.get(baseFolder + key + SUFFIX), value.toString().getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }
