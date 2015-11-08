@@ -1,3 +1,5 @@
+package org.dainst;
+
 import java.io.File;
 
 import static spark.Spark.get;

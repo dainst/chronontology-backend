@@ -1,3 +1,5 @@
+package org.dainst;
+
 import com.squareup.okhttp.*;
 import spark.Spark;
 

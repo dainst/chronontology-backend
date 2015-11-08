@@ -1,3 +1,5 @@
+package org.dainst;
+
 import static org.testng.Assert.assertEquals;
 
 import com.squareup.okhttp.*;
