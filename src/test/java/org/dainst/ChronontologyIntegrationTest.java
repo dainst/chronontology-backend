@@ -35,7 +35,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
                 ("{\"a\":\"" + sampleFieldValue + "\"}");
     }
 
-    private JsonNode enrichWithId(JsonNode node,String id) throws JsonProcessingException {
+    private JsonNode addId(JsonNode node, String id) throws JsonProcessingException {
         ((ObjectNode) node).put("@id", "/"+ TYPE_NAME+"/"+id);
         return node;
     }
@@ -49,7 +49,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         assertEquals(
                 postJSON(route("1"), sampleJson("b")),
-                enrichWithId(sampleJson("b"), "1"));
+                addId(sampleJson("b"), "1"));
 
     }
 
@@ -60,7 +60,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         assertEquals(
                 getJSON(route("1")),
-                enrichWithId(sampleJson("b"), "1"));
+                addId(sampleJson("b"), "1"));
     }
 
     @Test
@@ -71,6 +71,24 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         assertEquals(
                 getJSON(route("1")),
-                enrichWithId(sampleJson("b"), "1"));
+                addId(sampleJson("b"), "1"));
     }
+
+    @Test
+    public void retrieveDocumentsFromDifferentSources() throws IOException {
+
+        elasticSearchDatastore.put("1",sampleJson("a"));
+        fileSystemDatastore.put("1",sampleJson("b"));
+
+        assertEquals(
+                getJSON(route("1")),
+                sampleJson("a"), "1");
+        assertEquals(
+                getJSON(route("1")+"?direct=true"),
+                sampleJson("b"), "1");
+    }
+
+
+
+
 }

@@ -21,9 +21,9 @@ public class IntegrationTestBase {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    private static final ElasticSearchDatastoreConnector elasticSearchDatastore
+    protected static final ElasticSearchDatastoreConnector elasticSearchDatastore
             = new ElasticSearchDatastoreConnector("jeremy_test");
-    private static final FileSystemDatastoreConnector fileSystemDatastore
+    protected static final FileSystemDatastoreConnector fileSystemDatastore
             = new FileSystemDatastoreConnector(TEST_FOLDER);
 
     protected static final void cleanDatastores() {

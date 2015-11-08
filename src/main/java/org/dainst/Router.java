@@ -5,6 +5,7 @@ import static org.dainst.C.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import spark.Request;
 
 import java.io.IOException;
 
@@ -25,30 +26,24 @@ public class Router {
         return mapper.readTree(json);
     }
 
+    private boolean shouldBeDirect(Request req) {
+        return ((req.queryParams("direct")!=null)
+                &&(req.queryParams("direct").equals("true")));
+    }
+
     public Router(
             FileSystemDatastoreConnector store,
             ElasticSearchDatastoreConnector esStore
     ){
 
         get("/"+TYPE_NAME+"/:id", (req,res) -> {
-                    return esStore.get(req.params(":id"));
+
+                    if (shouldBeDirect(req))
+                        return store.get(req.params(":id"));
+                    else
+                        return esStore.get(req.params(":id"));
                 }
         );
-
-//        TODO enable this endpoint when elasticsearch is ready
-//        get("/"+TYPE_NAME, (req,res) -> {
-//
-//
-//                    for (String param:req.queryParams()){
-//                        System.out.println(param);
-//                        String q= req.queryParams(param);
-//
-//                        System.out.println(q);
-//                    }
-//
-//                    return "";
-//                }
-//        );
 
         post("/" + TYPE_NAME + "/:id", (req, res) -> {
 
