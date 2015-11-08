@@ -34,8 +34,8 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     public void respondWithEnrichedJSONonPost() throws IOException {
         final String json = "{\"a\":\"b\"}";
 
-        final String expectedJson = "{\"a\":\"b\",\"@id\":\"1\"}";
-        assertEquals(postJSON("/period/1",json), expectedJson);
+        final String expectedJson = "{\"a\":\"b\",\"@id\":\"/period/1\"}";
+        assertEquals(postJSON("/period/1", json), expectedJson);
 
     }
 
@@ -43,9 +43,10 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     public void storeAndRetrieveOneResource() throws IOException {
 
         final String json = "{\"a\":\"b\"}";
-
         postJSON("/period/1",json);
-        assertEquals(getJSON("/period/1"), json);
+
+        final String expectedJson = "{\"a\":\"b\",\"@id\":\"/period/1\"}";
+        assertEquals(getJSON("/period/1"), expectedJson);
     }
 
     @Test
@@ -53,9 +54,10 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         final String json = "{\"a\":\"b\"}";
         final String json2 = "{\"b\":\"a\"}";
-
         postJSON("/period/1",json);
         postJSON("/period/2",json2);
-        assertEquals(getJSON("/period/1"),json);
+
+        final String expectedJson = "{\"a\":\"b\",\"@id\":\"/period/1\"}";
+        assertEquals(getJSON("/period/1"),expectedJson);
     }
 }
