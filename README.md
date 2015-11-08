@@ -12,14 +12,19 @@ as command line argument, the specified folder gets used as datastore.
 
 ### POST /period/:id 
 
-post json to store a period with id
+Post json to store a period with id.
 
 ### GET /period/:id
 
-get json stored for period with id
+Get json stored for period with id.
+
+### GET /period/:id?direct=true
+
+Get json stored for period with id. the json is retrieved from 
+the main storage this time, not from the connected storage.
 
 ## Testing
 
 For the Component Tests to run, you need an elastic search 
-instance on localhost up and running.
-An index called "jeremy" must be existent on it.
+instance on localhost up and running. The index named "jeremy_test" 
+is used.
