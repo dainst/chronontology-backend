@@ -19,11 +19,9 @@ public class Router {
 
 
     private static JsonNode enrichJSON(String body, String id) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(body);
+        JsonNode jsonNode = new ObjectMapper().readTree(body);
         ((ObjectNode) jsonNode).put("@id", "/"+TYPE_NAME+"/"+id);
-        String json = mapper.writeValueAsString(jsonNode);
-        return mapper.readTree(json);
+        return jsonNode; 
     }
 
     private boolean shouldBeDirect(Request req) {
