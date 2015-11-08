@@ -15,7 +15,8 @@ public class IntegrationTestBase {
     private static final OkHttpClient client = new OkHttpClient();
 
     protected static void startServer() throws InterruptedException {
-        Chronontology.main(new String[]{"src/test/resources/"});
+
+        new Router(new FileSystemDatastore("src/test/resources/"));
         Thread.sleep(200);
     }
 
