@@ -29,13 +29,23 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         new File(TEST_FOLDER + "2.txt").delete();
     }
 
+
+    @Test
+    public void respondWithEnrichedJSONonPost() throws IOException {
+        final String json = "{\"a\":\"b\"}";
+
+        final String expectedJson = "{\"a\":\"b\",\"@id\":\"1\"}";
+        assertEquals(postJSON("/period/1",json), expectedJson);
+
+    }
+
     @Test
     public void storeAndRetrieveOneResource() throws IOException {
 
         final String json = "{\"a\":\"b\"}";
 
         postJSON("/period/1",json);
-        assertEquals(getJSON("/period/1"),json);
+        assertEquals(getJSON("/period/1"), json);
     }
 
     @Test

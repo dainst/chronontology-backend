@@ -1,7 +1,12 @@
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import java.io.File;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
+
 
 /**
  * @author Daniel M. de Oliveira
@@ -38,7 +43,12 @@ public class Chronontology {
                     store.put(req.params(":id"),req.body());
                     res.header("location",req.params(":id"));
                     res.status(200);
-                    return req.body();
+
+                    ObjectMapper mapper = new ObjectMapper();
+                    JsonNode jsonNode = mapper.readTree(req.body());
+                    ((ObjectNode) jsonNode).put("@id", req.params(":id"));
+                    String json = mapper.writeValueAsString(jsonNode);
+                    return json;
                 }
         );
     }

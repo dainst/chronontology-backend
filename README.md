@@ -12,6 +12,6 @@ as command line argument, the specified folder gets used as datastore.
 
 post json to store a period with id
 
-## GET /perios/:id
+## GET /period/:id
 
 get json stored for period with id

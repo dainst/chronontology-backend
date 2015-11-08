@@ -24,13 +24,14 @@ public class IntegrationTestBase {
         Spark.stop();
     }
 
-    protected void postJSON(String path,String json) throws IOException {
+    protected String postJSON(String path,String json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(URL + path)
                 .post(body)
                 .build();
-        client.newCall(request).execute();
+        Response response = client.newCall(request).execute();
+        return response.body().string();
     }
 
     protected String getJSON(String path) throws IOException {
