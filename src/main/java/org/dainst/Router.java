@@ -25,10 +25,13 @@ public class Router {
         return json;
     }
 
-    public Router(FileSystemDatastore store){
+    public Router(
+            FileSystemDatastore store,
+            ElasticSearchDatastore esStore
+    ){
 
         get("/"+TYPE_NAME+"/:id", (req,res) -> {
-                    return store.get(req.params(":id"));
+                    return esStore.get(req.params(":id"));
                 }
         );
 
@@ -51,6 +54,7 @@ public class Router {
 
                     String enrichedJSON = enrichJSON(req.body(), req.params(":id"));
                     store.put(req.params(":id"), enrichedJSON);
+                    esStore.put(req.params(":id"), enrichedJSON);
 
                     res.header("location", req.params(":id"));
                     res.status(200);

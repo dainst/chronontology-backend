@@ -9,7 +9,7 @@ import static org.testng.Assert.assertEquals;
  */
 public class ElasticSearchDatastoreComponentTest {
 
-    ElasticSearchDatastore store = new ElasticSearchDatastore();
+    ElasticSearchDatastore store = new ElasticSearchDatastore("jeremy_test");
 
     @AfterMethod
     public void afterMethod() {

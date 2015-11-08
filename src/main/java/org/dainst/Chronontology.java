@@ -26,6 +26,6 @@ public class Chronontology {
             System.out.println("Could not initialize datastore.");
             System.exit(1);
         }
-        new Router(store);
+        new Router(store,new ElasticSearchDatastore("jeremy"));
     }
 }

@@ -12,21 +12,27 @@ import org.elasticsearch.client.transport.TransportClient;
  */
 public class ElasticSearchDatastore {
 
-    public static final String INDEX_NAME = "jeremy";
+    private String indexName = null;
 
     private final TransportClient client = new ESClientUtil("elasticsearch_daniel","localhost").getClient();
 
+    private ElasticSearchDatastore() {};
+
+    public ElasticSearchDatastore(String indexName) {
+        this.indexName= indexName;
+    }
+
     public String get(String key) {
-        GetResponse res= client.prepareGet(INDEX_NAME, TYPE_NAME,key).execute().actionGet();
+        GetResponse res= client.prepareGet(indexName, TYPE_NAME,key).execute().actionGet();
         return res.getSourceAsString();
     };
 
     public void put(String key,String value) {
-        IndexResponse ir= client.prepareIndex(INDEX_NAME, TYPE_NAME)
+        IndexResponse ir= client.prepareIndex(indexName, TYPE_NAME)
                 .setSource(value).setId(key).execute().actionGet();
     }
 
     public void delete(String key) {
-        client.prepareDelete(INDEX_NAME,TYPE_NAME,key).execute();
+        client.prepareDelete(indexName,TYPE_NAME,key).execute();
     }
 }

@@ -3,8 +3,10 @@ package org.dainst;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.*;
+import com.squareup.okhttp.internal.io.FileSystem;
 import spark.Spark;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -12,15 +14,34 @@ import java.io.IOException;
  */
 public class IntegrationTestBase {
 
+    private static final String TEST_FOLDER = "src/test/resources/";
+
     private static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
     private static final String URL = "http://0.0.0.0:4567";
 
     private static final OkHttpClient client = new OkHttpClient();
 
+    private static final ElasticSearchDatastore elasticSearchDatastore
+            = new ElasticSearchDatastore("jeremy_test");
+    private static final FileSystemDatastore fileSystemDatastore
+            = new FileSystemDatastore(TEST_FOLDER);
+
+    protected static final void cleanDatastores() {
+
+        new File(TEST_FOLDER + "1.txt").delete();
+        new File(TEST_FOLDER + "2.txt").delete();
+
+        elasticSearchDatastore.delete("1");
+        elasticSearchDatastore.delete("2");
+    }
+
     protected static void startServer() throws InterruptedException {
 
-        new Router(new FileSystemDatastore("src/test/resources/"));
+        new Router(
+                fileSystemDatastore,
+                elasticSearchDatastore
+        );
         Thread.sleep(200);
     }
 
