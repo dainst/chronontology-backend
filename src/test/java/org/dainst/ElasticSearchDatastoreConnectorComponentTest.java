@@ -7,9 +7,9 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ElasticSearchDatastoreComponentTest {
+public class ElasticSearchDatastoreConnectorComponentTest {
 
-    ElasticSearchDatastore store = new ElasticSearchDatastore("jeremy_test");
+    ElasticSearchDatastoreConnector store = new ElasticSearchDatastoreConnector("jeremy_test");
 
     @AfterMethod
     public void afterMethod() {

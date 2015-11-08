@@ -10,22 +10,22 @@ public class Chronontology {
 
     private static final String DEFAULT_DATASTORE_PATH = "datastore/";
 
-    private static FileSystemDatastore initDS(String datastorePath) {
+    private static FileSystemDatastoreConnector initDS(String datastorePath) {
 
         if (!(new File(datastorePath).exists())) {
             System.out.println("The specified path "+datastorePath+" does not exist.");
             return null;
         }
-        return new FileSystemDatastore(datastorePath);
+        return new FileSystemDatastoreConnector(datastorePath);
     }
 
     public static void main(String [] args) {
 
-        final FileSystemDatastore store= (args.length==1) ? initDS(args[0]) : initDS(DEFAULT_DATASTORE_PATH);
+        final FileSystemDatastoreConnector store= (args.length==1) ? initDS(args[0]) : initDS(DEFAULT_DATASTORE_PATH);
         if (store==null) {
             System.out.println("Could not initialize datastore.");
             System.exit(1);
         }
-        new Router(store,new ElasticSearchDatastore("jeremy"));
+        new Router(store,new ElasticSearchDatastoreConnector("jeremy"));
     }
 }

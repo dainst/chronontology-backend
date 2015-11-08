@@ -10,15 +10,15 @@ import org.elasticsearch.client.transport.TransportClient;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ElasticSearchDatastore {
+public class ElasticSearchDatastoreConnector {
 
     private String indexName = null;
 
     private final TransportClient client = new ESClientUtil("elasticsearch_daniel","localhost").getClient();
 
-    private ElasticSearchDatastore() {};
+    private ElasticSearchDatastoreConnector() {};
 
-    public ElasticSearchDatastore(String indexName) {
+    public ElasticSearchDatastoreConnector(String indexName) {
         this.indexName= indexName;
     }
 

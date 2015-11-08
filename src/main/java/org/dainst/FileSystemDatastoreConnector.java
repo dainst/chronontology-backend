@@ -7,12 +7,12 @@ import java.nio.file.Paths;
 /**
  * @author Daniel M. de Oliveira
  */
-public class FileSystemDatastore {
+public class FileSystemDatastoreConnector {
 
     private static final String SUFFIX = ".txt";
     private final String baseFolder;
 
-    public FileSystemDatastore(String baseFolder) {
+    public FileSystemDatastoreConnector(String baseFolder) {
         this.baseFolder=baseFolder;
     }
 

@@ -26,8 +26,8 @@ public class Router {
     }
 
     public Router(
-            FileSystemDatastore store,
-            ElasticSearchDatastore esStore
+            FileSystemDatastoreConnector store,
+            ElasticSearchDatastoreConnector esStore
     ){
 
         get("/"+TYPE_NAME+"/:id", (req,res) -> {

@@ -10,7 +10,7 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Daniel M. de Oliveira
  */
-public class FileSystemDatastoreComponentTest {
+public class FileSystemDatastoreConnectorComponentTest {
 
     private static final String BASE_FOLDER = "src/test/resources/";
 
@@ -22,7 +22,7 @@ public class FileSystemDatastoreComponentTest {
     @Test
     public void putAndGet() {
 
-        FileSystemDatastore store = new FileSystemDatastore(BASE_FOLDER);
+        FileSystemDatastoreConnector store = new FileSystemDatastoreConnector(BASE_FOLDER);
         store.put("a","a");
         assertEquals(store.get("a"),"a");
     }

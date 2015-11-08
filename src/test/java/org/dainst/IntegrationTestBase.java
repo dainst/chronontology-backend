@@ -3,7 +3,6 @@ package org.dainst;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.*;
-import com.squareup.okhttp.internal.io.FileSystem;
 import spark.Spark;
 
 import java.io.File;
@@ -22,10 +21,10 @@ public class IntegrationTestBase {
 
     private static final OkHttpClient client = new OkHttpClient();
 
-    private static final ElasticSearchDatastore elasticSearchDatastore
-            = new ElasticSearchDatastore("jeremy_test");
-    private static final FileSystemDatastore fileSystemDatastore
-            = new FileSystemDatastore(TEST_FOLDER);
+    private static final ElasticSearchDatastoreConnector elasticSearchDatastore
+            = new ElasticSearchDatastoreConnector("jeremy_test");
+    private static final FileSystemDatastoreConnector fileSystemDatastore
+            = new FileSystemDatastoreConnector(TEST_FOLDER);
 
     protected static final void cleanDatastores() {
 
