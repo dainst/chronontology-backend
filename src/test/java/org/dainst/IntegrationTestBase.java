@@ -1,5 +1,7 @@
 package org.dainst;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.*;
 import spark.Spark;
 
@@ -27,21 +29,27 @@ public class IntegrationTestBase {
         Spark.stop();
     }
 
-    protected String postJSON(String path,String json) throws IOException {
-        RequestBody body = RequestBody.create(JSON, json);
+    protected JsonNode postJSON(String path,JsonNode json) throws IOException {
+        RequestBody body = RequestBody.create(JSON, json.toString());
         Request request = new Request.Builder()
                 .url(URL + path)
                 .post(body)
                 .build();
         Response response = client.newCall(request).execute();
-        return response.body().string();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(response.body().string());
+        return jsonNode;
     }
 
-    protected String getJSON(String path) throws IOException {
+    protected JsonNode getJSON(String path) throws IOException {
         Request request = new Request.Builder()
                 .url(URL+path)
                 .build();
         Response response = client.newCall(request).execute();
-        return response.body().string();
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = mapper.readTree(response.body().string());
+        return jsonNode;
     }
 }

@@ -2,9 +2,6 @@ package org.dainst;
 
 import java.io.File;
 
-import static spark.Spark.get;
-import static spark.Spark.post;
-
 
 /**
  * @author Daniel M. de Oliveira
@@ -12,7 +9,6 @@ import static spark.Spark.post;
 public class Chronontology {
 
     private static final String DEFAULT_DATASTORE_PATH = "datastore/";
-    private static final String TYPE_NAME = "period";
 
     private static FileSystemDatastore initDS(String datastorePath) {
 

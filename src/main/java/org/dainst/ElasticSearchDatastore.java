@@ -1,15 +1,17 @@
 package org.dainst;
 
+import static org.dainst.C.*;
+
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.transport.TransportClient;
+
 
 /**
  * @author Daniel M. de Oliveira
  */
 public class ElasticSearchDatastore {
 
-    public static final String TYPE_NAME = "period";
     public static final String INDEX_NAME = "jeremy";
 
     private final TransportClient client = new ESClientUtil("elasticsearch_daniel","localhost").getClient();

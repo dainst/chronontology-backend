@@ -1,12 +1,16 @@
 package org.dainst;
 
+import static org.dainst.C.*;
+
 import static org.testng.Assert.assertEquals;
 
-import com.squareup.okhttp.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import spark.Spark;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,35 +35,47 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         new File(TEST_FOLDER + "2.txt").delete();
     }
 
+    private JsonNode sampleJson(String sampleFieldValue) throws IOException {
+        return new ObjectMapper().readTree
+                ("{\"a\":\"" + sampleFieldValue + "\"}");
+    }
+
+    private JsonNode enrichWithId(JsonNode node,String id) throws JsonProcessingException {
+        ((ObjectNode) node).put("@id", "/"+ TYPE_NAME+"/"+id);
+        return node;
+    }
+
+    private String route(String id) {
+        return "/"+ C.TYPE_NAME+"/"+id;
+    }
 
     @Test
     public void respondWithEnrichedJSONonPost() throws IOException {
-        final String json = "{\"a\":\"b\"}";
 
-        final String expectedJson = "{\"a\":\"b\",\"@id\":\"/period/1\"}";
-        assertEquals(postJSON("/period/1", json), expectedJson);
+        assertEquals(
+                postJSON(route("1"), sampleJson("b")),
+                enrichWithId(sampleJson("b"), "1"));
 
     }
 
     @Test
-    public void storeAndRetrieveOneResource() throws IOException {
+    public void storeAndRetrieveOneDocument() throws IOException {
 
-        final String json = "{\"a\":\"b\"}";
-        postJSON("/period/1",json);
+        postJSON(route("1"),sampleJson("b"));
 
-        final String expectedJson = "{\"a\":\"b\",\"@id\":\"/period/1\"}";
-        assertEquals(getJSON("/period/1"), expectedJson);
+        assertEquals(
+                getJSON(route("1")),
+                enrichWithId(sampleJson("b"), "1"));
     }
 
     @Test
-    public void storeAndRetrieveMoreThanOneResource() throws IOException {
+    public void storeAndRetrieveMoreThanOneDocument() throws IOException {
 
-        final String json = "{\"a\":\"b\"}";
-        final String json2 = "{\"b\":\"a\"}";
-        postJSON("/period/1",json);
-        postJSON("/period/2",json2);
+        postJSON(route("1"),sampleJson("b"));
+        postJSON(route("2"),sampleJson("a"));
 
-        final String expectedJson = "{\"a\":\"b\",\"@id\":\"/period/1\"}";
-        assertEquals(getJSON("/period/1"),expectedJson);
+        assertEquals(
+                getJSON(route("1")),
+                enrichWithId(sampleJson("b"), "1"));
     }
 }
