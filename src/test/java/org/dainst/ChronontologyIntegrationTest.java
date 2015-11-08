@@ -48,7 +48,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     public void respondWithEnrichedJSONonPost() throws IOException {
 
         assertEquals(
-                postJSON(route("1"), sampleJson("b")),
+                post(route("1"), sampleJson("b")),
                 addId(sampleJson("b"), "1"));
 
     }
@@ -56,21 +56,21 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     @Test
     public void storeAndRetrieveOneDocument() throws IOException {
 
-        postJSON(route("1"),sampleJson("b"));
+        post(route("1"), sampleJson("b"));
 
         assertEquals(
-                getJSON(route("1")),
+                get(route("1")),
                 addId(sampleJson("b"), "1"));
     }
 
     @Test
     public void storeAndRetrieveMoreThanOneDocument() throws IOException {
 
-        postJSON(route("1"),sampleJson("b"));
-        postJSON(route("2"),sampleJson("a"));
+        post(route("1"), sampleJson("b"));
+        post(route("2"), sampleJson("a"));
 
         assertEquals(
-                getJSON(route("1")),
+                get(route("1")),
                 addId(sampleJson("b"), "1"));
     }
 
@@ -81,10 +81,10 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         mainDatastore.put("1",sampleJson("b"));
 
         assertEquals(
-                getJSON(route("1")),
+                get(route("1")),
                 sampleJson("a"), "1");
         assertEquals(
-                getJSON(route("1")+"?direct=true"),
+                get(route("1") + "?direct=true"),
                 sampleJson("b"), "1");
     }
 

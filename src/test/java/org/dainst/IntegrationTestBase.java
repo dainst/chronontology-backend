@@ -26,6 +26,11 @@ public class IntegrationTestBase {
     protected static final FileSystemDatastoreConnector mainDatastore
             = new FileSystemDatastoreConnector(TEST_FOLDER);
 
+    private static JsonNode jsonNode(String s) throws IOException {
+        return new ObjectMapper().readTree(s);
+    }
+
+
     protected static final void cleanDatastores() {
 
         new File(TEST_FOLDER + "1.txt").delete();
@@ -49,7 +54,7 @@ public class IntegrationTestBase {
         Spark.stop();
     }
 
-    protected JsonNode postJSON(String path,JsonNode json) throws IOException {
+    protected JsonNode post(String path, JsonNode json) throws IOException {
         RequestBody body = RequestBody.create(JSON, json.toString());
         Request request = new Request.Builder()
                 .url(URL + path)
@@ -57,19 +62,15 @@ public class IntegrationTestBase {
                 .build();
         Response response = client.newCall(request).execute();
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(response.body().string());
-        return jsonNode;
+        return jsonNode(response.body().string());
     }
 
-    protected JsonNode getJSON(String path) throws IOException {
+    protected JsonNode get(String path) throws IOException {
         Request request = new Request.Builder()
                 .url(URL+path)
                 .build();
         Response response = client.newCall(request).execute();
 
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode jsonNode = mapper.readTree(response.body().string());
-        return jsonNode;
+        return jsonNode(response.body().string());
     }
 }

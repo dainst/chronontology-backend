@@ -17,9 +17,11 @@ import static spark.Spark.post;
  */
 public class Router {
 
+    private static JsonNode jsonNode(String s) throws IOException {
+        return new ObjectMapper().readTree(s);
+    }
 
-    private static JsonNode enrichJSON(String body, String id) throws IOException {
-        JsonNode jsonNode = new ObjectMapper().readTree(body);
+    private static JsonNode addStorageInfo(JsonNode jsonNode, String id) throws IOException {
         ((ObjectNode) jsonNode).put("@id", "/"+TYPE_NAME+"/"+id);
         return jsonNode; 
     }
@@ -45,7 +47,7 @@ public class Router {
 
         post("/" + TYPE_NAME + "/:id", (req, res) -> {
 
-                    JsonNode enrichedJSON = enrichJSON(req.body(), req.params(":id"));
+                    JsonNode enrichedJSON = addStorageInfo(jsonNode(req.body()), req.params(":id"));
                     mainDatastore.put(req.params(":id"), enrichedJSON);
                     connectDatastore.put(req.params(":id"), enrichedJSON);
 
