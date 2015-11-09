@@ -35,6 +35,7 @@ public class IntegrationTestBase {
 
         new File(TEST_FOLDER + "1.txt").delete();
         new File(TEST_FOLDER + "2.txt").delete();
+        new File(TEST_FOLDER + "3.txt").delete();
 
         connectDatastore.delete("1");
         connectDatastore.delete("2");

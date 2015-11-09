@@ -36,6 +36,16 @@ public class Router {
             ElasticSearchDatastoreConnector connectDatastore
     ){
 
+        get("/"+TYPE_NAME+"/_search", (req,res) -> {
+
+                    JsonNode results = connectDatastore.search(
+                            req.queryParams("q"),
+//                            Integer.parseInt(req.queryParams("size")));
+                            1);
+                    return results;
+                }
+        );
+
         get("/"+TYPE_NAME+"/:id", (req,res) -> {
 
                     if (shouldBeDirect(req))

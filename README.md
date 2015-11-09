@@ -23,6 +23,11 @@ Get json stored for period with id.
 Get json stored for period with id. the json is retrieved from 
 the main storage this time, not from the connected storage.
 
+### GET /period/_search?q=search
+
+Gets a json object with a top level array field named results which
+contains the json for the search hits.
+
 ## Testing
 
 For the Component Tests to run, you need an elastic search 

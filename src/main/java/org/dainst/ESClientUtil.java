@@ -13,6 +13,8 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
  */
 public class ESClientUtil {
 
+    // TODO close client on shutdown
+
     Integer port = 9300;
     TransportClient client = null;
 

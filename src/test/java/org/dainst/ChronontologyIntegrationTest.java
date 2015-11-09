@@ -50,7 +50,6 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         assertEquals(
                 post(route("1"), sampleJson("b")),
                 addId(sampleJson("b"), "1"));
-
     }
 
     @Test
@@ -88,7 +87,18 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
                 sampleJson("b"), "1");
     }
 
+    @Test
+    public void searchForDocuments() throws IOException, InterruptedException {
 
+        post(route("1"), sampleJson("a"));
+        post(route("2"), sampleJson("b"));
+        post(route("3"), sampleJson("b"));
+
+        assertEquals(
+                get(route("_search") + "?q=a:b").toString(),
+                "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/2\"},{\"a\":\"b\",\"@id\":\"/period/3\"}]}");
+
+    }
 
 
 }
