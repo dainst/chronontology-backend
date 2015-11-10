@@ -23,10 +23,18 @@ Get json stored for period with id.
 Get json stored for period with id. the json is retrieved from 
 the main storage this time, not from the connected storage.
 
-### GET /period/_search?q=search
+### GET /period/?q=searchCriteria(?size=1000)
 
 Gets a json object with a top level array field named results which
-contains the json for the search hits.
+contains the json for the search hits. Additionally, you can restrict the 
+size of the search result set by using the size query parameter.
+
+An example for searchCriteria can be
+
+  /period/?q=a:b
+  
+which means, the that the field a in all records gets searched for the term b.
+If there is a match, the record gets added to the result set.
 
 ## Testing
 

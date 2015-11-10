@@ -95,8 +95,21 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         post(route("3"), sampleJson("b"));
 
         assertEquals(
-                get(route("_search") + "?q=a:b").toString(),
+                get(route("") + "?q=a:b").toString(),
                 "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/2\"},{\"a\":\"b\",\"@id\":\"/period/3\"}]}");
+
+    }
+
+    @Test
+    public void restrictedSizeSearch() throws IOException, InterruptedException {
+
+        post(route("1"), sampleJson("a"));
+        post(route("2"), sampleJson("b"));
+        post(route("3"), sampleJson("b"));
+
+        assertEquals(
+                get(route("") + "?q=a:b&size=1").toString(),
+                "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/2\"}]}");
 
     }
 

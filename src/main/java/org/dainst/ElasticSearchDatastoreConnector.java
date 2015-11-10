@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -54,24 +55,25 @@ public class ElasticSearchDatastoreConnector {
     /**
      *
      * @param queryString some string like a:b&c:d&e:f
-     * @param size results to fetch
+     * @param size number of results to fetch.
+     *             Set false to mark there should be no restriction.
      * @return a JsonNode with a top level field named results which
      *   is an array containing objects representing the search hits.
      */
     public JsonNode search(
             final String queryString,
-            final int size) throws IOException {
+            final Integer size) throws IOException {
 
         client.admin().indices().prepareRefresh().execute().actionGet();
 
         String[] queryTerms = queryString.split(":");
         TermQueryBuilder tq = QueryBuilders.termQuery(queryTerms[0], queryTerms[1]);
 
-        SearchResponse response=client.prepareSearch(indexName).setTypes(TYPE_NAME)
-                .setQuery(tq)
-                .execute().actionGet();
+        SearchRequestBuilder srb= client.prepareSearch(indexName).setTypes(TYPE_NAME)
+                .setQuery(tq);
+        if (size!=null) srb.setSize(size);
 
-        return makeResultsNode(response);
+        return makeResultsNode(srb.execute().actionGet());
     }
 
     private JsonNode makeResultsNode(final SearchResponse response) throws IOException {
