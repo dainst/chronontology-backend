@@ -13,7 +13,6 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 
 import java.io.IOException;
@@ -78,14 +77,14 @@ public class ElasticSearchDatastoreConnector {
         return makeResultsNode(srb.execute().actionGet());
     }
 
-    private class ResultJson {
+    private class Results {
         private JsonNode json;
 
-        public ResultJson() throws IOException {
+        public Results() throws IOException {
             json = json("{\"results\":[]}");
         }
 
-        public JsonNode addNodeToResultsArray(final JsonNode jsonToAdd)
+        public JsonNode add(final JsonNode jsonToAdd)
                 throws JsonProcessingException {
             ArrayNode data=(ArrayNode) json.get("results");
             data.add(jsonToAdd);
@@ -98,9 +97,9 @@ public class ElasticSearchDatastoreConnector {
     }
 
     private JsonNode makeResultsNode(final SearchResponse response) throws IOException {
-        ResultJson results = new ResultJson();
+        Results results = new Results();
         for (SearchHit hit:response.getHits().getHits()) {
-            results.addNodeToResultsArray(json(hit.getSourceAsString()));
+            results.add(json(hit.getSourceAsString()));
         }
         return results.j();
     }
