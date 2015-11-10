@@ -13,7 +13,7 @@ import static spark.Spark.get;
 import static spark.Spark.post;
 
 /**
- * Created by daniel on 08.11.15.
+ * @author Daniel M. de Oliveira
  */
 public class Router {
 

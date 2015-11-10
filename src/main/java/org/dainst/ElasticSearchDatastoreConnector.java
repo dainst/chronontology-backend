@@ -25,7 +25,7 @@ public class ElasticSearchDatastoreConnector {
 
     private String indexName = null;
 
-    private final TransportClient client = new ESClientUtil("elasticsearch_daniel","localhost").getClient();
+    private final TransportClient client = new ESClientUtil("elasticsearch","localhost").getClient();
 
     private ElasticSearchDatastoreConnector() {};
 
