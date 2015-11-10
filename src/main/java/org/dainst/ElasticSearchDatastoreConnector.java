@@ -78,24 +78,38 @@ public class ElasticSearchDatastoreConnector {
         return makeResultsNode(srb.execute().actionGet());
     }
 
-    private JsonNode makeResultsNode(final SearchResponse response) throws IOException {
-        JsonNode results = json("{\"results\":[]}");
-        for (SearchHit hit:response.getHits().getHits()) {
-            results=addNodeToResultsArray(results, json(hit.getSourceAsString()));
+    private class ResultJson {
+        private JsonNode json;
+
+        public ResultJson() throws IOException {
+            json = json("{\"results\":[]}");
         }
-        return results;
+
+        public JsonNode addNodeToResultsArray(final JsonNode jsonToAdd)
+                throws JsonProcessingException {
+            ArrayNode data=(ArrayNode) json.get("results");
+            data.add(jsonToAdd);
+            return json;
+        }
+
+        public JsonNode j() {
+            return json;
+        }
+    }
+
+    private JsonNode makeResultsNode(final SearchResponse response) throws IOException {
+        ResultJson results = new ResultJson();
+        for (SearchHit hit:response.getHits().getHits()) {
+            results.addNodeToResultsArray(json(hit.getSourceAsString()));
+        }
+        return results.j();
     }
 
     private JsonNode json(final String s) throws IOException {
         return new ObjectMapper().readTree(s);
     }
 
-    private JsonNode addNodeToResultsArray(final JsonNode node, final JsonNode jsonToAdd)
-            throws JsonProcessingException {
-        ArrayNode data=(ArrayNode) node.get("results");
-        data.add(jsonToAdd);
-        return node;
-    }
+
 
     public void put(final String key,final JsonNode value) {
         IndexResponse ir= client.prepareIndex(indexName, TYPE_NAME)
