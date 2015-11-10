@@ -18,3 +18,17 @@ dependencies {
     testCompile 'org.testng:testng:6.9.9'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
 }
+
+test {
+    useTestNG()
+    scanForTestClasses = false
+    include '**/*Test.class'
+
+    testLogging {
+        showStandardStreams = true
+
+        // log results to "build/test-results" directory
+        exceptionFormat "full"
+        events "passed", "skipped", "failed", "standardOut", "standardError"
+    }
+}

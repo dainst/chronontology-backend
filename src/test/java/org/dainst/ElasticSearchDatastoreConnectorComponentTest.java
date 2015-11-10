@@ -34,10 +34,12 @@ public class ElasticSearchDatastoreConnectorComponentTest {
     }
 
     @Test
-    public void deleteAnItem() throws IOException {
+    public void deleteAnItem() throws IOException, InterruptedException {
 
         store.put("a",sampleJson("a"));
         store.delete("a");
-        assertEquals(store.get("a"),null);
+
+        Thread.sleep(100);
+        assertEquals(store.get("a"), null);
     }
 }
