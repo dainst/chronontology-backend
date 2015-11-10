@@ -113,5 +113,15 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
     }
 
+    @Test
+    public void matchUrlEncodedQueryTerm() throws IOException, InterruptedException {
+
+        post(route("1"), sampleJson("/period/2"));
+        assertEquals(
+                get(route("") + "?q=a:%22%2Fperiod%22%2F1").toString(),
+                "{\"results\":[{\"a\":\"/period/2\",\"@id\":\"/period/1\"}]}"
+        );
+
+    }
 
 }

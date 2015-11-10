@@ -11,6 +11,7 @@ import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.TermQueryBuilder;
 import org.elasticsearch.search.SearchHit;
@@ -67,7 +68,7 @@ public class ElasticSearchDatastoreConnector {
         client.admin().indices().prepareRefresh().execute().actionGet();
 
         String[] queryTerms = queryString.split(":");
-        TermQueryBuilder tq = QueryBuilders.termQuery(queryTerms[0], queryTerms[1]);
+        MatchQueryBuilder tq = QueryBuilders.matchQuery(queryTerms[0], queryTerms[1]);
 
         SearchRequestBuilder srb= client.prepareSearch(indexName).setTypes(TYPE_NAME)
                 .setQuery(tq);
