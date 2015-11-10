@@ -5,10 +5,21 @@
 Execution of the main method starts an embedded 
 jetty server listening on 0.0.0.0:4567.
 
-A file system based datastore is used which is assumed to 
-be located at datastore/ relative to the current working directory from
+A file system based datastore is used as the primary datastore.
+It is is assumed to be located at datastore/ relative to the 
+current working directory from
 which you started the main. However, by specifying an alternative path
 as command line argument, the specified folder gets used as datastore.
+
+Elasticsearch is used as the connected datastore. So make sure 
+you have an elasticSearch instance running with the following settings:
+
+  cluster name : elasticsearch
+  index name : jeremy
+  type name : period
+  type mapping : src/main/resources/mapping.json
+  
+Make sure you didn't forget to add the mapping to the period type!
 
 ### POST /period/:id 
 
@@ -40,4 +51,6 @@ If there is a match, the record gets added to the result set.
 
 For the Component Tests to run, you need an elastic search 
 instance on localhost up and running. The index named "jeremy_test" 
-is used.
+is used. Make sure that this index also has the mapping from 
+
+  src/main/resources/mapping.json
