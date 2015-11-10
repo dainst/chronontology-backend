@@ -68,7 +68,8 @@ public class ElasticSearchDatastoreConnector {
         client.admin().indices().prepareRefresh().execute().actionGet();
 
         String[] queryTerms = queryString.split(":");
-        MatchQueryBuilder tq = QueryBuilders.matchQuery(queryTerms[0], queryTerms[1]);
+        MatchQueryBuilder tq = QueryBuilders.matchPhraseQuery(
+                queryTerms[0], java.net.URLDecoder.decode(queryTerms[1], "UTF-8"));
 
         SearchRequestBuilder srb= client.prepareSearch(indexName).setTypes(TYPE_NAME)
                 .setQuery(tq);

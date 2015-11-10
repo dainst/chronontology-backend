@@ -44,6 +44,12 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         return "/"+ C.TYPE_NAME+"/"+id;
     }
 
+    private JsonNode searchResultJson(String id,String sampleFieldValue) throws IOException {
+        return new ObjectMapper().readTree
+                ("{\"results\":[{\"a\":\""+sampleFieldValue+"\",\"@id\":\"/period/"+id+"\"}]}");
+    }
+
+
     @Test
     public void respondWithEnrichedJSONonPost() throws IOException {
 
@@ -108,20 +114,45 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         post(route("3"), sampleJson("b"));
 
         assertEquals(
-                get(route("") + "?q=a:b&size=1").toString(),
-                "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/2\"}]}");
+                get(route("") + "?q=a:b&size=1"),
+                searchResultJson("2", "b"));
 
     }
 
     @Test
-    public void matchUrlEncodedQueryTerm() throws IOException, InterruptedException {
+    public void matchQueryTermWithSlashes() throws IOException, InterruptedException {
 
         post(route("1"), sampleJson("/period/2"));
         assertEquals(
-                get(route("") + "?q=a:%22%2Fperiod%22%2F1").toString(),
-                "{\"results\":[{\"a\":\"/period/2\",\"@id\":\"/period/1\"}]}"
+                get(route("") + "?q=a:/period/2"),
+                searchResultJson("1","/period/2")
         );
+    }
 
+    @Test
+    public void matchExactlyTheOneTermWithSlashes() throws IOException, InterruptedException {
+
+        post(route("1"), sampleJson("/period/2"));
+        post(route("2"), sampleJson("/period/3"));
+        assertEquals(
+                get(route("") + "?q=a:/period/2"),
+                searchResultJson("1","/period/2")
+        );
+    }
+
+    @Test
+    public void matchQueryTermWithUrlEncodedSlashes() throws IOException, InterruptedException {
+
+        post(route("1"), sampleJson("/period/2"));
+        assertEquals(
+                get(route("") + "?q=a:%22%2Fperiod%22%2F2"),
+                searchResultJson("1","/period/2")
+        );
+        post(route("2"), sampleJson("/period/1"));
+        assertEquals(
+                get(route("") + "?q=a:%2Fperiod%2F1"),
+                searchResultJson("2","/period/1")
+        );
     }
 
 }

@@ -1,0 +1,103 @@
+{
+    "period": {
+        "properties": {
+        	
+            "@id": {
+                "type": "string"
+            },
+        	"created": {
+	            "type": "date",
+	            "format": "dateOptionalTime"
+	        },
+	        "modified": {
+	            "type": "date",
+	            "format": "dateOptionalTime"
+	        },
+
+	        "altLabel": {
+                "properties": {
+                    "@language": {
+                        "type": "string"
+                    },
+                    "@value": {
+                        "type": "string"
+                    }
+                }
+            },
+            "created": {
+                "type": "date",
+                "format": "dateOptionalTime"
+            },
+            "description": {
+                "properties": {
+                    "de": {
+                        "type": "string"
+                    },
+                    "en": {
+                        "type": "string"
+                    }
+                }
+            },
+            "fallsWithin": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "hasSource": {
+                "type": "string"
+            },
+            "hasTimeSpan": {
+                "properties": {
+                    "@id": {
+                        "type": "string"
+                    },
+                    "begin": {
+                        "type": "date",
+                        "format": "dateOptionalTime"
+                    },
+                    "earliestBegin": {
+                        "type": "date",
+                        "format": "dateOptionalTime"
+                    },
+                    "end": {
+                        "type": "date",
+                        "format": "dateOptionalTime"
+                    }
+                }
+            },
+            "isDefinedBy": {
+                "type": "string"
+            },
+            "isMetInTimeBy": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "meetsInTimeWith": {
+                "type": "string",
+                "index": "not_analyzed"
+            },
+            "prefLabel": {
+                "properties": {
+                    "de": {
+                        "type": "string"
+                    },
+                    "en": {
+                        "type": "string"
+                    }
+                }
+            },
+            "provenance": {
+                "type": "string"
+            },
+            "sameAs": {
+                "type": "string"
+            },
+            "tags": {
+                "type": "string"
+            },
+            "tookPlaceAt": {
+                "type": "string"
+            }
+
+	    }
+    }
+}
