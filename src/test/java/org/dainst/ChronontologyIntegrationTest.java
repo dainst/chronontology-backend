@@ -102,7 +102,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         assertEquals(
                 get(route("") + "?q=a:b").toString(),
-                "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/2\"},{\"a\":\"b\",\"@id\":\"/period/3\"}]}");
+                "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/3\"},{\"a\":\"b\",\"@id\":\"/period/2\"}]}");
 
     }
 
@@ -115,7 +115,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         assertEquals(
                 get(route("") + "?q=a:b&size=1"),
-                searchResultJson("2", "b"));
+                searchResultJson("3", "b"));
 
     }
 
@@ -145,7 +145,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         post(route("1"), sampleJson("/period/2"));
         assertEquals(
-                get(route("") + "?q=a:%22%2Fperiod%22%2F2"),
+                get(route("") + "?q=a:%22%2Fperiod%2F2%22"),
                 searchResultJson("1","/period/2")
         );
         post(route("2"), sampleJson("/period/1"));

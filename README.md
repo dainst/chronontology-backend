@@ -51,6 +51,6 @@ If there is a match, the record gets added to the result set.
 
 For the Component Tests to run, you need an elastic search 
 instance on localhost up and running. The index named "jeremy_test" 
-is used. Make sure that this index also has the mapping from 
+is used. Make sure that the index has the type mapping from
 
-  src/main/resources/mapping.json
+  src/test/resources/mapping.json

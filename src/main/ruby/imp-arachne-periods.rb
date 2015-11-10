@@ -105,7 +105,7 @@ result.fetch do |row|
     	sibling = periods[last_sibling]
 		sibling["meetsInTimeWith"] = periods[last_label]["@id"]
 		puts "sibling" + sibling["@id"].to_s
-		# api[sibling["@id"]].put(sibling.to_json, :content_type => :json, :accept => :json)
+		api[sibling["@id"]].post(sibling.to_json, :content_type => :json, :accept => :json)
 	end
 
     last_level = level

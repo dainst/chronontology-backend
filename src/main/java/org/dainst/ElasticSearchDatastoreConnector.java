@@ -16,6 +16,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 
 /**
@@ -52,6 +53,11 @@ public class ElasticSearchDatastoreConnector {
         return result;
     };
 
+
+    private String normalizeQueryTerm(String qt) throws UnsupportedEncodingException {
+        return java.net.URLDecoder.decode(qt, "UTF-8").replaceAll("\"","");
+    }
+
     /**
      *
      * @param queryString some string like a:b&c:d&e:f
@@ -68,7 +74,7 @@ public class ElasticSearchDatastoreConnector {
 
         String[] queryTerms = queryString.split(":");
         MatchQueryBuilder tq = QueryBuilders.matchPhraseQuery(
-                queryTerms[0], java.net.URLDecoder.decode(queryTerms[1], "UTF-8"));
+                queryTerms[0], normalizeQueryTerm(queryTerms[1]));
 
         SearchRequestBuilder srb= client.prepareSearch(indexName).setTypes(TYPE_NAME)
                 .setQuery(tq);

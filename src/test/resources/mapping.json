@@ -1,0 +1,14 @@
+{
+  "period": {
+    "properties": {
+
+
+      "a": {
+        "type": "string",
+        "index": "not_analyzed"
+      }
+
+
+    }
+  }
+}
