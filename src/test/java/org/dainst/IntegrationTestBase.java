@@ -39,7 +39,7 @@ public class IntegrationTestBase {
     protected static final FileSystemDatastoreConnector mainDatastore
             = new FileSystemDatastoreConnector(TEST_FOLDER);
 
-    private static JsonNode jsonNode(String s) throws IOException {
+    protected static JsonNode jsonNode(String s) throws IOException {
         return new ObjectMapper().readTree(s);
     }
 

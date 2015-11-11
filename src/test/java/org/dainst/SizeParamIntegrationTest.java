@@ -1,11 +1,13 @@
 package org.dainst;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
 import static org.testng.Assert.fail;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Daniel M. de Oliveira
@@ -64,7 +66,9 @@ public class SizeParamIntegrationTest extends IntegrationTestBase{
         post(route("2"), sampleJson("b"));
         post(route("3"), sampleJson("b"));
 
-        assertTwoResultsAreFound(get(route("") + "?q=a:b&size=0"));
+        assertEquals(
+                get(route("") + "?q=a:b&size=0"),
+                jsonNode("{\"+results+\":[]}"));
     }
 
     @Test

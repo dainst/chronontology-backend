@@ -5,8 +5,7 @@ import static org.dainst.C.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import spark.QueryParamsMap;
-import spark.Request;
+import org.apache.log4j.Logger;
 
 import java.io.IOException;
 
@@ -18,6 +17,8 @@ import static spark.Spark.post;
  */
 public class Router {
 
+    final static Logger logger = Logger.getLogger(Router.class);
+
     private static JsonNode jsonNode(String s) throws IOException {
         return new ObjectMapper().readTree(s);
     }
@@ -27,24 +28,29 @@ public class Router {
         return jsonNode; 
     }
 
-    private boolean shouldBeDirect(Request req) {
-        return ((req.queryParams("direct")!=null)
-                &&(req.queryParams("direct").equals("true")));
+    private boolean shouldBeDirect(final String directParam) {
+        return (directParam!=null&&
+                directParam.equals("true"));
     }
 
-    private Integer getSize(final QueryParamsMap queryParams) {
-        Integer size = null;
+    /**
+     * Converts a String to an int.
+     *
+     * @param sizeParam
+     * @return -1 if sizeParam is null
+     *   or cannot be parsed properly.
+     */
+    private Integer sizeAsInt(final String sizeParam) {
+        if (sizeParam==null) return -1;
+        int size = -1;
         try {
-            if (queryParams.get("size") != null)
-                size = Integer.parseInt(queryParams.get("size").value());
+            if (sizeParam != null)
+                size = Integer.parseInt(sizeParam);
         } catch (NumberFormatException e) {
-            // TODO logger error
-            System.out.println("Illegal format: "+queryParams.get("size").value());
-            return null;
+            logger.error("Illegal format for number in param: "+sizeParam);
+            return -1;
         }
-        if (size>0)
-            return size;
-        else return null;
+        return size;
     }
 
     public Router(
@@ -55,13 +61,13 @@ public class Router {
         get("/"+TYPE_NAME+"/", (req,res) -> {
 
                     return connectDatastore.search(
-                        req.queryParams("q"), getSize(req.queryMap()));
+                        req.queryParams("q"), sizeAsInt(req.queryParams("size")));
                 }
         );
 
         get("/"+TYPE_NAME+"/:id", (req,res) -> {
 
-                    if (shouldBeDirect(req))
+                    if (shouldBeDirect(req.queryParams("direct")))
                         return mainDatastore.get(req.params(":id"));
                     else
                         return connectDatastore.get(req.params(":id"));
