@@ -20,35 +20,11 @@ import java.io.IOException;
  */
 public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
-    @BeforeClass
-    public static void beforeClass() throws InterruptedException {
-        startServer();
-    }
-
-    @AfterClass
-    public static void afterClass() throws InterruptedException {
-        stopServer();
-        cleanDatastores();
-    }
-
-    private JsonNode sampleJson(String sampleFieldValue) throws IOException {
-        return new ObjectMapper().readTree
-                ("{\"a\":\"" + sampleFieldValue + "\"}");
-    }
-
     private JsonNode addId(JsonNode node, String id) throws JsonProcessingException {
         ((ObjectNode) node).put("@id", "/"+ TYPE_NAME+"/"+id);
         return node;
     }
 
-    private String route(String id) {
-        return "/"+ C.TYPE_NAME+"/"+id;
-    }
-
-    private JsonNode searchResultJson(String id,String sampleFieldValue) throws IOException {
-        return new ObjectMapper().readTree
-                ("{\"results\":[{\"a\":\""+sampleFieldValue+"\",\"@id\":\"/period/"+id+"\"}]}");
-    }
 
 
     @Test
@@ -92,39 +68,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
                 sampleJson("b"), "1");
     }
 
-    @Test
-    public void searchForDocuments() throws IOException, InterruptedException {
 
-        post(route("1"), sampleJson("a"));
-        post(route("2"), sampleJson("b"));
-        post(route("3"), sampleJson("b"));
-
-        String searchResult = get(route("") + "?q=a:b").toString();
-        if (!searchResult.equals(
-                "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/3\"},{\"a\":\"b\",\"@id\":\"/period/2\"}]}")
-            &&
-            !searchResult.equals(
-                "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/2\"},{\"a\":\"b\",\"@id\":\"/period/3\"}]}"))
-            fail();
-    }
-
-
-
-    @Test
-    public void restrictedSizeSearch() throws IOException, InterruptedException {
-
-        post(route("1"), sampleJson("a"));
-        post(route("2"), sampleJson("b"));
-        post(route("3"), sampleJson("b"));
-
-        JsonNode searchResult = get(route("") + "?q=a:b&size=1");
-        if (!searchResult.equals(
-                searchResultJson("3", "b"))
-            &&
-            !searchResult.equals(
-                searchResultJson("2", "b")))
-            fail();
-    }
 
     @Test
     public void matchQueryTermWithSlashes() throws IOException, InterruptedException {

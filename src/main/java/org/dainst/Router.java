@@ -5,6 +5,7 @@ import static org.dainst.C.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import spark.QueryParamsMap;
 import spark.Request;
 
 import java.io.IOException;
@@ -31,20 +32,30 @@ public class Router {
                 &&(req.queryParams("direct").equals("true")));
     }
 
+    private Integer getSize(final QueryParamsMap queryParams) {
+        Integer size = null;
+        try {
+            if (queryParams.get("size") != null)
+                size = Integer.parseInt(queryParams.get("size").value());
+        } catch (NumberFormatException e) {
+            // TODO logger error
+            System.out.println("Illegal format: "+queryParams.get("size").value());
+            return null;
+        }
+        if (size>0)
+            return size;
+        else return null;
+    }
+
     public Router(
-            FileSystemDatastoreConnector mainDatastore,
-            ElasticSearchDatastoreConnector connectDatastore
+            final FileSystemDatastoreConnector mainDatastore,
+            final ElasticSearchDatastoreConnector connectDatastore
     ){
 
         get("/"+TYPE_NAME+"/", (req,res) -> {
 
-                    Integer size = null;
-                    if (req.queryParams("size")!=null)
-                        size= Integer.parseInt(req.queryParams("size"));
-
-                    JsonNode results = connectDatastore.search(
-                            req.queryParams("q"),size);
-                    return results;
+                    return connectDatastore.search(
+                        req.queryParams("q"), getSize(req.queryMap()));
                 }
         );
 

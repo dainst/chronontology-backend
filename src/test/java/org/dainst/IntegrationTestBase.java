@@ -3,6 +3,8 @@ package org.dainst;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.*;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import spark.Spark;
 
 import java.io.File;
@@ -12,6 +14,17 @@ import java.io.IOException;
  * @author Daniel M. de Oliveira
  */
 public class IntegrationTestBase {
+
+    @BeforeClass
+    public static void beforeClass() throws InterruptedException {
+        startServer();
+    }
+
+    @AfterClass
+    public static void afterClass() throws InterruptedException {
+        stopServer();
+        cleanDatastores();
+    }
 
     private static final String TEST_FOLDER = "src/test/resources/";
 
@@ -74,5 +87,19 @@ public class IntegrationTestBase {
         Response response = client.newCall(request).execute();
 
         return jsonNode(response.body().string());
+    }
+
+    protected String route(String id) {
+        return "/"+ C.TYPE_NAME+"/"+id;
+    }
+
+    protected JsonNode sampleJson(String sampleFieldValue) throws IOException {
+        return new ObjectMapper().readTree
+                ("{\"a\":\"" + sampleFieldValue + "\"}");
+    }
+
+    protected JsonNode searchResultJson(String id, String sampleFieldValue) throws IOException {
+        return new ObjectMapper().readTree
+                ("{\"results\":[{\"a\":\""+sampleFieldValue+"\",\"@id\":\"/period/"+id+"\"}]}");
     }
 }

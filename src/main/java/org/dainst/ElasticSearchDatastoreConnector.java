@@ -62,14 +62,17 @@ public class ElasticSearchDatastoreConnector {
      * @param queryString some string like a:b for searching b
      *                    in all records a fields. Can also be just b
      *                    for searching for b in all fields.
-     * @param size number of results to fetch.
-     *             Set null to mark there should be no restriction.
+     * @param size number of results to fetch. Set to a number >=1 or
+     *             set null to mark there should be no restriction.
      * @return a JsonNode with a top level field named results which
      *   is an array containing objects representing the search hits.
      */
     public JsonNode search(
             final String queryString,
             final Integer size) throws IOException {
+
+        if (size!=null&&size<1) throw
+                new IllegalArgumentException("If used, size must be greater than 1");
 
         client.admin().indices().prepareRefresh().execute().actionGet();
 
