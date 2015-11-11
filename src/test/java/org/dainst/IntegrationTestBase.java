@@ -39,6 +39,7 @@ public class IntegrationTestBase {
 
         connectDatastore.delete("1");
         connectDatastore.delete("2");
+        connectDatastore.delete("3");
     }
 
     protected static void startServer() throws InterruptedException {

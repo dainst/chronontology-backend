@@ -3,6 +3,7 @@ package org.dainst;
 import static org.dainst.C.*;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.fail;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -62,7 +63,6 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     public void storeAndRetrieveOneDocument() throws IOException {
 
         post(route("1"), sampleJson("b"));
-
         assertEquals(
                 get(route("1")),
                 addId(sampleJson("b"), "1"));
@@ -73,7 +73,6 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         post(route("1"), sampleJson("b"));
         post(route("2"), sampleJson("a"));
-
         assertEquals(
                 get(route("1")),
                 addId(sampleJson("b"), "1"));
@@ -100,11 +99,16 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         post(route("2"), sampleJson("b"));
         post(route("3"), sampleJson("b"));
 
-        assertEquals(
-                get(route("") + "?q=a:b").toString(),
-                "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/3\"},{\"a\":\"b\",\"@id\":\"/period/2\"}]}");
-
+        String searchResult = get(route("") + "?q=a:b").toString();
+        if (!searchResult.equals(
+                "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/3\"},{\"a\":\"b\",\"@id\":\"/period/2\"}]}")
+            &&
+            !searchResult.equals(
+                "{\"results\":[{\"a\":\"b\",\"@id\":\"/period/2\"},{\"a\":\"b\",\"@id\":\"/period/3\"}]}"))
+            fail();
     }
+
+
 
     @Test
     public void restrictedSizeSearch() throws IOException, InterruptedException {
@@ -113,10 +117,13 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         post(route("2"), sampleJson("b"));
         post(route("3"), sampleJson("b"));
 
-        assertEquals(
-                get(route("") + "?q=a:b&size=1"),
-                searchResultJson("3", "b"));
-
+        JsonNode searchResult = get(route("") + "?q=a:b&size=1");
+        if (!searchResult.equals(
+                searchResultJson("3", "b"))
+            &&
+            !searchResult.equals(
+                searchResultJson("2", "b")))
+            fail();
     }
 
     @Test
