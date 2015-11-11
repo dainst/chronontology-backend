@@ -59,10 +59,11 @@ public class ElasticSearchDatastoreConnector {
     }
 
     /**
-     *
-     * @param queryString some string like a:b&c:d&e:f
+     * @param queryString some string like a:b for searching b
+     *                    in all records a fields. Can also be just b
+     *                    for searching for b in all fields.
      * @param size number of results to fetch.
-     *             Set false to mark there should be no restriction.
+     *             Set null to mark there should be no restriction.
      * @return a JsonNode with a top level field named results which
      *   is an array containing objects representing the search hits.
      */
@@ -72,9 +73,11 @@ public class ElasticSearchDatastoreConnector {
 
         client.admin().indices().prepareRefresh().execute().actionGet();
 
-        String[] queryTerms = queryString.split(":");
+        String fieldToSearch= queryString.contains(":") ? queryString.split(":")[0] : "_all";
+        String termToSearchFor= queryString.contains(":") ? queryString.split(":")[1] : queryString;
+
         MatchQueryBuilder tq = QueryBuilders.matchPhraseQuery(
-                queryTerms[0], normalizeQueryTerm(queryTerms[1]));
+                fieldToSearch, normalizeQueryTerm(termToSearchFor));
 
         SearchRequestBuilder srb= client.prepareSearch(indexName).setTypes(TYPE_NAME)
                 .setQuery(tq);

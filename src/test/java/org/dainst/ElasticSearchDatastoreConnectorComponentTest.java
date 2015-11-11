@@ -42,4 +42,20 @@ public class ElasticSearchDatastoreConnectorComponentTest {
         Thread.sleep(100);
         assertEquals(store.get("a"), null);
     }
+
+
+    /*
+
+
+    @Test
+    public void searchInFields() throws IOException {
+        store.search("a:b", null);
+    }
+
+    @Test
+    public void searchOverAllFields() throws IOException {
+        store.search("b", null);
+    }
+
+    */
 }

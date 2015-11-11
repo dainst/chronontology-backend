@@ -162,4 +162,14 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         );
     }
 
+    @Test
+    public void searchInAllFields() throws IOException, InterruptedException {
+
+        post(route("1"), sampleJson("abc"));
+        post(route("2"), sampleJson("def"));
+        assertEquals(
+                get(route("") + "?q=def"),
+                searchResultJson("2","def")
+        );
+    }
 }

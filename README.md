@@ -47,6 +47,10 @@ An example for searchCriteria can be
 which means, the that the field a in all records gets searched for the term b.
 If there is a match, the record gets added to the result set.
 
+For searching in all fields, you can issue a search request like
+
+  /period/?q=b
+
 ## Testing
 
 For the Component Tests to run, you need an elastic search 
