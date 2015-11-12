@@ -3,12 +3,16 @@ package org.dainst;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.*;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import spark.Spark;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.testng.Assert.fail;
 
 /**
  * @author Daniel M. de Oliveira
@@ -101,5 +105,15 @@ public class IntegrationTestBase {
     protected JsonNode searchResultJson(String id, String sampleFieldValue) throws IOException {
         return new ObjectMapper().readTree
                 ("{\"results\":[{\"a\":\""+sampleFieldValue+"\",\"@id\":\"/period/"+id+"\"}]}");
+    }
+
+    protected void jsonAssertEquals(JsonNode actual,JsonNode expected) {
+        try {
+            JSONAssert.assertEquals(
+                    expected.toString(),
+                    actual.toString(), false);
+        } catch (JSONException e) {
+            fail(e.getMessage());
+        }
     }
 }

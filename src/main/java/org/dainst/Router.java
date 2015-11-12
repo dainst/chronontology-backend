@@ -4,10 +4,14 @@ import static org.dainst.C.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
@@ -25,7 +29,13 @@ public class Router {
 
     private static JsonNode addStorageInfo(JsonNode jsonNode, String id) throws IOException {
         ((ObjectNode) jsonNode).put("@id", "/"+TYPE_NAME+"/"+id);
-        return jsonNode; 
+        String nowAsIso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ").format(new Date());
+
+        ((ObjectNode) jsonNode).put("created", nowAsIso8601);
+        ArrayNode a = ((ObjectNode) jsonNode).putArray("modified");
+        a.add(nowAsIso8601);
+
+        return jsonNode;
     }
 
     private boolean shouldBeDirect(final String directParam) {
@@ -47,7 +57,7 @@ public class Router {
             if (sizeParam != null)
                 size = Integer.parseInt(sizeParam);
         } catch (NumberFormatException e) {
-            logger.error("Illegal format for number in param: "+sizeParam);
+            logger.error("Illegal format for number in param: " + sizeParam);
             return -1;
         }
         return size;

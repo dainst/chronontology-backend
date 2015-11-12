@@ -3,14 +3,12 @@ package org.dainst;
 import static org.dainst.C.*;
 
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.fail;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.json.JSONException;
+import org.skyscreamer.jsonassert.JSONAssert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -28,18 +26,37 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
 
     @Test
-    public void respondWithEnrichedJSONonPost() throws IOException {
-
-        assertEquals(
+    public void respondWithEnrichedJSONonPost() throws IOException, JSONException {
+        System.out.println(post(route("1"), sampleJson("b")));
+        jsonAssertEquals(
                 post(route("1"), sampleJson("b")),
                 addId(sampleJson("b"), "1"));
     }
+
+    /*
+    @Test
+    public void testIdTimeAndDateCreated() throws IOException, JSONException {
+
+        jsonAssertEquals(
+                post(route("1"), sampleJson("b")),
+                addId(sampleJson("b"), "1"));  // TEST here
+
+        jsonAssertEquals(
+                get(route("1")),
+                addId(sampleJson("b"), "1"));  // TEST here again
+
+        jsonAssertEquals(
+                post(route("1")+"?direct=true"),
+                addId(sampleJson("b"), "1"));  // TEST here again
+
+    }*/
+
 
     @Test
     public void storeAndRetrieveOneDocument() throws IOException {
 
         post(route("1"), sampleJson("b"));
-        assertEquals(
+        jsonAssertEquals(
                 get(route("1")),
                 addId(sampleJson("b"), "1"));
     }
@@ -49,7 +66,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         post(route("1"), sampleJson("b"));
         post(route("2"), sampleJson("a"));
-        assertEquals(
+        jsonAssertEquals(
                 get(route("1")),
                 addId(sampleJson("b"), "1"));
     }
@@ -60,12 +77,12 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         connectDatastore.put("1",sampleJson("a"));
         mainDatastore.put("1",sampleJson("b"));
 
-        assertEquals(
+        jsonAssertEquals(
                 get(route("1")),
-                sampleJson("a"), "1");
+                sampleJson("a"));
         assertEquals(
                 get(route("1") + "?direct=true"),
-                sampleJson("b"), "1");
+                sampleJson("b"));
     }
 
 
@@ -74,9 +91,9 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     public void matchQueryTermWithSlashes() throws IOException, InterruptedException {
 
         post(route("1"), sampleJson("/period/2"));
-        assertEquals(
+        jsonAssertEquals(
                 get(route("") + "?q=a:/period/2"),
-                searchResultJson("1","/period/2")
+                searchResultJson("1", "/period/2")
         );
     }
 
@@ -85,9 +102,9 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         post(route("1"), sampleJson("/period/2"));
         post(route("2"), sampleJson("/period/3"));
-        assertEquals(
+        jsonAssertEquals(
                 get(route("") + "?q=a:/period/2"),
-                searchResultJson("1","/period/2")
+                searchResultJson("1", "/period/2")
         );
     }
 
@@ -95,14 +112,14 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     public void matchQueryTermWithUrlEncodedSlashes() throws IOException, InterruptedException {
 
         post(route("1"), sampleJson("/period/2"));
-        assertEquals(
+        jsonAssertEquals(
                 get(route("") + "?q=a:%22%2Fperiod%2F2%22"),
-                searchResultJson("1","/period/2")
+                searchResultJson("1", "/period/2")
         );
         post(route("2"), sampleJson("/period/1"));
-        assertEquals(
+        jsonAssertEquals(
                 get(route("") + "?q=a:%2Fperiod%2F1"),
-                searchResultJson("2","/period/1")
+                searchResultJson("2", "/period/1")
         );
     }
 
@@ -111,9 +128,9 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
         post(route("1"), sampleJson("abc"));
         post(route("2"), sampleJson("def"));
-        assertEquals(
+        jsonAssertEquals(
                 get(route("") + "?q=def"),
-                searchResultJson("2","def")
+                searchResultJson("2", "def")
         );
     }
 }
