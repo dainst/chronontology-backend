@@ -6,6 +6,7 @@ import static org.testng.Assert.assertEquals;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -18,54 +19,10 @@ import java.io.IOException;
  */
 public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
-    private JsonNode addId(JsonNode node, String id) throws JsonProcessingException {
-        ((ObjectNode) node).put("@id", "/"+ TYPE_NAME+"/"+id);
-        return node;
+    private JsonNode searchResultJson(String id, String sampleFieldValue) throws IOException {
+        return new ObjectMapper().readTree
+                ("{\"results\":[{\"a\":\""+sampleFieldValue+"\",\"@id\":\"/period/"+id+"\"}]}");
     }
-
-
-
-    @Test
-    public void respondWithEnrichedJSONonPost() throws IOException, JSONException {
-        System.out.println(post(route("1"), sampleJson("b")));
-        jsonAssertEquals(
-                post(route("1"), sampleJson("b")),
-                addId(sampleJson("b"), "1"));
-    }
-
-    /*
-    @Test
-    public void testIdTimeAndDateCreated() throws IOException, JSONException {
-
-        jsonAssertEquals(
-                post(route("1"), sampleJson("b")),
-                addId(sampleJson("b"), "1"));  // TEST here
-
-        jsonAssertEquals(
-                get(route("1")),
-                addId(sampleJson("b"), "1"));  // TEST here again
-
-        jsonAssertEquals(
-                post(route("1")+"?direct=true"),
-                addId(sampleJson("b"), "1"));  // TEST here again
-
-    @Test
-    public void testIdTimeAndDateModified() throws IOException, JSONException {
-
-        jsonAssertEquals(
-                post(route("1"), sampleJson("b")),
-                addId(sampleJson("b"), "1"));
-
-        jsonAssertEquals(
-                put(route("1")),
-                addId(sampleJson("b"), "1"));
-
-        jsonAssertEquals(
-                post(route("1")+"?direct=true"),
-                addId(sampleJson("b"), "1"));  // TEST here
-
-    }*/
-
 
     @Test
     public void storeAndRetrieveOneDocument() throws IOException {
@@ -73,7 +30,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         post(route("1"), sampleJson("b"));
         jsonAssertEquals(
                 get(route("1")),
-                addId(sampleJson("b"), "1"));
+                sampleJson("b"));
     }
 
     @Test
@@ -83,7 +40,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         post(route("2"), sampleJson("a"));
         jsonAssertEquals(
                 get(route("1")),
-                addId(sampleJson("b"), "1"));
+                sampleJson("b"));
     }
 
 
@@ -94,7 +51,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         put(route("1"), sampleJson("b"));
         jsonAssertEquals(
                 get(route("1")),
-                addId(sampleJson("b"), "1")); // check also with direct = true
+                sampleJson("b")); // check also with direct = true
     }
 
 
@@ -104,7 +61,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         put(route("1"), sampleJson("a"));
         jsonAssertEquals(
                 get(route("1")),
-                addId(sampleJson("a"), "1"));
+                sampleJson("a"));
     }
 
     /*
@@ -112,7 +69,9 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     public void itemExistsBeforePost() throws IOException {
 
         post(route("1"), sampleJson("a"));
+
         post(route("1"), sampleJson("b"));
+
         jsonAssertEquals(
                 get(route("1")),
                 addId(sampleJson("a"), "1"));

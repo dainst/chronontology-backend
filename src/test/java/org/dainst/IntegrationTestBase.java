@@ -122,10 +122,7 @@ public class IntegrationTestBase {
                 ("{\"a\":\"" + sampleFieldValue + "\"}");
     }
 
-    protected JsonNode searchResultJson(String id, String sampleFieldValue) throws IOException {
-        return new ObjectMapper().readTree
-                ("{\"results\":[{\"a\":\""+sampleFieldValue+"\",\"@id\":\"/period/"+id+"\"}]}");
-    }
+
 
     protected void jsonAssertEquals(JsonNode actual,JsonNode expected) {
         try {
