@@ -23,7 +23,7 @@ public class Chronontology {
     private static FileSystemDatastoreConnector initDS(String datastorePath) {
 
         if (!(new File(datastorePath).exists())) {
-            logger.error("The specified path "+datastorePath+" does not exist.");
+            logger.error("The specified path " + datastorePath + " does not exist.");
             return null;
         }
         return new FileSystemDatastoreConnector(datastorePath);
@@ -55,12 +55,12 @@ public class Chronontology {
 
         int serverPort= Integer.parseInt((String)props.get("serverPort"));
         port(serverPort);
-        String typeName= (String)props.get("typeName");
+        String[] typeNames= ((String)props.get("typeNames")).split(",");
 
         ESConnection esC= new ESConnection("elasticsearch",(String)props.get("esHost"));
         new Router(
                 store,
                 new ElasticSearchDatastoreConnector(esC,(String)props.get("esIndexName")),
-                typeName);
+                typeNames);
     }
 }

@@ -13,6 +13,7 @@ import spark.Spark;
 import java.io.File;
 import java.io.IOException;
 
+import static org.dainst.TC.TYPE_NAME;
 import static org.testng.Assert.fail;
 
 /**
@@ -57,13 +58,13 @@ public class IntegrationTestBase {
 
     protected static final void cleanDatastores() {
 
-        new File(TEST_FOLDER + C.TYPE_NAME + "/1.txt").delete();
-        new File(TEST_FOLDER + C.TYPE_NAME + "/2.txt").delete();
-        new File(TEST_FOLDER + C.TYPE_NAME + "/3.txt").delete();
+        new File(TEST_FOLDER + TYPE_NAME + "/1.txt").delete();
+        new File(TEST_FOLDER + TYPE_NAME + "/2.txt").delete();
+        new File(TEST_FOLDER + TYPE_NAME + "/3.txt").delete();
 
-        connectDatastore.delete(C.TYPE_NAME,"1");
-        connectDatastore.delete(C.TYPE_NAME,"2");
-        connectDatastore.delete(C.TYPE_NAME,"3");
+        connectDatastore.delete(TYPE_NAME,"1");
+        connectDatastore.delete(TYPE_NAME,"2");
+        connectDatastore.delete(TYPE_NAME,"3");
     }
 
     protected static void startServer() throws InterruptedException {
@@ -71,7 +72,7 @@ public class IntegrationTestBase {
         new Router(
                 mainDatastore,
                 connectDatastore,
-                C.TYPE_NAME
+                new String[]{TYPE_NAME}
         );
         Thread.sleep(200);
     }
@@ -136,7 +137,7 @@ public class IntegrationTestBase {
     }
 
     protected String route(String id) {
-        return "/"+ C.TYPE_NAME+"/"+id;
+        return "/"+ TYPE_NAME+"/"+id;
     }
 
     protected JsonNode sampleJson(String sampleFieldValue) throws IOException {

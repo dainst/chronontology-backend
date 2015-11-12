@@ -8,7 +8,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static org.dainst.C.TYPE_NAME;
+import static org.dainst.TC.TYPE_NAME;
 
 /**
  * @author Daniel M. de Oliveira

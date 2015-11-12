@@ -1,5 +1,6 @@
 package org.dainst;
 
+import static org.dainst.TC.TYPE_NAME;
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
@@ -66,8 +67,8 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     @Test
     public void retrieveDocumentsFromDifferentSources() throws IOException {
 
-        connectDatastore.put(C.TYPE_NAME,"1",sampleJson("a"));
-        mainDatastore.put(C.TYPE_NAME,"1",sampleJson("b"));
+        connectDatastore.put(TYPE_NAME,"1",sampleJson("a"));
+        mainDatastore.put(TYPE_NAME,"1",sampleJson("b"));
 
         jsonAssertEquals(
                 get(route("1")),

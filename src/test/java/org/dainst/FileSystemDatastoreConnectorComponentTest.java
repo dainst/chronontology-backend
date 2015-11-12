@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static org.dainst.TC.TYPE_NAME;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -19,7 +20,7 @@ public class FileSystemDatastoreConnectorComponentTest {
 
     @AfterClass
     public static void afterClass() {
-        new File(BASE_FOLDER + C.TYPE_NAME +"/a.txt").delete();
+        new File(BASE_FOLDER + TYPE_NAME +"/a.txt").delete();
     }
 
     private JsonNode sampleJson(String sampleFieldValue) throws IOException {
@@ -31,7 +32,7 @@ public class FileSystemDatastoreConnectorComponentTest {
     public void putAndGet() throws IOException {
 
         FileSystemDatastoreConnector store = new FileSystemDatastoreConnector(BASE_FOLDER);
-        store.put(C.TYPE_NAME,"a",sampleJson("a"));
-        assertEquals(store.get(C.TYPE_NAME,"a"), sampleJson("a"));
+        store.put(TYPE_NAME,"a",sampleJson("a"));
+        assertEquals(store.get(TYPE_NAME,"a"), sampleJson("a"));
     }
 }

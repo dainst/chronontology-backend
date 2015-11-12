@@ -9,17 +9,19 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.dainst.C.TYPE_NAME;
-
 /**
  * @author Daniel M. de Oliveira
  */
 public class DocumentModel {
 
     private final JsonNode node;
+    private final String typeName;
 
-    public DocumentModel (final JsonNode node) {
+    public DocumentModel (
+            final String typeName,
+            final JsonNode node) {
         this.node= node;
+        this.typeName= typeName;
     }
 
     /**
@@ -32,7 +34,7 @@ public class DocumentModel {
     JsonNode addStorageInfo(final String id) throws IOException {
         JsonNode node = this.node.deepCopy();
 
-        ((ObjectNode) node).put("@id", "/"+TYPE_NAME+"/"+id);
+        ((ObjectNode) node).put("@id", "/"+typeName+"/"+id);
 
         String date = date();
         ((ObjectNode) node).put("created", date);
@@ -44,7 +46,7 @@ public class DocumentModel {
 
     JsonNode addStorageInfo(final JsonNode oldNode, final String id) {
 
-        ((ObjectNode) node).put("@id", "/" + TYPE_NAME + "/" + id);
+        ((ObjectNode) node).put("@id", "/" + typeName + "/" + id);
         String dateCreated = oldNode.get("created").asText();
         ((ObjectNode) node).put("created", dateCreated);
 

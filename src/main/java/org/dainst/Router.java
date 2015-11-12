@@ -84,9 +84,7 @@ public class Router {
         String id = req.params(ID);
         JsonNode oldDoc = mainDatastore.get(typeName,id);
 
-        res.header("location", id);
-
-        DocumentModel dm = new DocumentModel(json(req.body()));
+        DocumentModel dm = new DocumentModel(typeName,json(req.body()));
         JsonNode doc = null;
         if (oldDoc!=null) {
             doc= dm.addStorageInfo(oldDoc, id);
@@ -112,14 +110,12 @@ public class Router {
         String id = req.params(ID);
         JsonNode oldDoc = mainDatastore.get(typeName,id);
 
-        res.header("location", id);
-
         if (oldDoc!=null) {
             res.status(HTTP_FORBIDDEN);
             return "";
         }
 
-        JsonNode doc = new DocumentModel(json(req.body()))
+        JsonNode doc = new DocumentModel(typeName,json(req.body()))
                 .addStorageInfo(id);
 
         mainDatastore.put(typeName,id, doc);
@@ -133,20 +129,34 @@ public class Router {
     private void route(
             final String typeName
     ) {
-        get( "/" + typeName + "/", (req,res) -> handleSearch(typeName,req,res));
-        get( "/" + typeName + "/" + ID, (req,res) -> handleGet(typeName,req,res));
-        post("/" + typeName + "/" + ID, (req, res) ->  handlePost(typeName,req,res));
-        put( "/" + typeName + "/" + ID, (req, res) -> handlePut(typeName,req,res));
+        get( "/" + typeName + "/", (req,res) -> {
+            res.header("location", req.params(ID));
+            return handleSearch(typeName,req,res);
+        });
+        get( "/" + typeName + "/" + ID, (req,res) -> {
+            res.header("location", req.params(ID));
+            return handleGet(typeName,req,res);
+        });
+        post("/" + typeName + "/" + ID, (req, res) ->  {
+            res.header("location", req.params(ID));
+            return handlePost(typeName,req,res);
+        });
+        put( "/" + typeName + "/" + ID, (req, res) -> {
+            res.header("location", req.params(ID));
+            return handlePut(typeName,req,res);
+        });
     }
 
     public Router(
         final FileSystemDatastoreConnector mainDatastore,
         final ElasticSearchDatastoreConnector connectDatastore,
-        final String typeName
+        final String[] typeNames
     ){
 
         this.mainDatastore=mainDatastore;
         this.connectDatastore=connectDatastore;
-        route(typeName);
+
+        for (String typeName:typeNames)
+            route(typeName);
     }
 }

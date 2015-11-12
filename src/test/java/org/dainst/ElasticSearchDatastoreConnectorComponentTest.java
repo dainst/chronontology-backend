@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
+import static org.dainst.TC.TYPE_NAME;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -26,24 +27,24 @@ public class ElasticSearchDatastoreConnectorComponentTest {
 
     @AfterMethod
     public void afterMethod() {
-        store.delete(C.TYPE_NAME,"a");
+        store.delete(TYPE_NAME,"a");
     }
 
     @Test
     public void putAndGetItemForId() throws IOException {
 
-        store.put(C.TYPE_NAME,"a",sampleJson("a"));
-        assertEquals(store.get(C.TYPE_NAME,"a"),sampleJson("a"));
+        store.put(TYPE_NAME,"a",sampleJson("a"));
+        assertEquals(store.get(TYPE_NAME,"a"),sampleJson("a"));
     }
 
     @Test
     public void deleteAnItem() throws IOException, InterruptedException {
 
-        store.put(C.TYPE_NAME,"a",sampleJson("a"));
-        store.delete(C.TYPE_NAME,"a");
+        store.put(TYPE_NAME,"a",sampleJson("a"));
+        store.delete(TYPE_NAME,"a");
 
         Thread.sleep(100);
-        assertEquals(store.get(C.TYPE_NAME,"a"), null);
+        assertEquals(store.get(TYPE_NAME,"a"), null);
     }
 
 
