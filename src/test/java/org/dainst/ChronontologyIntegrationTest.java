@@ -59,18 +59,17 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
                 sampleJson("a"));
     }
 
-    /*
+
     @Test
     public void itemExistsBeforePost() throws IOException {
 
         post(route("1"), sampleJson("a"));
-
         post(route("1"), sampleJson("b"));
 
         jsonAssertEquals(
                 get(route("1")),
-                addId(sampleJson("a"), "1"));
-    }*/
+                sampleJson("a"));
+    }
 
 
     @Test

@@ -76,6 +76,11 @@ public class Router {
         post("/" + TYPE_NAME + "/" + ID, (req, res) -> {
 
                     String id = req.params(ID);
+                    JsonNode oldDoc = mainDatastore.get(id);
+
+                    if (oldDoc!=null) {
+                        return "";
+                    }
 
                     JsonNode doc = new DocumentModel(json(req.body()))
                             .addStorageInfo(id);

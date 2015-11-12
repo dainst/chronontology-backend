@@ -73,6 +73,14 @@ public class IntegrationTestBase {
         Spark.stop();
     }
 
+    /**
+     *
+     * @param path
+     * @param method
+     * @param json
+     * @return null if a JsonNode could not get generated properly
+     *   from the response body.
+     */
     private JsonNode restApi(String path,String method, JsonNode json) {
 
         Request.Builder b = new Request.Builder().url(URL + path);
@@ -89,11 +97,12 @@ public class IntegrationTestBase {
             }
         }
 
-
         Response response = null;
         try {
             response = client.newCall(b.build()).execute();
-            return jsonNode(response.body().string());
+            String body= response.body().string();
+            if (body.isEmpty()) return null;
+            return jsonNode(body);
         } catch (IOException e) {
             fail(e.getMessage());
             return null;
