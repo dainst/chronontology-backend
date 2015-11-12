@@ -6,6 +6,7 @@ import com.squareup.okhttp.*;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import spark.Spark;
 
@@ -19,6 +20,23 @@ import static org.testng.Assert.fail;
  */
 public class IntegrationTestBase {
 
+    private static final String TEST_FOLDER = "src/test/resources/";
+
+    protected static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
+
+    protected static final String URL = "http://0.0.0.0:4567";
+    protected static final OkHttpClient client = new OkHttpClient();
+
+    protected static final ElasticSearchDatastoreConnector connectDatastore
+            = new ElasticSearchDatastoreConnector("jeremy_test");
+
+    protected static final FileSystemDatastoreConnector mainDatastore
+            = new FileSystemDatastoreConnector(TEST_FOLDER);
+    protected static JsonNode jsonNode(String s) throws IOException {
+        return new ObjectMapper().readTree(s);
+    }
+
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
         startServer();
@@ -27,24 +45,11 @@ public class IntegrationTestBase {
     @AfterClass
     public static void afterClass() throws InterruptedException {
         stopServer();
-        cleanDatastores();
     }
 
-    private static final String TEST_FOLDER = "src/test/resources/";
-
-    private static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
-    private static final String URL = "http://0.0.0.0:4567";
-
-    private static final OkHttpClient client = new OkHttpClient();
-
-    protected static final ElasticSearchDatastoreConnector connectDatastore
-            = new ElasticSearchDatastoreConnector("jeremy_test");
-    protected static final FileSystemDatastoreConnector mainDatastore
-            = new FileSystemDatastoreConnector(TEST_FOLDER);
-
-    protected static JsonNode jsonNode(String s) throws IOException {
-        return new ObjectMapper().readTree(s);
+    @AfterMethod
+    public static void afterMethod() {
+        cleanDatastores();
     }
 
 
@@ -83,7 +88,22 @@ public class IntegrationTestBase {
      */
     private JsonNode restApi(String path,String method, JsonNode json) {
 
-        Request.Builder b = new Request.Builder().url(URL + path);
+        Request.Builder b = getBuilder(method, json).url(URL + path);
+
+        Response response = null;
+        try {
+            response = client.newCall(b.build()).execute();
+            String body= response.body().string();
+            if (body.isEmpty()) return null;
+            return jsonNode(body);
+        } catch (IOException e) {
+            fail(e.getMessage());
+            return null;
+        }
+    }
+
+    protected Request.Builder getBuilder(String method, JsonNode json) {
+        Request.Builder b = new Request.Builder();
 
         if (method.equals("GET")) {
             b.get();
@@ -96,17 +116,7 @@ public class IntegrationTestBase {
                 b.put(body);
             }
         }
-
-        Response response = null;
-        try {
-            response = client.newCall(b.build()).execute();
-            String body= response.body().string();
-            if (body.isEmpty()) return null;
-            return jsonNode(body);
-        } catch (IOException e) {
-            fail(e.getMessage());
-            return null;
-        }
+        return b;
     }
 
 

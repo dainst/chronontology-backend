@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 
-import javax.swing.text.Document;
+import javax.servlet.http.HttpUtils;
 import java.io.IOException;
 
 import static spark.Spark.get;
@@ -78,17 +78,20 @@ public class Router {
                     String id = req.params(ID);
                     JsonNode oldDoc = mainDatastore.get(id);
 
+                    res.header("location", id);
+
                     if (oldDoc!=null) {
+                        res.status(HTTP_FORBIDDEN);
                         return "";
                     }
 
                     JsonNode doc = new DocumentModel(json(req.body()))
                             .addStorageInfo(id);
+
                     mainDatastore.put(id, doc);
                     connectDatastore.put(id, doc);
 
-                    res.header("location", id);
-                    res.status(200);
+                    res.status(HTTP_CREATED);
 
                     return doc;
                 }
@@ -99,16 +102,20 @@ public class Router {
                     String id = req.params(ID);
                     JsonNode oldDoc = mainDatastore.get(id);
 
+                    res.header("location", id);
+
                     DocumentModel dm = new DocumentModel(json(req.body()));
-                    JsonNode doc = (oldDoc != null)
-                            ? dm.addStorageInfo(oldDoc, id)
-                            : dm.addStorageInfo(id);
+                    JsonNode doc = null;
+                    if (oldDoc!=null) {
+                        doc= dm.addStorageInfo(oldDoc, id);
+                        res.status(HTTP_OK);
+                    } else {
+                        doc= dm.addStorageInfo(id);
+                        res.status(HTTP_CREATED);
+                    }
 
                     mainDatastore.put(id, doc);
                     connectDatastore.put(id, doc);
-
-                    res.header("location", id);
-                    res.status(200);
 
                     return doc;
                 }

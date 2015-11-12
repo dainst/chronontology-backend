@@ -23,7 +23,6 @@ public class DocumentModelIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void respondWithEnrichedJSONonPost() throws IOException, JSONException {
-        System.out.println(post(route("1"), sampleJson("b")));
         jsonAssertEquals(
                 post(route("1"), sampleJson("b")),
                 addId(sampleJson("b"), "1"));

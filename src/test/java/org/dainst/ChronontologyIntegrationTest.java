@@ -51,7 +51,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
 
     @Test
-    public void itemDoesNotExistBeforePut() throws IOException {
+    public void documentDoesNotExistBeforePut() throws IOException {
 
         put(route("1"), sampleJson("a"));
         jsonAssertEquals(
@@ -61,7 +61,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
 
     @Test
-    public void itemExistsBeforePost() throws IOException {
+    public void documentExistsBeforePost() throws IOException {
 
         post(route("1"), sampleJson("a"));
         post(route("1"), sampleJson("b"));
