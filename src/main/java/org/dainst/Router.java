@@ -18,6 +18,7 @@ import static spark.Spark.put;
 public class Router {
 
     final static Logger logger = Logger.getLogger(Router.class);
+    public static final String ID = ":id";
 
     private static JsonNode json(String s) throws IOException {
         return new ObjectMapper().readTree(s);
@@ -60,42 +61,47 @@ public class Router {
                 }
         );
 
-        get("/"+TYPE_NAME+"/:id", (req,res) -> {
+        get("/" + TYPE_NAME + "/" + ID, (req,res) -> {
+
+                    String id = req.params(ID);
 
                     if (shouldBeDirect(req.queryParams("direct")))
-                        return mainDatastore.get(req.params(":id"));
+                        return mainDatastore.get(id);
                     else
-                        return connectDatastore.get(req.params(":id"));
+                        return connectDatastore.get(id);
                 }
         );
 
-        post("/" + TYPE_NAME + "/:id", (req, res) -> {
+        post("/" + TYPE_NAME + "/" + ID, (req, res) -> {
 
-                    JsonNode json = new DocumentModel(json(req.body()))
-                            .addStorageInfo(req.params(":id"));
-                    mainDatastore.put(req.params(":id"), json);
-                    connectDatastore.put(req.params(":id"), json);
+                    String id = req.params(ID);
 
-                    res.header("location", req.params(":id"));
+                    JsonNode doc = new DocumentModel(json(req.body()))
+                            .addStorageInfo(id);
+                    mainDatastore.put(id, doc);
+                    connectDatastore.put(id, doc);
+
+                    res.header("location", id);
                     res.status(200);
 
-                    return json;
+                    return doc;
                 }
         );
 
-        put("/" + TYPE_NAME + "/:id", (req, res) -> {
+        put("/" + TYPE_NAME + "/" + ID, (req, res) -> {
 
-                    JsonNode oldJson = mainDatastore.get(req.params(":id"));
-                    JsonNode json = new DocumentModel(json(req.body()))
-                            .addStorageInfo(oldJson, req.params(":id"));
+                    String id = req.params(ID);
+                    JsonNode oldDoc = mainDatastore.get(id);
+                    JsonNode doc = new DocumentModel(json(req.body()))
+                            .addStorageInfo(oldDoc, id);
 
-                    mainDatastore.put(req.params(":id"), json);
-                    connectDatastore.put(req.params(":id"), json);
+                    mainDatastore.put(id, doc);
+                    connectDatastore.put(id, doc);
 
-                    res.header("location", req.params(":id"));
+                    res.header("location", id);
                     res.status(200);
 
-                    return json;
+                    return doc;
                 }
         );
     }
