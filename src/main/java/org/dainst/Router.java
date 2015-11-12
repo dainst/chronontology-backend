@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 
+import javax.swing.text.Document;
 import java.io.IOException;
 
 import static spark.Spark.get;
@@ -92,8 +93,11 @@ public class Router {
 
                     String id = req.params(ID);
                     JsonNode oldDoc = mainDatastore.get(id);
-                    JsonNode doc = new DocumentModel(json(req.body()))
-                            .addStorageInfo(oldDoc, id);
+
+                    DocumentModel dm = new DocumentModel(json(req.body()));
+                    JsonNode doc = (oldDoc != null)
+                            ? dm.addStorageInfo(oldDoc, id)
+                            : dm.addStorageInfo(id);
 
                     mainDatastore.put(id, doc);
                     connectDatastore.put(id, doc);

@@ -5,9 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 
 /**
+ * Key value store where the values are of type JsonNode
+ * and get stored on a file system.
+ *
  * @author Daniel M. de Oliveira
  */
 public class FileSystemDatastoreConnector {
@@ -19,19 +23,28 @@ public class FileSystemDatastoreConnector {
         this.baseFolder=baseFolder;
     }
 
+    /**
+     * @param key
+     * @return null if there exists no item for key.
+     * @throws IOException
+     */
     public JsonNode get(String key) throws IOException {
 
-        String content="";
+        String content= "";
         try {
             content = new String(Files.readAllBytes(Paths.get(baseFolder + key + SUFFIX)));
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (NoSuchFileException e) {
+            return null;
         }
 
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readTree(content);
+        return new ObjectMapper().readTree(content);
     };
 
+    /**
+     * Stores or updates the item for key.
+     * @param key
+     * @param value
+     */
     public void put(String key,JsonNode value) {
         try {
             Files.write(Paths.get(baseFolder + key + SUFFIX), value.toString().getBytes());

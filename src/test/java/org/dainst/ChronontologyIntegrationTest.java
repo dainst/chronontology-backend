@@ -97,14 +97,25 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
                 addId(sampleJson("b"), "1")); // check also with direct = true
     }
 
-    /*
+
     @Test
     public void itemDoesNotExistBeforePut() throws IOException {
 
-        put(route("1"), sampleJson("b"));
+        put(route("1"), sampleJson("a"));
         jsonAssertEquals(
                 get(route("1")),
-                addId(sampleJson("b"), "1"));
+                addId(sampleJson("a"), "1"));
+    }
+
+    /*
+    @Test
+    public void itemExistsBeforePost() throws IOException {
+
+        post(route("1"), sampleJson("a"));
+        post(route("1"), sampleJson("b"));
+        jsonAssertEquals(
+                get(route("1")),
+                addId(sampleJson("a"), "1"));
     }*/
 
 
