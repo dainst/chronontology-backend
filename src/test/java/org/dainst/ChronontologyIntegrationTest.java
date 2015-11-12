@@ -1,15 +1,6 @@
 package org.dainst;
 
-import static org.dainst.C.*;
-
 import static org.testng.Assert.assertEquals;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

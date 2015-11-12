@@ -28,8 +28,10 @@ public class IntegrationTestBase {
     protected static final String URL = "http://0.0.0.0:4567";
     protected static final OkHttpClient client = new OkHttpClient();
 
+    private static final ESConnection esC= new ESConnection("elasticsearch","localhost");
+
     protected static final ElasticSearchDatastoreConnector connectDatastore
-            = new ElasticSearchDatastoreConnector("jeremy_test");
+            = new ElasticSearchDatastoreConnector(esC,"jeremy_test");
 
     protected static final FileSystemDatastoreConnector mainDatastore
             = new FileSystemDatastoreConnector(TEST_FOLDER);
@@ -68,7 +70,8 @@ public class IntegrationTestBase {
 
         new Router(
                 mainDatastore,
-                connectDatastore
+                connectDatastore,
+                C.TYPE_NAME
         );
         Thread.sleep(200);
     }

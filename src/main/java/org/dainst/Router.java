@@ -141,11 +141,12 @@ public class Router {
 
     public Router(
         final FileSystemDatastoreConnector mainDatastore,
-        final ElasticSearchDatastoreConnector connectDatastore
+        final ElasticSearchDatastoreConnector connectDatastore,
+        final String typeName
     ){
 
         this.mainDatastore=mainDatastore;
         this.connectDatastore=connectDatastore;
-        route(TYPE_NAME);
+        route(typeName);
     }
 }

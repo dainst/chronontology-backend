@@ -14,9 +14,12 @@ import static org.testng.Assert.assertEquals;
  */
 public class ElasticSearchDatastoreConnectorComponentTest {
 
-    ElasticSearchDatastoreConnector store = new ElasticSearchDatastoreConnector("jeremy_test");
+    private final ESConnection esC= new ESConnection("elasticsearch","localhost");
 
-    private JsonNode sampleJson(String sampleFieldValue) throws IOException {
+    private final ElasticSearchDatastoreConnector store=
+            new ElasticSearchDatastoreConnector(esC,"jeremy_test");
+
+    private JsonNode sampleJson(final String sampleFieldValue) throws IOException {
         return new ObjectMapper().readTree
                 ("{\"a\":\"" + sampleFieldValue + "\"}");
     }

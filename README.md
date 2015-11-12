@@ -3,23 +3,21 @@
 ## Using the server
 
 Execution of the main method starts an embedded 
-jetty server listening on 0.0.0.0:4567.
+jetty server.
 
-A file system based datastore is used as the primary datastore.
-It is is assumed to be located at datastore/ relative to the 
-current working directory from
-which you started the main. However, by specifying an alternative path
-as command line argument, the specified folder gets used as datastore.
+The application uses two datastores. The main datastore is
+file system based. The connected datastore is an elastisearch instance.
 
-Elasticsearch is used as the connected datastore. So make sure 
-you have an elasticSearch instance running with the following settings:
+At startup, the application reads the properties from 
 
-  cluster name : elasticsearch
-  index name : jeremy
-  type name : period
+  config.properties
+
+Make sure you revise the settings before startup!
+
+A type mapping for every type used is needed, so make sure 
+you didn't forget to add the mapping to the period type!
+ 
   type mapping : src/main/resources/mapping.json
-  
-Make sure you didn't forget to add the mapping to the period type!
 
 ### POST /period/:id 
 

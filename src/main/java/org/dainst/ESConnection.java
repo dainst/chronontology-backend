@@ -11,7 +11,7 @@ import org.elasticsearch.common.transport.InetSocketTransportAddress;
  *
  * @author: Daniel M. de Oliveira
  */
-public class ESClientUtil {
+public class ESConnection {
 
     // TODO close client on shutdown
 
@@ -19,13 +19,13 @@ public class ESClientUtil {
     TransportClient client = null;
 
     // hide default constructor
-    private ESClientUtil(){}
+    private ESConnection(){}
 
     /**
      * @param clusterName
      * @param hostName
      */
-    public ESClientUtil(
+    public ESConnection(
             String clusterName,
             String hostName
     ) {

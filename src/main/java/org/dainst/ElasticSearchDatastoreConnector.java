@@ -24,11 +24,15 @@ public class ElasticSearchDatastoreConnector {
 
     private String indexName = null;
 
-    private final TransportClient client = new ESClientUtil("elasticsearch","localhost").getClient();
+    private TransportClient client= null;
 
     private ElasticSearchDatastoreConnector() {};
 
-    public ElasticSearchDatastoreConnector(final String indexName) {
+    public ElasticSearchDatastoreConnector(
+            final ESConnection esConnection,
+            final String indexName) {
+
+        client= esConnection.getClient();
         this.indexName= indexName;
     }
 
