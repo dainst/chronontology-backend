@@ -1,7 +1,5 @@
 package org.dainst;
 
-import static org.dainst.C.*;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -39,8 +37,8 @@ public class ElasticSearchDatastoreConnector {
      * @return null if item not found.
      * @throws IOException
      */
-    public JsonNode get(final String key) {
-        GetResponse res= client.prepareGet(indexName, TYPE_NAME,key).execute().actionGet();
+    public JsonNode get(final String typeName,final String key) {
+        GetResponse res= client.prepareGet(indexName, typeName,key).execute().actionGet();
 
         if (res.getSourceAsString()==null) return null;
 
@@ -68,6 +66,7 @@ public class ElasticSearchDatastoreConnector {
      *   is an array containing objects representing the search hits.
      */
     public JsonNode search(
+            final String typeName,
             final String queryString,
             final int size) throws IOException {
 
@@ -79,7 +78,7 @@ public class ElasticSearchDatastoreConnector {
         MatchQueryBuilder tq = QueryBuilders.matchPhraseQuery(
                 fieldToSearch, normalizeQueryTerm(termToSearchFor));
 
-        SearchRequestBuilder srb= client.prepareSearch(indexName).setTypes(TYPE_NAME)
+        SearchRequestBuilder srb= client.prepareSearch(indexName).setTypes(typeName)
                 .setQuery(tq);
         srb.setSize(size);
 
@@ -119,12 +118,12 @@ public class ElasticSearchDatastoreConnector {
 
 
 
-    public void put(final String key,final JsonNode value) {
-        IndexResponse ir= client.prepareIndex(indexName, TYPE_NAME)
+    public void put(final String typeName,final String key,final JsonNode value) {
+        IndexResponse ir= client.prepareIndex(indexName, typeName)
                 .setSource(value.toString()).setId(key).execute().actionGet();
     }
 
-    public void delete(final String key) {
-        client.prepareDelete(indexName,TYPE_NAME,key).execute();
+    public void delete(final String typeName,final String key) {
+        client.prepareDelete(indexName,typeName,key).execute();
     }
 }

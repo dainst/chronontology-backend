@@ -5,8 +5,9 @@ import static org.dainst.C.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
+import spark.Request;
+import spark.Response;
 
-import javax.servlet.http.HttpUtils;
 import java.io.IOException;
 
 import static spark.Spark.get;
@@ -20,6 +21,9 @@ public class Router {
 
     final static Logger logger = Logger.getLogger(Router.class);
     public static final String ID = ":id";
+
+    final FileSystemDatastoreConnector mainDatastore;
+    final ElasticSearchDatastoreConnector connectDatastore;
 
     private static JsonNode json(String s) throws IOException {
         return new ObjectMapper().readTree(s);
@@ -50,75 +54,98 @@ public class Router {
         return size;
     }
 
+    private Object handleGet(
+            final String typeName,
+            final Request req,
+            final Response res) throws IOException {
+
+        String id = req.params(ID);
+
+        if (shouldBeDirect(req.queryParams("direct")))
+            return mainDatastore.get(typeName,id);
+        else
+            return connectDatastore.get(typeName,id);
+    }
+
+    private Object handleSearch(
+            final String typeName,
+            final Request req,
+            final Response res) throws IOException {
+
+        return connectDatastore.search( typeName,
+                req.queryParams("q"), sizeAsInt(req.queryParams("size")));
+    }
+
+    private Object handlePut(
+            final String typeName,
+            final Request req,
+            final Response res) throws IOException {
+
+        String id = req.params(ID);
+        JsonNode oldDoc = mainDatastore.get(typeName,id);
+
+        res.header("location", id);
+
+        DocumentModel dm = new DocumentModel(json(req.body()));
+        JsonNode doc = null;
+        if (oldDoc!=null) {
+            doc= dm.addStorageInfo(oldDoc, id);
+            res.status(HTTP_OK);
+        } else {
+            doc= dm.addStorageInfo(id);
+            res.status(HTTP_CREATED);
+        }
+
+        mainDatastore.put(typeName,id, doc);
+        connectDatastore.put(typeName,id, doc);
+
+        return doc;
+    }
+
+    private Object handlePost(
+            final String typeName,
+            final Request req,
+            final Response res) throws IOException {
+
+        System.out.println(typeName+":"+req.toString());
+
+        String id = req.params(ID);
+        JsonNode oldDoc = mainDatastore.get(typeName,id);
+
+        res.header("location", id);
+
+        if (oldDoc!=null) {
+            res.status(HTTP_FORBIDDEN);
+            return "";
+        }
+
+        JsonNode doc = new DocumentModel(json(req.body()))
+                .addStorageInfo(id);
+
+        mainDatastore.put(typeName,id, doc);
+        connectDatastore.put(typeName,id, doc);
+
+        res.status(HTTP_CREATED);
+
+        return doc;
+    }
+
+    private void route(
+            final String typeName
+    ) {
+        get( "/" + typeName + "/", (req,res) -> handleSearch(typeName,req,res));
+        get( "/" + typeName + "/" + ID, (req,res) -> handleGet(typeName,req,res));
+        post("/" + typeName + "/" + ID, (req, res) ->  handlePost(typeName,req,res));
+        put( "/" + typeName + "/" + ID, (req, res) -> handlePut(typeName,req,res));
+    }
+
     public Router(
-            final FileSystemDatastoreConnector mainDatastore,
-            final ElasticSearchDatastoreConnector connectDatastore
+        final FileSystemDatastoreConnector mainDatastore,
+        final ElasticSearchDatastoreConnector connectDatastore
     ){
 
-        get("/"+TYPE_NAME+"/", (req,res) -> {
-
-                    return connectDatastore.search(
-                        req.queryParams("q"), sizeAsInt(req.queryParams("size")));
-                }
-        );
-
-        get("/" + TYPE_NAME + "/" + ID, (req,res) -> {
-
-                    String id = req.params(ID);
-
-                    if (shouldBeDirect(req.queryParams("direct")))
-                        return mainDatastore.get(id);
-                    else
-                        return connectDatastore.get(id);
-                }
-        );
-
-        post("/" + TYPE_NAME + "/" + ID, (req, res) -> {
-
-                    String id = req.params(ID);
-                    JsonNode oldDoc = mainDatastore.get(id);
-
-                    res.header("location", id);
-
-                    if (oldDoc!=null) {
-                        res.status(HTTP_FORBIDDEN);
-                        return "";
-                    }
-
-                    JsonNode doc = new DocumentModel(json(req.body()))
-                            .addStorageInfo(id);
-
-                    mainDatastore.put(id, doc);
-                    connectDatastore.put(id, doc);
-
-                    res.status(HTTP_CREATED);
-
-                    return doc;
-                }
-        );
-
-        put("/" + TYPE_NAME + "/" + ID, (req, res) -> {
-
-                    String id = req.params(ID);
-                    JsonNode oldDoc = mainDatastore.get(id);
-
-                    res.header("location", id);
-
-                    DocumentModel dm = new DocumentModel(json(req.body()));
-                    JsonNode doc = null;
-                    if (oldDoc!=null) {
-                        doc= dm.addStorageInfo(oldDoc, id);
-                        res.status(HTTP_OK);
-                    } else {
-                        doc= dm.addStorageInfo(id);
-                        res.status(HTTP_CREATED);
-                    }
-
-                    mainDatastore.put(id, doc);
-                    connectDatastore.put(id, doc);
-
-                    return doc;
-                }
-        );
+        this.mainDatastore=mainDatastore;
+        this.connectDatastore=connectDatastore;
+        route(TYPE_NAME);
     }
 }

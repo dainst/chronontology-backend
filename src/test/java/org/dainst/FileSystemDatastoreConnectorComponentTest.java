@@ -19,7 +19,7 @@ public class FileSystemDatastoreConnectorComponentTest {
 
     @AfterClass
     public static void afterClass() {
-        new File(BASE_FOLDER + "a.txt").delete();
+        new File(BASE_FOLDER + C.TYPE_NAME +"/a.txt").delete();
     }
 
     private JsonNode sampleJson(String sampleFieldValue) throws IOException {
@@ -31,7 +31,7 @@ public class FileSystemDatastoreConnectorComponentTest {
     public void putAndGet() throws IOException {
 
         FileSystemDatastoreConnector store = new FileSystemDatastoreConnector(BASE_FOLDER);
-        store.put("a",sampleJson("a"));
-        assertEquals(store.get("a"), sampleJson("a"));
+        store.put(C.TYPE_NAME,"a",sampleJson("a"));
+        assertEquals(store.get(C.TYPE_NAME,"a"), sampleJson("a"));
     }
 }

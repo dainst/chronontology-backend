@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -28,11 +29,14 @@ public class FileSystemDatastoreConnector {
      * @return null if there exists no item for key.
      * @throws IOException
      */
-    public JsonNode get(String key) throws IOException {
+    public JsonNode get(
+            final String typeName,
+            final String key) throws IOException {
 
         String content= "";
         try {
-            content = new String(Files.readAllBytes(Paths.get(baseFolder + key + SUFFIX)));
+            content = new String(Files.readAllBytes(
+                    path(typeName,key)));
         } catch (NoSuchFileException e) {
             return null;
         }
@@ -40,14 +44,22 @@ public class FileSystemDatastoreConnector {
         return new ObjectMapper().readTree(content);
     };
 
+    private Path path(final String typeName, final String key) {
+        return Paths.get(baseFolder + typeName + "/" + key + SUFFIX);
+    }
+
     /**
      * Stores or updates the item for key.
      * @param key
      * @param value
      */
-    public void put(String key,JsonNode value) {
+    public void put(
+            final String typeName,
+            String key,
+            JsonNode value) {
         try {
-            Files.write(Paths.get(baseFolder + key + SUFFIX), value.toString().getBytes());
+            Files.write( path(typeName,key)
+                    , value.toString().getBytes());
         } catch (IOException e) {
             e.printStackTrace();
         }

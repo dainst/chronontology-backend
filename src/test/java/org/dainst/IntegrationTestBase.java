@@ -55,13 +55,13 @@ public class IntegrationTestBase {
 
     protected static final void cleanDatastores() {
 
-        new File(TEST_FOLDER + "1.txt").delete();
-        new File(TEST_FOLDER + "2.txt").delete();
-        new File(TEST_FOLDER + "3.txt").delete();
+        new File(TEST_FOLDER + C.TYPE_NAME + "/1.txt").delete();
+        new File(TEST_FOLDER + C.TYPE_NAME + "/2.txt").delete();
+        new File(TEST_FOLDER + C.TYPE_NAME + "/3.txt").delete();
 
-        connectDatastore.delete("1");
-        connectDatastore.delete("2");
-        connectDatastore.delete("3");
+        connectDatastore.delete(C.TYPE_NAME,"1");
+        connectDatastore.delete(C.TYPE_NAME,"2");
+        connectDatastore.delete(C.TYPE_NAME,"3");
     }
 
     protected static void startServer() throws InterruptedException {

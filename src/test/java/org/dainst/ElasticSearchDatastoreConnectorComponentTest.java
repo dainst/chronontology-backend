@@ -23,24 +23,24 @@ public class ElasticSearchDatastoreConnectorComponentTest {
 
     @AfterMethod
     public void afterMethod() {
-        store.delete("a");
+        store.delete(C.TYPE_NAME,"a");
     }
 
     @Test
     public void putAndGetItemForId() throws IOException {
 
-        store.put("a",sampleJson("a"));
-        assertEquals(store.get("a"),sampleJson("a"));
+        store.put(C.TYPE_NAME,"a",sampleJson("a"));
+        assertEquals(store.get(C.TYPE_NAME,"a"),sampleJson("a"));
     }
 
     @Test
     public void deleteAnItem() throws IOException, InterruptedException {
 
-        store.put("a",sampleJson("a"));
-        store.delete("a");
+        store.put(C.TYPE_NAME,"a",sampleJson("a"));
+        store.delete(C.TYPE_NAME,"a");
 
         Thread.sleep(100);
-        assertEquals(store.get("a"), null);
+        assertEquals(store.get(C.TYPE_NAME,"a"), null);
     }
 
 
