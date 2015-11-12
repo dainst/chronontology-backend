@@ -73,24 +73,44 @@ public class IntegrationTestBase {
         Spark.stop();
     }
 
-    protected JsonNode post(String path, JsonNode json) throws IOException {
-        RequestBody body = RequestBody.create(JSON, json.toString());
-        Request request = new Request.Builder()
-                .url(URL + path)
-                .post(body)
-                .build();
-        Response response = client.newCall(request).execute();
+    private JsonNode restApi(String path,String method, JsonNode json) {
 
-        return jsonNode(response.body().string());
+        Request.Builder b = new Request.Builder().url(URL + path);
+
+        if (method.equals("GET")) {
+            b.get();
+        } else {
+            RequestBody body = RequestBody.create(JSON, json.toString());
+            if (method.equals("POST")) {
+                b.post(body);
+            }
+            if (method.equals("PUT")) {
+                b.put(body);
+            }
+        }
+
+
+        Response response = null;
+        try {
+            response = client.newCall(b.build()).execute();
+            return jsonNode(response.body().string());
+        } catch (IOException e) {
+            fail(e.getMessage());
+            return null;
+        }
+    }
+
+
+    protected JsonNode post(String path, JsonNode json) {
+        return restApi(path,"POST",json);
+    }
+
+    protected JsonNode put(String path, JsonNode json) throws IOException {
+        return restApi(path,"PUT",json);
     }
 
     protected JsonNode get(String path) throws IOException {
-        Request request = new Request.Builder()
-                .url(URL+path)
-                .build();
-        Response response = client.newCall(request).execute();
-
-        return jsonNode(response.body().string());
+        return restApi(path,"GET",null);
     }
 
     protected String route(String id) {

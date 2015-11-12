@@ -4,17 +4,13 @@ import static org.dainst.C.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import static spark.Spark.get;
 import static spark.Spark.post;
+import static spark.Spark.put;
 
 /**
  * @author Daniel M. de Oliveira
@@ -23,19 +19,8 @@ public class Router {
 
     final static Logger logger = Logger.getLogger(Router.class);
 
-    private static JsonNode jsonNode(String s) throws IOException {
+    private static JsonNode json(String s) throws IOException {
         return new ObjectMapper().readTree(s);
-    }
-
-    private static JsonNode addStorageInfo(JsonNode jsonNode, String id) throws IOException {
-        ((ObjectNode) jsonNode).put("@id", "/"+TYPE_NAME+"/"+id);
-        String nowAsIso8601 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmZ").format(new Date());
-
-        ((ObjectNode) jsonNode).put("created", nowAsIso8601);
-        ArrayNode a = ((ObjectNode) jsonNode).putArray("modified");
-        a.add(nowAsIso8601);
-
-        return jsonNode;
     }
 
     private boolean shouldBeDirect(final String directParam) {
@@ -86,14 +71,31 @@ public class Router {
 
         post("/" + TYPE_NAME + "/:id", (req, res) -> {
 
-                    JsonNode enrichedJSON = addStorageInfo(jsonNode(req.body()), req.params(":id"));
-                    mainDatastore.put(req.params(":id"), enrichedJSON);
-                    connectDatastore.put(req.params(":id"), enrichedJSON);
+                    JsonNode json = new DocumentModel(json(req.body()))
+                            .addStorageInfo(req.params(":id"));
+                    mainDatastore.put(req.params(":id"), json);
+                    connectDatastore.put(req.params(":id"), json);
 
                     res.header("location", req.params(":id"));
                     res.status(200);
 
-                    return enrichedJSON;
+                    return json;
+                }
+        );
+
+        put("/" + TYPE_NAME + "/:id", (req, res) -> {
+
+                    JsonNode oldJson = mainDatastore.get(req.params(":id"));
+                    JsonNode json = new DocumentModel(json(req.body()))
+                            .addStorageInfo(oldJson, req.params(":id"));
+
+                    mainDatastore.put(req.params(":id"), json);
+                    connectDatastore.put(req.params(":id"), json);
+
+                    res.header("location", req.params(":id"));
+                    res.status(200);
+
+                    return json;
                 }
         );
     }

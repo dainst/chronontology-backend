@@ -49,6 +49,21 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
                 post(route("1")+"?direct=true"),
                 addId(sampleJson("b"), "1"));  // TEST here again
 
+    @Test
+    public void testIdTimeAndDateModified() throws IOException, JSONException {
+
+        jsonAssertEquals(
+                post(route("1"), sampleJson("b")),
+                addId(sampleJson("b"), "1"));
+
+        jsonAssertEquals(
+                put(route("1")),
+                addId(sampleJson("b"), "1"));
+
+        jsonAssertEquals(
+                post(route("1")+"?direct=true"),
+                addId(sampleJson("b"), "1"));  // TEST here
+
     }*/
 
 
@@ -70,6 +85,28 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
                 get(route("1")),
                 addId(sampleJson("b"), "1"));
     }
+
+
+    @Test
+    public void changeADocument() throws IOException, InterruptedException {
+
+        post(route("1"), sampleJson("a"));
+        put(route("1"), sampleJson("b"));
+        jsonAssertEquals(
+                get(route("1")),
+                addId(sampleJson("b"), "1")); // check also with direct = true
+    }
+
+    /*
+    @Test
+    public void itemDoesNotExistBeforePut() throws IOException {
+
+        put(route("1"), sampleJson("b"));
+        jsonAssertEquals(
+                get(route("1")),
+                addId(sampleJson("b"), "1"));
+    }*/
+
 
     @Test
     public void retrieveDocumentsFromDifferentSources() throws IOException {
