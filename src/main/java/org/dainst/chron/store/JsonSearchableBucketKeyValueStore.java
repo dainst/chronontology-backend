@@ -1,4 +1,4 @@
-package org.dainst;
+package org.dainst.chron.store;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

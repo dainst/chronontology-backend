@@ -1,4 +1,4 @@
-package org.dainst;
+package org.dainst.chron;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

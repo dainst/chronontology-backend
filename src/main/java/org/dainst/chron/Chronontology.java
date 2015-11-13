@@ -1,6 +1,8 @@
-package org.dainst;
+package org.dainst.chron;
 
 import org.apache.log4j.Logger;
+import org.dainst.chron.store.ESRestSearchableKeyValueStore;
+import org.dainst.chron.store.FileSystemKeyValueStore;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -9,6 +11,7 @@ import java.util.Properties;
 
 import static spark.Spark.port;
 
+import org.dainst.chron.connect.JsonRestClient;
 
 /**
  * Main class. Handles application setup.

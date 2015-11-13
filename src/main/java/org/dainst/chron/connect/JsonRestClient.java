@@ -1,4 +1,4 @@
-package org.dainst;
+package org.dainst.chron.connect;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,7 +12,7 @@ import java.util.Base64;
 /**
  * @author Daniel M. de Oliveira
  */
-class JsonRestClient {
+public class JsonRestClient {
 
     private final static Logger logger = Logger.getLogger(JsonRestClient.class);
 
@@ -73,7 +73,7 @@ class JsonRestClient {
         return new ObjectMapper().readTree(s);
     }
 
-    Request.Builder getBuilder(String method, JsonNode json) {
+    public Request.Builder getBuilder(String method, JsonNode json) {
         Request.Builder b = new Request.Builder();
 
         if (method.equals("GET")) {

@@ -1,4 +1,4 @@
-package org.dainst;
+package org.dainst.chron;
 
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;

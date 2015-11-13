@@ -1,9 +1,9 @@
-package org.dainst;
+package org.dainst.chron;
 
 /**
  * @author Daniel M. de Oliveira
  */
-public class C {
+public class Constants {
 
     // A library for getting the status codes is not used on purpose
     // so we don't have to refactor in case it would change. The status codes themselves

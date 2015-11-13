@@ -1,4 +1,5 @@
-package org.dainst;
+package org.dainst.chron;
+
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.OkHttpClient;
@@ -9,7 +10,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.util.Base64;
 
-import static org.dainst.C.*;
+import static org.dainst.chron.Constants.*;
 import static org.testng.Assert.assertEquals;
 
 /**
