@@ -12,8 +12,6 @@ import spark.Response;
 
 import java.io.IOException;
 
-import static org.dainst.chron.Constants.*;
-
 /**
  * @author Daniel M. de Oliveira
  */

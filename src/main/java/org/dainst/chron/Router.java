@@ -3,15 +3,7 @@ package org.dainst.chron;
 import static spark.Spark.*;
 import static org.dainst.chron.Constants.*;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
-import org.dainst.chron.store.JsonBucketKeyValueStore;
-import org.dainst.chron.store.JsonSearchableBucketKeyValueStore;
-import spark.Request;
-import spark.Response;
-
-import java.io.IOException;
 import java.util.Base64;
 
 
@@ -23,9 +15,6 @@ public class Router {
 
     final static Logger logger = Logger.getLogger(Router.class);
     public static final String ID = ":id";
-
-    private final JsonBucketKeyValueStore mainDatastore;
-    private final JsonSearchableBucketKeyValueStore connectDatastore;
 
     private final Controller controller;
 
@@ -77,15 +66,11 @@ public class Router {
     }
 
     public Router(
-        final JsonBucketKeyValueStore mainDatastore,
-        final JsonSearchableBucketKeyValueStore connectDatastore,
+        final Controller controller,
         final String[] typeNames,
         final String[] credentials
     ){
-        controller= new Controller(mainDatastore,connectDatastore);
-
-        this.mainDatastore=mainDatastore;
-        this.connectDatastore=connectDatastore;
+        this.controller= controller;
 
         for (String typeName:typeNames)
             setUpTypeRoutes(typeName);

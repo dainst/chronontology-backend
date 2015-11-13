@@ -88,9 +88,11 @@ public class IntegrationTestBase {
 
     protected static void startServer() throws InterruptedException {
 
+        Controller controller= new Controller(
+                mainDatastore,connectDatastore);
+
         new Router(
-                mainDatastore,
-                connectDatastore,
+                controller,
                 new String[]{TYPE_NAME},
                 new String[]{USER_NAME+":"+PASS_WORD}
         );

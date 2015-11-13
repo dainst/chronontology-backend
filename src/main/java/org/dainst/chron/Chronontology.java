@@ -63,9 +63,11 @@ public class Chronontology {
 
         JsonRestClient jrc= new JsonRestClient((String)props.get("esUrl"));
 
+        Controller controller= new Controller(
+                store,new ESRestSearchableKeyValueStore(jrc,(String)props.get("esIndexName")));
+
         new Router(
-                store,
-                new ESRestSearchableKeyValueStore(jrc,(String)props.get("esIndexName")),
+                controller,
                 typeNames,
                 credentials);
     }
