@@ -56,12 +56,14 @@ public class Chronontology {
         int serverPort= Integer.parseInt((String)props.get("serverPort"));
         port(serverPort);
         String[] typeNames= ((String)props.get("typeNames")).split(",");
+        String[] credentials= ((String)props.get("credentials")).split(",");
 
         JsonRestClient jrc= new JsonRestClient((String)props.get("esUrl"));
 
         new Router(
                 store,
                 new ESRestSearchableKeyValueStore(jrc,(String)props.get("esIndexName")),
-                typeNames);
+                typeNames,
+                credentials);
     }
 }

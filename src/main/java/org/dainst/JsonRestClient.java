@@ -6,22 +6,42 @@ import com.squareup.okhttp.*;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Base64;
 
 /**
  * @author Daniel M. de Oliveira
  */
 class JsonRestClient {
 
-    final static Logger logger = Logger.getLogger(JsonRestClient.class);
+    private final static Logger logger = Logger.getLogger(JsonRestClient.class);
 
     private static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
     private final String url;
     private static final OkHttpClient client = new OkHttpClient();
 
+    private String username= null;
+    private String password= null;
+
     public JsonRestClient(
             final String url) {
         this.url = url;
+    }
+
+    public void authenticate(
+            final String username,
+            final String password) {
+        this.username= username;
+        this.password= password;
+    }
+
+    private void authorize(Request.Builder b) {
+
+        if (password==null||username==null) return;
+
+        b.addHeader("Authorization","Basic "+ new String(
+                Base64.getEncoder().encode((username+":"+password).getBytes())));
     }
 
     /**
@@ -35,6 +55,7 @@ class JsonRestClient {
     private JsonNode restApi(String path, String method, JsonNode json) {
 
         Request.Builder b = getBuilder(method, json).url(url + path);
+        authorize(b);
 
         Response response = null;
         try {

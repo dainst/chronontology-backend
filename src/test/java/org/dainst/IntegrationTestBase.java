@@ -8,6 +8,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeMethod;
 import spark.Spark;
 
 import java.io.File;
@@ -20,6 +21,8 @@ import static org.testng.Assert.fail;
  */
 public class IntegrationTestBase {
 
+    protected static final String USER_NAME = "admin";
+    protected static final String PASS_WORD = "s3cr3t";
     protected static final String TYPE_NAME = "period";
 
     private static final String TEST_FOLDER = "src/test/resources/";
@@ -33,8 +36,8 @@ public class IntegrationTestBase {
     protected static final OkHttpClient ok= new OkHttpClient();
 
 
-    private static final String ES_URL= "http://localhost:9200";
-    private static final String INDEX_NAME = "jeremy_test";
+    protected static final String ES_URL= "http://localhost:9200";
+    protected static final String INDEX_NAME = "jeremy_test";
     private static final JsonRestClient esClient = new JsonRestClient(ES_URL);
     protected static final ESRestSearchableKeyValueStore connectDatastore
             = new ESRestSearchableKeyValueStore(esClient,INDEX_NAME);
@@ -42,20 +45,11 @@ public class IntegrationTestBase {
 
     protected static final FileSystemKeyValueStore mainDatastore
             = new FileSystemKeyValueStore(TEST_FOLDER);
-    protected static JsonNode jsonNode(String s) throws IOException {
+    protected static JsonNode json(String s) throws IOException {
         return new ObjectMapper().readTree(s);
     }
 
-    protected void refreshES() {
-        RequestBody body = RequestBody.create(JSON, "{}");
-        Request.Builder b = new Request.Builder()
-                .url(ES_URL+ "/" + INDEX_NAME + "/_refresh").post(body);
-        try {
-            ok.newCall(b.build()).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+
 
     @BeforeClass
     public static void beforeClass() throws InterruptedException {
@@ -65,6 +59,11 @@ public class IntegrationTestBase {
     @AfterClass
     public static void afterClass() throws InterruptedException {
         stopServer();
+    }
+
+    @BeforeMethod
+    public static void beforeMethod() {
+        client.authenticate(USER_NAME, PASS_WORD);
     }
 
     @AfterMethod
@@ -89,7 +88,8 @@ public class IntegrationTestBase {
         new Router(
                 mainDatastore,
                 connectDatastore,
-                new String[]{TYPE_NAME}
+                new String[]{TYPE_NAME},
+                new String[]{USER_NAME+":"+PASS_WORD}
         );
         Thread.sleep(200);
     }
@@ -103,9 +103,15 @@ public class IntegrationTestBase {
         return "/"+ TYPE_NAME+"/"+id;
     }
 
-    protected JsonNode sampleJson(String sampleFieldValue) throws IOException {
-        return new ObjectMapper().readTree
-                ("{\"a\":\"" + sampleFieldValue + "\"}");
+    protected JsonNode sampleJson(String sampleFieldValue) {
+        JsonNode json= null;
+        try {
+            json = new ObjectMapper().readTree
+                    ("{\"a\":\"" + sampleFieldValue + "\"}");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 
     protected void jsonAssertEquals(JsonNode actual,JsonNode expected) {

@@ -2,6 +2,8 @@ package org.dainst;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -17,9 +19,22 @@ import static org.testng.Assert.fail;
  */
 public class SearchIntegrationTest extends IntegrationTestBase {
 
+
+
     private JsonNode searchResultJson(String id, String sampleFieldValue) throws IOException {
         return new ObjectMapper().readTree
                 ("{\"results\":[{\"a\":\""+sampleFieldValue+"\",\"@id\":\"/period/"+id+"\"}]}");
+    }
+
+    private void refreshES() {
+        RequestBody body = RequestBody.create(JSON, "{}");
+        Request.Builder b = new Request.Builder()
+                .url(ES_URL+ "/" + INDEX_NAME + "/_refresh").post(body);
+        try {
+            ok.newCall(b.build()).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -89,7 +104,7 @@ public class SearchIntegrationTest extends IntegrationTestBase {
         refreshES();
         jsonAssertEquals(
                 client.get(route("") + "?q=a:b&size=1"),
-                jsonNode("{\"results\":[{\"a\":\"b\"}]}"));
+                json("{\"results\":[{\"a\":\"b\"}]}"));
 
 
     }
@@ -117,7 +132,7 @@ public class SearchIntegrationTest extends IntegrationTestBase {
         refreshES();
         jsonAssertEquals(
                 client.get(route("") + "?q=a:b&size=0"),
-                jsonNode("{\"results\":[]}"));
+                json("{\"results\":[]}"));
     }
 
     @Test

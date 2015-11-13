@@ -12,4 +12,5 @@ public class C {
     static final int HTTP_FORBIDDEN = 403;
     static final int HTTP_OK = 200;
     static final int HTTP_NOT_FOUND = 404;
+    static final int HTTP_UNAUTHORIZED = 401;
 }

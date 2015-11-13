@@ -11,7 +11,32 @@ import java.io.IOException;
 public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
     @Test
-    public void storeAndRetrieveOneDocument() throws IOException {
+    public void getNonExistingDocument() {
+        assertEquals(
+                client.get(route("1")),
+                null);
+    }
+
+    @Test
+     public void postUnauthorized() {
+        client.authenticate(USER_NAME,"wrong");
+        client.post(route("1"), sampleJson("b"));
+        assertEquals(
+                client.get(route("1")),
+                null);
+    }
+
+    @Test
+    public void putUnauthorized() {
+        client.authenticate(USER_NAME,"wrong");
+        client.put(route("1"), sampleJson("b"));
+        assertEquals(
+                client.get(route("1")),
+                null);
+    }
+
+    @Test
+    public void storeAndRetrieveOneDocument() {
 
         client.post(route("1"), sampleJson("b"));
         jsonAssertEquals(
@@ -19,9 +44,8 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
                 sampleJson("b"));
     }
 
-
     @Test
-    public void storeAndRetrieveMoreThanOneDocument() throws IOException {
+    public void storeAndRetrieveMoreThanOneDocument() {
 
         client.post(route("1"), sampleJson("b"));
         client.post(route("2"), sampleJson("a"));
@@ -32,7 +56,7 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
 
 
     @Test
-    public void changeADocument() throws IOException, InterruptedException {
+    public void changeADocument() {
 
         client.post(route("1"), sampleJson("a"));
         client.put(route("1"), sampleJson("b"));
