@@ -19,39 +19,33 @@ you didn't forget to add the mapping to the period type!
  
   type mapping : src/main/resources/mapping.json
 
-### POST /period/:id 
+### POST /:typeName/:id 
 
-Post json to store a period with id.
+Post json to store a type named :typeName and id :id.
 
-### GET /period/:id
+### GET /:typeName/:id
 
-Get json stored for period with id.
+Get json stored for type with name :typeName and id :id.
 
-### GET /period/:id?direct=true
+### GET /:typeName/:id?direct=true
 
-Get json stored for period with id. the json is retrieved from 
+Get json stored for type with name :typeName and id :id. the json is retrieved from 
 the main storage this time, not from the connected storage.
 
-### GET /period/?q=searchCriteria(?size=1000)
+### GET /:typeName/:elasticsearchSearchString
+
+Performs a search specified by :elasticsearchSearchString 
+over the documents of the type named :typeName.
 
 Gets a json object with a top level array field named results which
-contains the json for the search hits. Additionally, you can restrict the 
-size of the search result set by using the size query parameter.
+contains the json for the search hits. 
 
-An example for searchCriteria can be
-
-  /period/?q=a:b
-  
-which means, the that the field a in all records gets searched for the term b.
-If there is a match, the record gets added to the result set.
-
-For searching in all fields, you can issue a search request like
-
-  /period/?q=b
+The elasticsearchSearchString should be a valid search string for elasticsearch
+and should not include the "_search?" prefix but everything after it.
 
 ## Testing
 
-For the Component Tests to run, you need an elastic search 
+For the Component and Integration Tests to run, you need an elastic search 
 instance on localhost up and running. The index named "jeremy_test" 
 is used. Make sure that the index has the type mapping from
 

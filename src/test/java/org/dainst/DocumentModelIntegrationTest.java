@@ -8,8 +8,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static org.dainst.TC.TYPE_NAME;
-
 /**
  * @author Daniel M. de Oliveira
  */
@@ -24,7 +22,7 @@ public class DocumentModelIntegrationTest extends IntegrationTestBase {
     @Test
     public void respondWithEnrichedJSONonPost() throws IOException, JSONException {
         jsonAssertEquals(
-                post(route("1"), sampleJson("b")),
+                client.post(route("1"), sampleJson("b")),
                 addId(sampleJson("b"), "1"));
     }
 

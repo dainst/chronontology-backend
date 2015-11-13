@@ -1,7 +1,5 @@
 package org.dainst;
 
-import org.elasticsearch.common.netty.handler.codec.http.HttpResponseStatus;
-
 /**
  * @author Daniel M. de Oliveira
  */

@@ -1,6 +1,7 @@
 package org.dainst;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import org.testng.annotations.Test;
@@ -15,13 +16,14 @@ import static org.testng.Assert.assertEquals;
  */
 public class StatusCodesIntegrationTest extends IntegrationTestBase {
 
+    private OkHttpClient ok= new OkHttpClient();
     private Response restApiResponse(String path,String method, JsonNode json) {
 
-        Request.Builder b= getBuilder(method, json).url(URL + path);
+        Request.Builder b= client.getBuilder(method, json).url(URL + path);
 
         Response response= null;
         try {
-            response = client.newCall(b.build()).execute();
+            response = ok.newCall(b.build()).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -39,7 +41,7 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void documentFound() throws IOException {
-        post(route("1"),sampleJson("a"));
+        client.post(route("1"),sampleJson("a"));
         assertEquals(
                 restApiResponse(route("1"), "GET", null).code(),
                 HTTP_OK
@@ -57,7 +59,7 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     @Test
     public void repeatedPost() throws IOException {
 
-        post(route("1"),sampleJson("a"));
+        client.post(route("1"),sampleJson("a"));
         assertEquals(
                 restApiResponse(route("1"), "POST", sampleJson("b")).code(),
                 HTTP_FORBIDDEN
@@ -67,7 +69,7 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     @Test
     public void update() throws IOException {
 
-        post(route("1"),sampleJson("a"));
+        client.post(route("1"),sampleJson("a"));
         assertEquals(
                 restApiResponse(route("1"), "PUT", sampleJson("b")).code(),
                 HTTP_OK

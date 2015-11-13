@@ -13,7 +13,6 @@ import spark.Spark;
 import java.io.File;
 import java.io.IOException;
 
-import static org.dainst.TC.TYPE_NAME;
 import static org.testng.Assert.fail;
 
 /**
@@ -21,23 +20,41 @@ import static org.testng.Assert.fail;
  */
 public class IntegrationTestBase {
 
+    protected static final String TYPE_NAME = "period";
+
     private static final String TEST_FOLDER = "src/test/resources/";
 
     protected static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
     protected static final String URL = "http://0.0.0.0:4567";
-    protected static final OkHttpClient client = new OkHttpClient();
+    protected static final JsonRestClient client = new JsonRestClient(URL);
 
-    private static final ESConnection esC= new ESConnection("elasticsearch","localhost");
+    protected static final OkHttpClient ok= new OkHttpClient();
 
-    protected static final ElasticSearchDatastoreConnector connectDatastore
-            = new ElasticSearchDatastoreConnector(esC,"jeremy_test");
 
-    protected static final FileSystemDatastoreConnector mainDatastore
-            = new FileSystemDatastoreConnector(TEST_FOLDER);
+    private static final String ES_URL= "http://localhost:9200";
+    private static final String INDEX_NAME = "jeremy_test";
+    private static final JsonRestClient esClient = new JsonRestClient(ES_URL);
+    protected static final ESRestSearchableKeyValueStore connectDatastore
+            = new ESRestSearchableKeyValueStore(esClient,INDEX_NAME);
+
+
+    protected static final FileSystemKeyValueStore mainDatastore
+            = new FileSystemKeyValueStore(TEST_FOLDER);
     protected static JsonNode jsonNode(String s) throws IOException {
         return new ObjectMapper().readTree(s);
+    }
+
+    protected void refreshES() {
+        RequestBody body = RequestBody.create(JSON, "{}");
+        Request.Builder b = new Request.Builder()
+                .url(ES_URL+ "/" + INDEX_NAME + "/_refresh").post(body);
+        try {
+            ok.newCall(b.build()).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @BeforeClass
@@ -62,9 +79,9 @@ public class IntegrationTestBase {
         new File(TEST_FOLDER + TYPE_NAME + "/2.txt").delete();
         new File(TEST_FOLDER + TYPE_NAME + "/3.txt").delete();
 
-        connectDatastore.delete(TYPE_NAME,"1");
-        connectDatastore.delete(TYPE_NAME,"2");
-        connectDatastore.delete(TYPE_NAME,"3");
+        connectDatastore.remove(TYPE_NAME, "1");
+        connectDatastore.remove(TYPE_NAME, "2");
+        connectDatastore.remove(TYPE_NAME, "3");
     }
 
     protected static void startServer() throws InterruptedException {
@@ -82,60 +99,6 @@ public class IntegrationTestBase {
         Spark.stop();
     }
 
-    /**
-     *
-     * @param path
-     * @param method
-     * @param json
-     * @return null if a JsonNode could not get generated properly
-     *   from the response body.
-     */
-    private JsonNode restApi(String path,String method, JsonNode json) {
-
-        Request.Builder b = getBuilder(method, json).url(URL + path);
-
-        Response response = null;
-        try {
-            response = client.newCall(b.build()).execute();
-            String body= response.body().string();
-            if (body.isEmpty()) return null;
-            return jsonNode(body);
-        } catch (IOException e) {
-            fail(e.getMessage());
-            return null;
-        }
-    }
-
-    protected Request.Builder getBuilder(String method, JsonNode json) {
-        Request.Builder b = new Request.Builder();
-
-        if (method.equals("GET")) {
-            b.get();
-        } else {
-            RequestBody body = RequestBody.create(JSON, json.toString());
-            if (method.equals("POST")) {
-                b.post(body);
-            }
-            if (method.equals("PUT")) {
-                b.put(body);
-            }
-        }
-        return b;
-    }
-
-
-    protected JsonNode post(String path, JsonNode json) {
-        return restApi(path,"POST",json);
-    }
-
-    protected JsonNode put(String path, JsonNode json) throws IOException {
-        return restApi(path,"PUT",json);
-    }
-
-    protected JsonNode get(String path) throws IOException {
-        return restApi(path,"GET",null);
-    }
-
     protected String route(String id) {
         return "/"+ TYPE_NAME+"/"+id;
     }
@@ -144,8 +107,6 @@ public class IntegrationTestBase {
         return new ObjectMapper().readTree
                 ("{\"a\":\"" + sampleFieldValue + "\"}");
     }
-
-
 
     protected void jsonAssertEquals(JsonNode actual,JsonNode expected) {
         try {

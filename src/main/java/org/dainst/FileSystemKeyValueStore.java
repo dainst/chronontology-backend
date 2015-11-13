@@ -2,6 +2,7 @@ package org.dainst;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,33 +16,38 @@ import java.nio.file.Paths;
  *
  * @author Daniel M. de Oliveira
  */
-public class FileSystemDatastoreConnector {
+public class FileSystemKeyValueStore implements JsonBucketKeyValueStore {
 
     private static final String SUFFIX = ".txt";
     private final String baseFolder;
 
-    public FileSystemDatastoreConnector(String baseFolder) {
+    public FileSystemKeyValueStore(String baseFolder) {
         this.baseFolder=baseFolder;
     }
 
     /**
      * @param key
      * @return null if there exists no item for key.
-     * @throws IOException
      */
     public JsonNode get(
             final String typeName,
-            final String key) throws IOException {
+            final String key) {
 
         String content= "";
         try {
             content = new String(Files.readAllBytes(
                     path(typeName,key)));
-        } catch (NoSuchFileException e) {
+        } catch (IOException e) {
             return null;
         }
 
-        return new ObjectMapper().readTree(content);
+        JsonNode n= null;
+        try {
+            n = new ObjectMapper().readTree(content);
+        } catch (IOException e) {
+            return null;
+        }
+        return n;
     };
 
     private Path path(final String typeName, final String key) {
@@ -63,5 +69,10 @@ public class FileSystemDatastoreConnector {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void remove(String bucket, String key) {
+        throw new NotImplementedException();
     }
 }

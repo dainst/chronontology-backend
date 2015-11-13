@@ -20,13 +20,13 @@ public class Chronontology {
     final static Logger logger = Logger.getLogger(Chronontology.class);
     private static final String DEFAULT_PROPERTIES_FILE_PATH = "config.properties";
 
-    private static FileSystemDatastoreConnector initDS(String datastorePath) {
+    private static FileSystemKeyValueStore initDS(String datastorePath) {
 
         if (!(new File(datastorePath).exists())) {
             logger.error("The specified path " + datastorePath + " does not exist.");
             return null;
         }
-        return new FileSystemDatastoreConnector(datastorePath);
+        return new FileSystemKeyValueStore(datastorePath);
     }
 
     private static Properties loadProps(String propertiesFilePath) {
@@ -47,7 +47,7 @@ public class Chronontology {
         Properties props= loadProps(DEFAULT_PROPERTIES_FILE_PATH);
         if (props==null) System.exit(1);
 
-        final FileSystemDatastoreConnector store=
+        final FileSystemKeyValueStore store=
                 initDS((String)props.get("datastorePath"));
         if (store==null) {
             System.exit(1);
@@ -57,10 +57,11 @@ public class Chronontology {
         port(serverPort);
         String[] typeNames= ((String)props.get("typeNames")).split(",");
 
-        ESConnection esC= new ESConnection("elasticsearch",(String)props.get("esHost"));
+        JsonRestClient jrc= new JsonRestClient((String)props.get("esUrl"));
+
         new Router(
                 store,
-                new ElasticSearchDatastoreConnector(esC,(String)props.get("esIndexName")),
+                new ESRestSearchableKeyValueStore(jrc,(String)props.get("esIndexName")),
                 typeNames);
     }
 }

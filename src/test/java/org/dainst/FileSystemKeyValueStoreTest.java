@@ -8,14 +8,14 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 
-import static org.dainst.TC.TYPE_NAME;
 import static org.testng.Assert.assertEquals;
 
 /**
  * @author Daniel M. de Oliveira
  */
-public class FileSystemDatastoreConnectorComponentTest {
+public class FileSystemKeyValueStoreTest {
 
+    private static final String TYPE_NAME = "period";
     private static final String BASE_FOLDER = "src/test/resources/";
 
     @AfterClass
@@ -31,7 +31,7 @@ public class FileSystemDatastoreConnectorComponentTest {
     @Test
     public void putAndGet() throws IOException {
 
-        FileSystemDatastoreConnector store = new FileSystemDatastoreConnector(BASE_FOLDER);
+        FileSystemKeyValueStore store = new FileSystemKeyValueStore(BASE_FOLDER);
         store.put(TYPE_NAME,"a",sampleJson("a"));
         assertEquals(store.get(TYPE_NAME,"a"), sampleJson("a"));
     }

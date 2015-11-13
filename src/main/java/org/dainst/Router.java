@@ -22,8 +22,8 @@ public class Router {
     final static Logger logger = Logger.getLogger(Router.class);
     public static final String ID = ":id";
 
-    final FileSystemDatastoreConnector mainDatastore;
-    final ElasticSearchDatastoreConnector connectDatastore;
+    final JsonBucketKeyValueStore mainDatastore;
+    final JsonSearchableBucketKeyValueStore connectDatastore;
 
     private static JsonNode json(String s) throws IOException {
         return new ObjectMapper().readTree(s);
@@ -32,26 +32,6 @@ public class Router {
     private boolean shouldBeDirect(final String directParam) {
         return (directParam!=null&&
                 directParam.equals("true"));
-    }
-
-    /**
-     * Converts a String to an int.
-     *
-     * @param sizeParam
-     * @return -1 if sizeParam is null
-     *   or cannot be parsed properly.
-     */
-    private Integer sizeAsInt(final String sizeParam) {
-        if (sizeParam==null) return -1;
-        int size = -1;
-        try {
-            if (sizeParam != null)
-                size = Integer.parseInt(sizeParam);
-        } catch (NumberFormatException e) {
-            logger.error("Illegal format for number in param: " + sizeParam);
-            return -1;
-        }
-        return size;
     }
 
     private Object handleGet(
@@ -73,7 +53,8 @@ public class Router {
             final Response res) throws IOException {
 
         return connectDatastore.search( typeName,
-                req.queryParams("q"), sizeAsInt(req.queryParams("size")));
+                req.queryString()
+                );
     }
 
     private Object handlePut(
@@ -105,8 +86,6 @@ public class Router {
             final Request req,
             final Response res) throws IOException {
 
-        System.out.println(typeName+":"+req.toString());
-
         String id = req.params(ID);
         JsonNode oldDoc = mainDatastore.get(typeName,id);
 
@@ -126,7 +105,7 @@ public class Router {
         return doc;
     }
 
-    private void route(
+    private void setUpTypeRoutes(
             final String typeName
     ) {
         get( "/" + typeName + "/", (req,res) -> {
@@ -148,8 +127,8 @@ public class Router {
     }
 
     public Router(
-        final FileSystemDatastoreConnector mainDatastore,
-        final ElasticSearchDatastoreConnector connectDatastore,
+        final JsonBucketKeyValueStore mainDatastore,
+        final JsonSearchableBucketKeyValueStore connectDatastore,
         final String[] typeNames
     ){
 
@@ -157,6 +136,6 @@ public class Router {
         this.connectDatastore=connectDatastore;
 
         for (String typeName:typeNames)
-            route(typeName);
+            setUpTypeRoutes(typeName);
     }
 }

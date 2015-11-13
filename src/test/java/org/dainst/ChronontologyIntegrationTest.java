@@ -1,6 +1,5 @@
 package org.dainst;
 
-import static org.dainst.TC.TYPE_NAME;
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
 
@@ -14,19 +13,20 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     @Test
     public void storeAndRetrieveOneDocument() throws IOException {
 
-        post(route("1"), sampleJson("b"));
+        client.post(route("1"), sampleJson("b"));
         jsonAssertEquals(
-                get(route("1")),
+                client.get(route("1")),
                 sampleJson("b"));
     }
+
 
     @Test
     public void storeAndRetrieveMoreThanOneDocument() throws IOException {
 
-        post(route("1"), sampleJson("b"));
-        post(route("2"), sampleJson("a"));
+        client.post(route("1"), sampleJson("b"));
+        client.post(route("2"), sampleJson("a"));
         jsonAssertEquals(
-                get(route("1")),
+                client.get(route("1")),
                 sampleJson("b"));
     }
 
@@ -34,10 +34,10 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     @Test
     public void changeADocument() throws IOException, InterruptedException {
 
-        post(route("1"), sampleJson("a"));
-        put(route("1"), sampleJson("b"));
+        client.post(route("1"), sampleJson("a"));
+        client.put(route("1"), sampleJson("b"));
         jsonAssertEquals(
-                get(route("1")),
+                client.get(route("1")),
                 sampleJson("b")); // check also with direct = true
     }
 
@@ -45,9 +45,9 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     @Test
     public void documentDoesNotExistBeforePut() throws IOException {
 
-        put(route("1"), sampleJson("a"));
+        client.put(route("1"), sampleJson("a"));
         jsonAssertEquals(
-                get(route("1")),
+                client.get(route("1")),
                 sampleJson("a"));
     }
 
@@ -55,11 +55,11 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
     @Test
     public void documentExistsBeforePost() throws IOException {
 
-        post(route("1"), sampleJson("a"));
-        post(route("1"), sampleJson("b"));
+        client.post(route("1"), sampleJson("a"));
+        client.post(route("1"), sampleJson("b"));
 
         jsonAssertEquals(
-                get(route("1")),
+                client.get(route("1")),
                 sampleJson("a"));
     }
 
@@ -71,10 +71,10 @@ public class ChronontologyIntegrationTest extends IntegrationTestBase {
         mainDatastore.put(TYPE_NAME,"1",sampleJson("b"));
 
         jsonAssertEquals(
-                get(route("1")),
+                client.get(route("1")),
                 sampleJson("a"));
         assertEquals(
-                get(route("1") + "?direct=true"),
+                client.get(route("1") + "?direct=true"),
                 sampleJson("b"));
     }
 }
