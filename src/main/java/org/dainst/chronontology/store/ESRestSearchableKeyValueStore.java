@@ -1,11 +1,11 @@
-package org.dainst.chron.store;
+package org.dainst.chronontology.store;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.log4j.Logger;
-import org.dainst.chron.connect.JsonRestClient;
+import org.dainst.chronontology.connect.JsonRestClient;
 
 import java.io.IOException;
 

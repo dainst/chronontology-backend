@@ -1,7 +1,7 @@
-package org.dainst.chron;
+package org.dainst.chronontology;
 
 import static spark.Spark.*;
-import static org.dainst.chron.Constants.*;
+import static org.dainst.chronontology.Constants.*;
 
 import org.apache.log4j.Logger;
 import java.util.Base64;

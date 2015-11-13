@@ -1,4 +1,4 @@
-package org.dainst.chron;
+package org.dainst.chronontology;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.util.Base64;
 
-import static org.dainst.chron.Constants.*;
+import static org.dainst.chronontology.Constants.*;
 import static org.testng.Assert.assertEquals;
 
 /**

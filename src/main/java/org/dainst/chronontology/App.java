@@ -1,8 +1,8 @@
-package org.dainst.chron;
+package org.dainst.chronontology;
 
 import org.apache.log4j.Logger;
-import org.dainst.chron.store.ESRestSearchableKeyValueStore;
-import org.dainst.chron.store.FileSystemKeyValueStore;
+import org.dainst.chronontology.store.ESRestSearchableKeyValueStore;
+import org.dainst.chronontology.store.FileSystemKeyValueStore;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,16 +11,16 @@ import java.util.Properties;
 
 import static spark.Spark.port;
 
-import org.dainst.chron.connect.JsonRestClient;
+import org.dainst.chronontology.connect.JsonRestClient;
 
 /**
  * Main class. Handles application setup.
  *
  * @author Daniel M. de Oliveira
  */
-public class Chronontology {
+public class App {
 
-    final static Logger logger = Logger.getLogger(Chronontology.class);
+    final static Logger logger = Logger.getLogger(App.class);
     private static final String DEFAULT_PROPERTIES_FILE_PATH = "config.properties";
 
     private static FileSystemKeyValueStore initDS(String datastorePath) {

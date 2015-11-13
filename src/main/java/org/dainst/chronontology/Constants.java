@@ -1,4 +1,4 @@
-package org.dainst.chron;
+package org.dainst.chronontology;
 
 /**
  * @author Daniel M. de Oliveira

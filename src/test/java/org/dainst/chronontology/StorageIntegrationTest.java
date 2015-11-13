@@ -1,4 +1,4 @@
-package org.dainst.chron;
+package org.dainst.chronontology;
 
 import static org.testng.Assert.assertEquals;
 import org.testng.annotations.Test;
@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ChronontologyIntegrationTest extends IntegrationTestBase {
+public class StorageIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void getNonExistingDocument() {

@@ -1,4 +1,4 @@
-package org.dainst.chron.connect;
+package org.dainst.chronontology.connect;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,7 +6,6 @@ import com.squareup.okhttp.*;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Base64;
 
 /**

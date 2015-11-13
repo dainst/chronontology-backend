@@ -1,4 +1,4 @@
-package org.dainst.chron;
+package org.dainst.chronontology;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

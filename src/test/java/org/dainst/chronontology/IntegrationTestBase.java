@@ -1,11 +1,11 @@
-package org.dainst.chron;
+package org.dainst.chronontology;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.*;
-import org.dainst.chron.connect.JsonRestClient;
-import org.dainst.chron.store.ESRestSearchableKeyValueStore;
-import org.dainst.chron.store.FileSystemKeyValueStore;
+import org.dainst.chronontology.connect.JsonRestClient;
+import org.dainst.chronontology.store.ESRestSearchableKeyValueStore;
+import org.dainst.chronontology.store.FileSystemKeyValueStore;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.testng.annotations.AfterClass;

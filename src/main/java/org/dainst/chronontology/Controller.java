@@ -1,12 +1,12 @@
-package org.dainst.chron;
+package org.dainst.chronontology;
 
-import static org.dainst.chron.Constants.*;
+import static org.dainst.chronontology.Constants.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
-import org.dainst.chron.store.JsonBucketKeyValueStore;
-import org.dainst.chron.store.JsonSearchableBucketKeyValueStore;
+import org.dainst.chronontology.store.JsonBucketKeyValueStore;
+import org.dainst.chronontology.store.JsonSearchableBucketKeyValueStore;
 import spark.Request;
 import spark.Response;
 
