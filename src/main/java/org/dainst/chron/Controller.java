@@ -45,8 +45,7 @@ public class Controller {
             return "";
         }
 
-        JsonNode doc = new DocumentModel(typeName,json(req.body()))
-                .addStorageInfo(id);
+        JsonNode doc = new DocumentModel(typeName,json(req.body()),id).j();
 
         mainDatastore.put(typeName,id, doc);
         connectDatastore.put(typeName,id, doc);
@@ -64,13 +63,13 @@ public class Controller {
         String id = req.params(ID);
         JsonNode oldDoc = mainDatastore.get(typeName,id);
 
-        DocumentModel dm = new DocumentModel(typeName,json(req.body()));
+        DocumentModel dm = new DocumentModel(typeName,json(req.body()),id);
         JsonNode doc = null;
         if (oldDoc!=null) {
-            doc= dm.addStorageInfo(oldDoc, id);
+            doc= dm.mix(oldDoc).j();
             res.status(HTTP_OK);
         } else {
-            doc= dm.addStorageInfo(id);
+            doc= dm.j();
             res.status(HTTP_CREATED);
         }
 

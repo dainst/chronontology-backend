@@ -109,7 +109,7 @@ public class SearchIntegrationTest extends IntegrationTestBase {
 
     }
 
-    /* TODO replace test by test for error code in statuscodesintegrationtest
+    /* TODO replace createdDateStaysSame by createdDateStaysSame for error code in statuscodesintegrationtest
     @Test
     public void restrictedSizeSearchWrongNrFormat() throws IOException, InterruptedException {
 
