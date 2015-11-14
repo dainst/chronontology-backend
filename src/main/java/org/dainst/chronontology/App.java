@@ -30,7 +30,7 @@ public class App {
 
         if (!(new File(datastorePath).exists())) {
             logger.error("The specified path " + datastorePath + " does not exist.");
-            return null;
+            System.exit(1);
         }
         return new FileSystemKeyValueStore(datastorePath);
     }
@@ -43,44 +43,58 @@ public class App {
             props.load(is);
         } catch (IOException e) {
             logger.error(e.getMessage());
-            return null;
+            System.exit(1);
         }
         return props;
     }
 
-    public static void main(String [] args) {
 
-        Properties props= loadProps(DEFAULT_PROPERTIES_FILE_PATH);
-        if (props==null) System.exit(1);
 
-        final FileSystemKeyValueStore store=
-                initDS((String)props.get("datastorePath"));
-        if (store==null) {
+    private static Properties _validate(final Properties props,final String name) {
+        if (props.get(name)==null) {
+            logger.error("Property "+name+" does not exist");
             System.exit(1);
         }
 
-        int serverPort= Integer.parseInt((String)props.get("serverPort"));
-        port(serverPort);
+        return props;
+    }
 
-        String[] typeNames= ((String)props.get("typeNames")).split(",");
-        for (String typeName:typeNames) {
+    private static String[] getTypes(final String typesString) {
+        String[] types= typesString.split(",");
+        for (String typeName:types) {
             DocumentModel dm= DocumentModelFactory.create(typeName, "1", new ObjectMapper().createObjectNode());
             if (dm==null) {
                 logger.error("No document model found for "+typeName);
                 System.exit(1);
             }
         }
+        return types;
+    }
 
-        String[] credentials= ((String)props.get("credentials")).split(",");
+    private static Properties validate(Properties props) {
+        _validate(props,"serverPort");
+        _validate(props,"esIndexName");
+        _validate(props,"datastorePath");
+        _validate(props,"esUrl");
+        _validate(props,"credentials");
+        _validate(props,"typeNames");
+        return props;
+    }
 
-        JsonRestClient jrc= new JsonRestClient((String)props.get("esUrl"));
+    public static void main(String [] args) {
 
-        Controller controller= new Controller(
-                store,new ESRestSearchableKeyValueStore(jrc,(String)props.get("esIndexName")));
+        Properties props= validate(loadProps(DEFAULT_PROPERTIES_FILE_PATH));
+
+        int serverPort= Integer.parseInt((String)props.get("serverPort"));
+        port(serverPort);
 
         new Router(
-                controller,
-                typeNames,
-                credentials);
+                new Controller(
+                        initDS((String)props.get("datastorePath")),
+                        new ESRestSearchableKeyValueStore(
+                                new JsonRestClient((String)props.get("esUrl")),
+                                (String)props.get("esIndexName"))),
+                getTypes((String)props.get("typeNames")),
+                ((String)props.get("credentials")).split(","));
     }
 }
