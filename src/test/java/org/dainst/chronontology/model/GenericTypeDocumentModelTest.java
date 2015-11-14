@@ -1,4 +1,4 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.model;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -15,18 +15,18 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Daniel M. de Oliveira
  */
-public class DocumentModelTest {
+public class GenericTypeDocumentModelTest {
 
     @Test
     public void createdDateStaysSame() throws IOException, InterruptedException {
         JsonNode old=
-                new DocumentModel("period",new ObjectMapper().readTree("{}"),"1").j();
+                new GenericTypeDocumentModel("period","1",new ObjectMapper().readTree("{}")).j();
         String dateCreated= (String) old.get("created").toString();
 
         Thread.sleep(10);
 
-        DocumentModel dm=
-                new DocumentModel("period",new ObjectMapper().readTree("{}"),"1");
+        GenericTypeDocumentModel dm=
+                new GenericTypeDocumentModel("period","1",new ObjectMapper().readTree("{}"));
         dm.mix(old);
 
         assertEquals(dm.j().get("created").toString(),dateCreated);
@@ -35,13 +35,13 @@ public class DocumentModelTest {
     @Test
     public void modifiedDatesMerge() throws IOException, InterruptedException, JSONException {
         JsonNode old=
-                new DocumentModel("period",new ObjectMapper().readTree("{}"),"1").j();
+                new GenericTypeDocumentModel("period","1",new ObjectMapper().readTree("{}")).j();
         String dateCreatedOld= old.get("created").toString();
 
         Thread.sleep(10);
 
-        DocumentModel dm=
-                new DocumentModel("period",new ObjectMapper().readTree("{}"),"1");
+        GenericTypeDocumentModel dm=
+                new GenericTypeDocumentModel("period","1",new ObjectMapper().readTree("{}"));
         String dateCreatedNew= dm.j().get("created").toString();
 
         JsonNode example= new ObjectMapper().readTree("{}");

@@ -1,4 +1,4 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -8,23 +8,44 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
+ * Clients outside of this package should never create instances
+ * of it directly.
+ *
  * @author Daniel M. de Oliveira
  */
-public class DocumentModel {
+class // Leave package private!
+
+        GenericTypeDocumentModel implements DocumentModel {
 
     private final JsonNode node;
     private final String typeName;
     private final String id;
 
-    public DocumentModel (
+    /**
+     * Should not be called directly by clients outside of the model package.
+     * They should use
+     * {@link DocumentModelFactory#create(String, String, JsonNode)}
+     * instead.
+     * @param typeName
+     * @param node
+     * @param id
+     */
+    GenericTypeDocumentModel(
             final String typeName,
-            final JsonNode node,
-            final String id) {
+            final String id,
+            final JsonNode node) {
 
         this.node= node;
         this.typeName= typeName;
         this.id= id;
         create();
+    }
+
+    @SuppressWarnings("unused")
+    private GenericTypeDocumentModel() {
+        node= null;
+        typeName= null;
+        id= null;
     }
 
     /**
@@ -45,7 +66,7 @@ public class DocumentModel {
         a.add(date);
     }
 
-    JsonNode j() {
+    public JsonNode j() {
         return node;
     }
 
@@ -60,7 +81,7 @@ public class DocumentModel {
      * @param oldNode
      * @return
      */
-    DocumentModel mix(final JsonNode oldNode) {
+    public GenericTypeDocumentModel mix(final JsonNode oldNode) {
 
         ArrayNode modifiedDates= (ArrayNode) oldNode.get("modified");
         modifiedDates.add(node.get("created"));

@@ -5,6 +5,8 @@ import static org.dainst.chronontology.Constants.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.model.DocumentModel;
+import org.dainst.chronontology.model.DocumentModelFactory;
 import org.dainst.chronontology.store.JsonBucketKeyValueStore;
 import org.dainst.chronontology.store.JsonSearchableBucketKeyValueStore;
 import spark.Request;
@@ -45,7 +47,8 @@ public class Controller {
             return "";
         }
 
-        JsonNode doc = new DocumentModel(typeName,json(req.body()),id).j();
+        JsonNode doc =
+                DocumentModelFactory.create(typeName,id,json(req.body())).j();
 
         mainDatastore.put(typeName,id, doc);
         connectDatastore.put(typeName,id, doc);
@@ -63,7 +66,7 @@ public class Controller {
         String id = req.params(ID);
         JsonNode oldDoc = mainDatastore.get(typeName,id);
 
-        DocumentModel dm = new DocumentModel(typeName,json(req.body()),id);
+        DocumentModel dm = DocumentModelFactory.create(typeName,id,json(req.body()));
         JsonNode doc = null;
         if (oldDoc!=null) {
             doc= dm.mix(oldDoc).j();

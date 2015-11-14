@@ -1,6 +1,9 @@
 package org.dainst.chronontology;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.model.DocumentModel;
+import org.dainst.chronontology.model.DocumentModelFactory;
 import org.dainst.chronontology.store.ESRestSearchableKeyValueStore;
 import org.dainst.chronontology.store.FileSystemKeyValueStore;
 
@@ -58,7 +61,16 @@ public class App {
 
         int serverPort= Integer.parseInt((String)props.get("serverPort"));
         port(serverPort);
+
         String[] typeNames= ((String)props.get("typeNames")).split(",");
+        for (String typeName:typeNames) {
+            DocumentModel dm= DocumentModelFactory.create(typeName, "1", new ObjectMapper().createObjectNode());
+            if (dm==null) {
+                logger.error("No document model found for "+typeName);
+                System.exit(1);
+            }
+        }
+
         String[] credentials= ((String)props.get("credentials")).split(",");
 
         JsonRestClient jrc= new JsonRestClient((String)props.get("esUrl"));
