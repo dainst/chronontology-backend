@@ -118,7 +118,7 @@ public class IntegrationTestBase {
                 new String[]{TYPE_NAME},
                 new String[]{USER_NAME+":"+PASS_WORD}
         );
-        Thread.sleep(200);
+        Thread.sleep(1000);
     }
 
     protected static void stopServer() throws InterruptedException {
