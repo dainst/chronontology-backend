@@ -15,7 +15,7 @@ api_password = ops[:api_password]
 db = DBI.connect("DBI:Mysql:arachne:arachne.uni-koeln.de", db_user, db_password)
 db.execute("SET NAMES 'utf8'")
 
-api = RestClient::Resource.new("0.0.0.0:4567")
+api = RestClient::Resource.new("0.0.0.0:4567", :user => api_user, :password => api_password)
 
 sql = "SELECT Inhalt FROM `wertelisten` WHERE  `FS_WlID` = 88"
 result = db.execute(sql)
@@ -95,7 +95,7 @@ result.fetch do |row|
 	end
 
 	puts period.to_json
-	response = api["period/"+i.to_s].post(period.to_json, :content_type => :json, :accept => :json)
+	response = api["period/"+i.to_s].put(period.to_json, :content_type => :json, :accept => :json)
     last_id = response.headers[:location]
     last_label = label.downcase
     periods[last_label] = JSON.parse(response.body)
@@ -105,7 +105,7 @@ result.fetch do |row|
     	sibling = periods[last_sibling]
 		sibling["meetsInTimeWith"] = periods[last_label]["@id"]
 		puts "sibling" + sibling["@id"].to_s
-		api[sibling["@id"]].post(sibling.to_json, :content_type => :json, :accept => :json)
+		api[sibling["@id"]].put(sibling.to_json, :content_type => :json, :accept => :json)
 	end
 
     last_level = level

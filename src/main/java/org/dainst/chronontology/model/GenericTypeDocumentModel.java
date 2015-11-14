@@ -59,6 +59,7 @@ class // Leave package private!
     private void create()  {
 
         ((ObjectNode) node).put("@id", "/"+typeName+"/"+id);
+        ((ObjectNode) node).put("version", 1);
 
         String date = date();
         ((ObjectNode) node).put("created", date);
@@ -90,6 +91,10 @@ class // Leave package private!
         ((ObjectNode) node).put("@id", "/" + typeName + "/" + id);
         String dateCreated = oldNode.get("created").asText();
         ((ObjectNode) node).put("created", dateCreated);
+
+        Integer version= oldNode.get("version").asInt();
+        version++;
+        ((ObjectNode) node).put("version", version);
 
         return this;
     }

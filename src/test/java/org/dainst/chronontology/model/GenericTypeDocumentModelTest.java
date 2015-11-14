@@ -52,4 +52,29 @@ public class GenericTypeDocumentModelTest {
         dm.mix(old);
         JSONAssert.assertEquals(example.toString(), dm.j().toString(),false);
     }
+
+    @Test
+    public void setVersionOnCreate() throws IOException, InterruptedException, JSONException {
+        JsonNode example= new ObjectMapper().createObjectNode();
+        ((ObjectNode)example).put("version",1);
+
+        JsonNode j=
+                new GenericTypeDocumentModel("period","1",new ObjectMapper().createObjectNode()).j();
+
+        JSONAssert.assertEquals(example.toString(), j.toString(), false);
+    }
+
+    @Test
+    public void countVersions() throws IOException, InterruptedException, JSONException {
+        JsonNode example= new ObjectMapper().createObjectNode();
+        ((ObjectNode)example).put("version",2);
+
+        JsonNode old=
+                new GenericTypeDocumentModel("period","1",new ObjectMapper().createObjectNode()).j();
+        GenericTypeDocumentModel dm=
+                new GenericTypeDocumentModel("period","1",new ObjectMapper().createObjectNode());
+        dm.mix(old);
+
+        JSONAssert.assertEquals(example.toString(), dm.j().toString(), false);
+    }
 }

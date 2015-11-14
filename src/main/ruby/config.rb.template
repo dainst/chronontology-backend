@@ -1,4 +1,6 @@
 {
     :db_user       => '',
     :db_password   => '',
+    :api_user   => '',
+    :api_password   => '',
 }
