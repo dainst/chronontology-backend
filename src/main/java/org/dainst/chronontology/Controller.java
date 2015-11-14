@@ -4,6 +4,7 @@ import static org.dainst.chronontology.Constants.*;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.model.DocumentModel;
 import org.dainst.chronontology.model.DocumentModelFactory;
@@ -13,6 +14,7 @@ import spark.Request;
 import spark.Response;
 
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * @author Daniel M. de Oliveira
@@ -34,18 +36,29 @@ public class Controller {
         this.connectDatastore= connectDatastore;
     }
 
+    private String generateId() {
+        byte[] r = new byte[9];
+        new Random().nextBytes(r);
+        String s = Base64.encodeBase64String(r);
+        return s.replaceAll("/", "_");
+    }
+
+    private String determineFreeId(String typeName) {
+        String id;
+        JsonNode existingDoc= null;
+        do {
+            id= generateId();
+            existingDoc = mainDatastore.get(typeName,id);
+        } while (existingDoc!=null);
+        return id;
+    }
+
     Object handlePost(
             final String typeName,
             final Request req,
             final Response res) throws IOException {
 
-        String id = req.params(ID);
-        JsonNode oldDoc = mainDatastore.get(typeName,id);
-
-        if (oldDoc!=null) {
-            res.status(HTTP_FORBIDDEN);
-            return "";
-        }
+        String id= determineFreeId(typeName);
 
         JsonNode doc =
                 DocumentModelFactory.create(typeName,id,json(req.body())).j();
@@ -53,8 +66,8 @@ public class Controller {
         mainDatastore.put(typeName,id, doc);
         connectDatastore.put(typeName,id, doc);
 
+        res.header("location", id);
         res.status(HTTP_CREATED);
-
         return doc;
     }
 

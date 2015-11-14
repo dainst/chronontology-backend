@@ -1,8 +1,14 @@
 package org.dainst.chronontology;
 
 import static org.testng.Assert.assertEquals;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.json.JSONException;
 import org.testng.annotations.Test;
 
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -13,55 +19,56 @@ public class StorageIntegrationTest extends IntegrationTestBase {
     @Test
     public void getNonExistingDocument() {
         assertEquals(
-                client.get(route("1")),
+                client.get(TYPE_ROUTE+"1"),
                 null);
     }
 
     @Test
      public void postUnauthorized() {
         client.authenticate(USER_NAME,"wrong");
-        client.post(route("1"), sampleJson("b"));
+        client.post(TYPE_ROUTE, sampleJson("b"));
         assertEquals(
-                client.get(route("1")),
+                client.get(TYPE_ROUTE+"1"),
                 null);
     }
 
     @Test
     public void putUnauthorized() {
         client.authenticate(USER_NAME,"wrong");
-        client.put(route("1"), sampleJson("b"));
+        client.put(TYPE_ROUTE+"1", sampleJson("b"));
         assertEquals(
-                client.get(route("1")),
+                client.get(TYPE_ROUTE+"1"),
                 null);
     }
 
     @Test
     public void storeAndRetrieveOneDocument() {
 
-        client.post(route("1"), sampleJson("b"));
+        String id= idOf(client.post(TYPE_ROUTE, sampleJson("b")));
         jsonAssertEquals(
-                client.get(route("1")),
+                client.get(id),
                 sampleJson("b"));
     }
 
     @Test
     public void storeAndRetrieveMoreThanOneDocument() {
 
-        client.post(route("1"), sampleJson("b"));
-        client.post(route("2"), sampleJson("a"));
+        client.post(TYPE_ROUTE, sampleJson("b"));
+        String id= idOf(client.post(TYPE_ROUTE, sampleJson("a")));
+
         jsonAssertEquals(
-                client.get(route("1")),
-                sampleJson("b"));
+                client.get(id),
+                sampleJson("a"));
     }
 
 
     @Test
     public void changeADocument() {
 
-        client.post(route("1"), sampleJson("a"));
-        client.put(route("1"), sampleJson("b"));
+        String id= idOf(client.post(TYPE_ROUTE, sampleJson("a")));
+        client.put(id, sampleJson("b"));
         jsonAssertEquals(
-                client.get(route("1")),
+                client.get(id),
                 sampleJson("b")); // check also with direct = true
     }
 
@@ -69,21 +76,9 @@ public class StorageIntegrationTest extends IntegrationTestBase {
     @Test
     public void documentDoesNotExistBeforePut() throws IOException {
 
-        client.put(route("1"), sampleJson("a"));
+        client.put(TYPE_ROUTE+"1", sampleJson("a"));
         jsonAssertEquals(
-                client.get(route("1")),
-                sampleJson("a"));
-    }
-
-
-    @Test
-    public void documentExistsBeforePost() throws IOException {
-
-        client.post(route("1"), sampleJson("a"));
-        client.post(route("1"), sampleJson("b"));
-
-        jsonAssertEquals(
-                client.get(route("1")),
+                client.get(TYPE_ROUTE+"1"),
                 sampleJson("a"));
     }
 
@@ -95,10 +90,25 @@ public class StorageIntegrationTest extends IntegrationTestBase {
         mainDatastore.put(TYPE_NAME,"1",sampleJson("b"));
 
         jsonAssertEquals(
-                client.get(route("1")),
+                client.get(TYPE_ROUTE+"1"),
                 sampleJson("a"));
         assertEquals(
-                client.get(route("1") + "?direct=true"),
+                client.get(TYPE_ROUTE+"1" + "?direct=true"),
                 sampleJson("b"));
+    }
+
+    private JsonNode addId(JsonNode node, String id) throws JsonProcessingException {
+        ((ObjectNode) node).put("@id", id);
+        return node;
+    }
+
+    @Test
+    public void respondWithEnrichedJSONonPost() throws IOException, JSONException {
+        JsonNode n= client.post(TYPE_ROUTE, sampleJson("b"));
+        String id= idOf(n);
+
+        jsonAssertEquals(
+                n,
+                addId(sampleJson("b"), id));
     }
 }

@@ -105,6 +105,11 @@ public class JsonRestClient {
         return restApi(path,"GET",null);
     }
 
+    /**
+     * Performs a delete request on url+path
+     * @param path must begin with a forward slash.
+     * @return the response, if any. Null otherwise
+     */
     public JsonNode delete(String path) {
         return restApi(path,"DELETE",null);
     }

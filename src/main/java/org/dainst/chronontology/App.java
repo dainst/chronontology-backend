@@ -83,17 +83,19 @@ public class App {
 
     public static void main(String [] args) {
 
-        Properties props= validate(loadProps(DEFAULT_PROPERTIES_FILE_PATH));
+        final Properties props= validate(loadProps(DEFAULT_PROPERTIES_FILE_PATH));
 
-        int serverPort= Integer.parseInt((String)props.get("serverPort"));
+        final int serverPort= Integer.parseInt((String)props.get("serverPort"));
         port(serverPort);
 
+        final Controller controller= new Controller(
+                initDS((String)props.get("datastorePath")),
+                new ESRestSearchableKeyValueStore(
+                        new JsonRestClient((String)props.get("esUrl")),
+                        (String)props.get("esIndexName")));
+
         new Router(
-                new Controller(
-                        initDS((String)props.get("datastorePath")),
-                        new ESRestSearchableKeyValueStore(
-                                new JsonRestClient((String)props.get("esUrl")),
-                                (String)props.get("esIndexName"))),
+                controller,
                 getTypes((String)props.get("typeNames")),
                 ((String)props.get("credentials")).split(","));
     }

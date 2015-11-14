@@ -45,7 +45,7 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     @Test
     public void putUnauthorized() throws IOException {
         assertEquals(
-                restApiResponse(route("1"), "PUT", json("{}"),USER_NAME,"wrong").code(),
+                restApiResponse(TYPE_ROUTE, "PUT", json("{}"),USER_NAME,"wrong").code(),
                 HTTP_UNAUTHORIZED
         );
     }
@@ -53,7 +53,7 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     @Test
     public void postUnauthorized() throws IOException {
         assertEquals(
-                restApiResponse(route("1"), "POST", json("{}"),USER_NAME,"wrong").code(),
+                restApiResponse(TYPE_ROUTE, "POST", json("{}"),USER_NAME,"wrong").code(),
                 HTTP_UNAUTHORIZED
         );
     }
@@ -61,7 +61,7 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     @Test
     public void deleteUnauthorized() throws IOException {
         assertEquals(
-                restApiResponse(route("1"), "DELETE", json("{}"),USER_NAME,"wrong").code(),
+                restApiResponse(TYPE_ROUTE, "DELETE", json("{}"),USER_NAME,"wrong").code(),
                 HTTP_UNAUTHORIZED
         );
     }
@@ -70,16 +70,16 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     @Test
     public void documentNotFound() throws IOException {
         assertEquals(
-                restApiResponse(route("1"), "GET", null).code(),
+                restApiResponse(TYPE_ROUTE+"1", "GET", null).code(),
                 HTTP_NOT_FOUND
         );
     }
 
     @Test
     public void documentFound() throws IOException {
-        client.post(route("1"),sampleJson("a"));
+        String id= idOf(client.post(TYPE_ROUTE,sampleJson("a")));
         assertEquals(
-                restApiResponse(route("1"), "GET", null).code(),
+                restApiResponse(id, "GET", null).code(),
                 HTTP_OK
         );
     }
@@ -87,27 +87,17 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     @Test
     public void oneTimePost() throws IOException {
         assertEquals(
-                restApiResponse(route("1"), "POST", sampleJson("b")).code(),
+                restApiResponse(TYPE_ROUTE, "POST", sampleJson("b")).code(),
                 HTTP_CREATED
-        );
-    }
-
-    @Test
-    public void repeatedPost() throws IOException {
-
-        client.post(route("1"),sampleJson("a"));
-        assertEquals(
-                restApiResponse(route("1"), "POST", sampleJson("b")).code(),
-                HTTP_FORBIDDEN
         );
     }
 
     @Test
     public void update() throws IOException {
 
-        client.post(route("1"),sampleJson("a"));
+        String id= idOf(client.post(TYPE_ROUTE,sampleJson("a")));
         assertEquals(
-                restApiResponse(route("1"), "PUT", sampleJson("b")).code(),
+                restApiResponse(id, "PUT", sampleJson("b")).code(),
                 HTTP_OK
         );
     }
@@ -116,7 +106,7 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     public void createWithPut() throws IOException {
 
         assertEquals(
-                restApiResponse(route("1"), "PUT", sampleJson("b")).code(),
+                restApiResponse(TYPE_ROUTE+"1", "PUT", sampleJson("b")).code(),
                 HTTP_CREATED
         );
     }

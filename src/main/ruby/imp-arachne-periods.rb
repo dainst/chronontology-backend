@@ -95,7 +95,7 @@ result.fetch do |row|
 	end
 
 	puts period.to_json
-	response = api["period/"+i.to_s].put(period.to_json, :content_type => :json, :accept => :json)
+	response = api["period/"].post(period.to_json, :content_type => :json, :accept => :json)
     last_id = response.headers[:location]
     last_label = label.downcase
     periods[last_label] = JSON.parse(response.body)

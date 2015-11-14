@@ -23,7 +23,7 @@ public class SearchIntegrationTest extends IntegrationTestBase {
 
     private JsonNode searchResultJson(String id, String sampleFieldValue) throws IOException {
         return new ObjectMapper().readTree
-                ("{\"results\":[{\"a\":\""+sampleFieldValue+"\",\"@id\":\"/period/"+id+"\"}]}");
+                ("{\"results\":[{\"a\":\""+sampleFieldValue+"\",\"@id\":\""+id+"\"}]}");
     }
 
     private void refreshES() {
@@ -40,41 +40,41 @@ public class SearchIntegrationTest extends IntegrationTestBase {
     @Test
     public void matchQueryTermWithUrlEncodedSlashes() throws IOException, InterruptedException {
 
-        client.post(route("1"), sampleJson("/period/2"));
+        String id= idOf(client.post(TYPE_ROUTE, sampleJson("/period/2")));
 
         refreshES();
         jsonAssertEquals(
-                client.get(route("") + "?q=a:%22%2Fperiod%2F2%22"),
-                searchResultJson("1", "/period/2")
+                client.get(TYPE_ROUTE + "?q=a:%22%2Fperiod%2F2%22"),
+                searchResultJson(id, "/period/2")
         );
 
 
-        client.post(route("2"), sampleJson("/period/1"));
+        String id2= idOf(client.post(TYPE_ROUTE, sampleJson("/period/1")));
         refreshES();
         jsonAssertEquals(
-                client.get(route("") + "?q=a:%22%2Fperiod%2F1%22"),
-                searchResultJson("2", "/period/1")
+                client.get(TYPE_ROUTE + "?q=a:%22%2Fperiod%2F1%22"),
+                searchResultJson(id2, "/period/1")
         );
     }
 
     @Test
     public void searchInAllFields() throws IOException, InterruptedException {
 
-        client.post(route("1"), sampleJson("abc"));
-        client.post(route("2"), sampleJson("def"));
+        client.post(TYPE_ROUTE, sampleJson("abc"));
+        String id= idOf(client.post(TYPE_ROUTE, sampleJson("def")));
 
         refreshES();
         jsonAssertEquals(
-                client.get(route("") + "?q=def"),
-                searchResultJson("2", "def")
+                client.get(TYPE_ROUTE + "?q=def"),
+                searchResultJson(id, "def")
         );
     }
 
-    private void assertTwoResultsAreFound(JsonNode searchResult)  {
+    private void assertTwoResultsAreFound(JsonNode searchResult,String id1,String id2)  {
 
         try {
             JSONCompareResult r  = JSONCompare.compareJSON(
-                    "{\"results\":[{\"@id\":\"/period/3\"},{\"@id\":\"/period/2\"}]}",
+                    "{\"results\":[{\"@id\":\""+id1+"\"},{\"@id\":\""+id2+"\"}]}",
                     searchResult.toString(), JSONCompareMode.LENIENT);
 
             if (r.failed()) fail(r.getMessage());
@@ -86,32 +86,32 @@ public class SearchIntegrationTest extends IntegrationTestBase {
     @Test
     public void searchWithoutSizeRestriction() throws IOException, InterruptedException {
 
-        client.post(route("1"), sampleJson("a"));
-        client.post(route("2"), sampleJson("b"));
-        client.post(route("3"), sampleJson("b"));
+        client.post(TYPE_ROUTE, sampleJson("a"));
+        String id1= idOf(client.post(TYPE_ROUTE, sampleJson("b")));
+        String id2= idOf(client.post(TYPE_ROUTE, sampleJson("b")));
 
         refreshES();
-        assertTwoResultsAreFound(client.get(route("") + "?q=a:b"));
+        assertTwoResultsAreFound(client.get(TYPE_ROUTE + "?q=a:b"),id1,id2);
     }
 
     @Test
     public void restrictedSizeSearch() throws IOException, InterruptedException {
 
-        client.post(route("1"), sampleJson("a"));
-        client.post(route("2"), sampleJson("b"));
-        client.post(route("3"), sampleJson("b"));
+        client.post(TYPE_ROUTE, sampleJson("a"));
+        client.post(TYPE_ROUTE, sampleJson("b"));
+        client.post(TYPE_ROUTE, sampleJson("b"));
 
         refreshES();
         jsonAssertEquals(
-                client.get(route("") + "?q=a:b&size=1"),
+                client.get(TYPE_ROUTE + "?q=a:b&size=1"),
                 json("{\"results\":[{\"a\":\"b\"}]}"));
 
 
     }
 
-    /* TODO replace createdDateStaysSame by createdDateStaysSame for error code in statuscodesintegrationtest
+    /* TODO
     @Test
-    public void restrictedSizeSearchWrongNrFormat() throws IOException, InterruptedException {
+    public void badSearchRequest() throws IOException, InterruptedException {
 
         post(route("1"), sampleJson("a"));
         post(route("2"), sampleJson("b"));
@@ -119,30 +119,30 @@ public class SearchIntegrationTest extends IntegrationTestBase {
 
         Thread.sleep(1000);
 
-        assertTwoResultsAreFound(get(route("") + "?q=a:b&size=A"));
+        assertTwoResultsAreFound(get(route("") + "?q=a:b&size=A")); // This A causes trouble.
     }*/
 
     @Test
     public void restrictedSizeSearchSizeIsZero() throws IOException, InterruptedException {
 
-        client.post(route("1"), sampleJson("a"));
-        client.post(route("2"), sampleJson("b"));
-        client.post(route("3"), sampleJson("b"));
+        client.post(TYPE_ROUTE, sampleJson("a"));
+        client.post(TYPE_ROUTE, sampleJson("b"));
+        client.post(TYPE_ROUTE, sampleJson("b"));
 
         refreshES();
         jsonAssertEquals(
-                client.get(route("") + "?q=a:b&size=0"),
+                client.get(TYPE_ROUTE + "?q=a:b&size=0"),
                 json("{\"results\":[]}"));
     }
 
     @Test
     public void restrictedSizeSearchSizeLowerThanZero() throws IOException, InterruptedException {
 
-        client.post(route("1"), sampleJson("a"));
-        client.post(route("2"), sampleJson("b"));
-        client.post(route("3"), sampleJson("b"));
+        client.post(TYPE_ROUTE, sampleJson("a"));
+        String id1= idOf(client.post(TYPE_ROUTE, sampleJson("b")));
+        String id2= idOf(client.post(TYPE_ROUTE, sampleJson("b")));
 
         refreshES();
-        assertTwoResultsAreFound(client.get(route("") + "?q=a:b&size=-1"));
+        assertTwoResultsAreFound(client.get(TYPE_ROUTE + "?q=a:b&size=-1"),id1,id2);
     }
 }

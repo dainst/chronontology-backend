@@ -19,9 +19,22 @@ you didn't forget to add the mapping to the period type!
  
   type mapping : src/main/resources/mapping.json
 
-### POST /:typeName/:id 
+### POST /:typeName/
 
-Post json to store a type named :typeName and id :id.
+Post json to store a a document of type :typeName.
+After posting, the location header will contain the id of 
+the created element, if successful. The id will be a string like
+
+  /period/TAvlBuaAasWM
+  
+That means, it will contain both the type name as well as a 
+base64 encoded random part.
+
+The response body will contain the json in the form it got send
+to the stores. This means that it will be enriched by id an date information.
+
+  Status codes: 
+    201 if created successfully.
 
 ### GET /:typeName/:id
 

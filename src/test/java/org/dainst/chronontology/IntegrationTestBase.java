@@ -16,6 +16,8 @@ import spark.Spark;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.testng.Assert.fail;
 
@@ -27,20 +29,21 @@ public class IntegrationTestBase {
     protected static final String USER_NAME = "admin";
     protected static final String PASS_WORD = "s3cr3t";
     protected static final String TYPE_NAME = "period";
-
+    protected static final String TYPE_ROUTE = "/" + TYPE_NAME + "/";
+    protected static final String INDEX_NAME = "jeremy_test";
     private static final String TEST_FOLDER = "src/test/resources/";
+    protected static final String URL = "http://0.0.0.0:4567";
+    protected static final String ES_URL= "http://localhost:9200";
+
 
     protected static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
 
-    protected static final String URL = "http://0.0.0.0:4567";
     protected static final JsonRestClient client = new JsonRestClient(URL);
 
     protected static final OkHttpClient ok= new OkHttpClient();
 
 
-    protected static final String ES_URL= "http://localhost:9200";
-    protected static final String INDEX_NAME = "jeremy_test";
     private static final JsonRestClient esClient = new JsonRestClient(ES_URL);
     protected static final ESRestSearchableKeyValueStore connectDatastore
             = new ESRestSearchableKeyValueStore(esClient,INDEX_NAME);
@@ -64,26 +67,45 @@ public class IntegrationTestBase {
         stopServer();
     }
 
+    private JsonNode loadTestTypeMapping(String path) {
+        JsonNode n= null;
+        try {
+            String content = new String(Files.readAllBytes(
+                    Paths.get(path)));
+            n= new ObjectMapper().readTree(content);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+        return n;
+    }
+
+    private void createEsTypeAndMapping() {
+        esClient.post("/"+INDEX_NAME+"/"+TYPE_NAME,
+                loadTestTypeMapping(TEST_FOLDER+"mapping.json"));
+    }
+
+    private void deleteESTypeAndMapping() {
+        esClient.delete("/"+INDEX_NAME+"/"+TYPE_NAME);
+    }
+
+
     @BeforeMethod
-    public static void beforeMethod() {
+    public void beforeMethod() {
         client.authenticate(USER_NAME, PASS_WORD);
+        createEsTypeAndMapping();
     }
 
     @AfterMethod
-    public static void afterMethod() {
-        cleanDatastores();
+    public void afterMethod() {
+        cleanFileSystemDatastore();
+        deleteESTypeAndMapping();
     }
 
 
-    protected static final void cleanDatastores() {
+    protected static final void cleanFileSystemDatastore() {
 
-        new File(TEST_FOLDER + TYPE_NAME + "/1.txt").delete();
-        new File(TEST_FOLDER + TYPE_NAME + "/2.txt").delete();
-        new File(TEST_FOLDER + TYPE_NAME + "/3.txt").delete();
-
-        connectDatastore.remove(TYPE_NAME, "1");
-        connectDatastore.remove(TYPE_NAME, "2");
-        connectDatastore.remove(TYPE_NAME, "3");
+        for (File f : new File(TEST_FOLDER+TYPE_NAME).listFiles())
+            if (f.getName().endsWith(".txt")) f.delete();
     }
 
     protected static void startServer() throws InterruptedException {
@@ -104,11 +126,7 @@ public class IntegrationTestBase {
         Spark.stop();
     }
 
-    protected String route(String id) {
-        return "/"+ TYPE_NAME+"/"+id;
-    }
-
-    protected JsonNode sampleJson(String sampleFieldValue) {
+    protected JsonNode sampleJson(final String sampleFieldValue) {
         JsonNode json= null;
         try {
             json = new ObjectMapper().readTree
@@ -119,7 +137,7 @@ public class IntegrationTestBase {
         return json;
     }
 
-    protected void jsonAssertEquals(JsonNode actual,JsonNode expected) {
+    protected void jsonAssertEquals(final JsonNode actual,final JsonNode expected) {
         try {
             JSONAssert.assertEquals(
                     expected.toString(),
@@ -127,5 +145,9 @@ public class IntegrationTestBase {
         } catch (JSONException e) {
             fail(e.getMessage());
         }
+    }
+
+    protected String idOf(final JsonNode n) {
+        return (String) n.get("@id").textValue();
     }
 }

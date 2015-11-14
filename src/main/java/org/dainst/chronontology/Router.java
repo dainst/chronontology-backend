@@ -29,8 +29,7 @@ public class Router {
             res.header("location", req.params(ID));
             return controller.handleGet(typeName,req,res);
         });
-        post("/" + typeName + "/" + ID, (req, res) ->  {
-            res.header("location", req.params(ID));
+        post("/" + typeName + "/", (req, res) ->  {
             return controller.handlePost(typeName,req,res);
         });
         put( "/" + typeName + "/" + ID, (req, res) -> {
