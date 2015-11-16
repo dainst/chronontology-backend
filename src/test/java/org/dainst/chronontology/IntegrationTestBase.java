@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 
 import static org.testng.Assert.fail;
 
+
 /**
  * @author Daniel M. de Oliveira
  */
@@ -135,16 +136,6 @@ public class IntegrationTestBase {
             e.printStackTrace();
         }
         return json;
-    }
-
-    protected void jsonAssertEquals(final JsonNode actual,final JsonNode expected) {
-        try {
-            JSONAssert.assertEquals(
-                    expected.toString(),
-                    actual.toString(), false);
-        } catch (JSONException e) {
-            fail(e.getMessage());
-        }
     }
 
     protected String idOf(final JsonNode n) {

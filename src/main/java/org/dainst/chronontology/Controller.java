@@ -82,7 +82,7 @@ public class Controller {
         DocumentModel dm = DocumentModelFactory.create(typeName,id,json(req.body()));
         JsonNode doc = null;
         if (oldDoc!=null) {
-            doc= dm.mix(oldDoc).j();
+            doc= dm.merge(oldDoc).j();
             res.status(HTTP_OK);
         } else {
             doc= dm.j();
@@ -102,13 +102,10 @@ public class Controller {
 
         String id = req.params(ID);
 
-        JsonNode result= null;
-        if (shouldBeDirect(req.queryParams("direct")))
-            result= mainDatastore.get(typeName,id);
-        else {
-            result= connectDatastore.get(typeName,id);
+        JsonNode result= shouldBeDirect(req.queryParams("direct"))
+                ? mainDatastore.get(typeName,id)
+                : connectDatastore.get(typeName,id);
 
-        }
         if (result==null){
             res.status(HTTP_NOT_FOUND);
             return "";

@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static org.dainst.chronontology.Constants.*;
+
 /**
  * Clients outside of this package should never create instances
  * of it directly.
@@ -17,7 +19,7 @@ class // Leave package private!
 
         GenericTypeDocumentModel implements DocumentModel {
 
-    private final JsonNode node;
+    private final ObjectNode node;
     private final String typeName;
     private final String id;
 
@@ -35,16 +37,24 @@ class // Leave package private!
             final String id,
             final JsonNode node) {
 
-        this.node= node;
+        this.node = (ObjectNode) node;
         this.typeName= typeName;
         this.id= id;
-        create();
+
+        initNode();
     }
+
+    private void initNode() {
+        setNodeId();
+        initVersion();
+        initCreatedAndModifiedDates();
+    }
+
 
     @SuppressWarnings("unused")
     private GenericTypeDocumentModel() {
-        node= null;
         typeName= null;
+        node = null;
         id= null;
     }
 
@@ -56,14 +66,15 @@ class // Leave package private!
         return currentDateTime.format(DateTimeFormatter.ISO_DATE_TIME)+"Z";
     }
 
-    private void create()  {
 
-        ((ObjectNode) node).put("@id", "/"+typeName+"/"+id);
-        ((ObjectNode) node).put("version", 1);
+    private void initVersion() {
+        node.put(VERSION, 1);
+    }
 
+    private void initCreatedAndModifiedDates() {
         String date = date();
-        ((ObjectNode) node).put("created", date);
-        ArrayNode a = ((ObjectNode) node).putArray("modified");
+        node.put(CREATED, date);
+        ArrayNode a = node.putArray(MODIFIED);
         a.add(date);
     }
 
@@ -82,20 +93,33 @@ class // Leave package private!
      * @param oldNode
      * @return
      */
-    public GenericTypeDocumentModel mix(final JsonNode oldNode) {
+    public GenericTypeDocumentModel merge(final JsonNode oldNode) {
 
-        ArrayNode modifiedDates= (ArrayNode) oldNode.get("modified");
-        modifiedDates.add(node.get("created"));
-        ((ObjectNode) node).set("modified", modifiedDates);
-
-        ((ObjectNode) node).put("@id", "/" + typeName + "/" + id);
-        String dateCreated = oldNode.get("created").asText();
-        ((ObjectNode) node).put("created", dateCreated);
-
-        Integer version= oldNode.get("version").asInt();
-        version++;
-        ((ObjectNode) node).put("version", version);
-
+        setNodeId();
+        mergeModifiedDates(oldNode);
+        overwriteCreatedDate(oldNode);
+        setVersion(oldNode);
         return this;
+    }
+
+    private void setNodeId() {
+        node.put("@id", "/" + typeName + "/" + id);
+    }
+
+    private void setVersion(JsonNode oldNode) {
+        Integer version= oldNode.get(VERSION).asInt();
+        version++;
+        node.put(VERSION, version);
+    }
+
+    private void overwriteCreatedDate(JsonNode oldNode) {
+        String dateCreated = oldNode.get(CREATED).asText();
+        node.put(CREATED, dateCreated);
+    }
+
+    private void mergeModifiedDates(JsonNode oldNode) {
+        ArrayNode modifiedDates= (ArrayNode) oldNode.get(MODIFIED);
+        modifiedDates.add(node.get(CREATED));
+        node.set(MODIFIED, modifiedDates);
     }
 }

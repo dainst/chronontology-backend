@@ -5,6 +5,10 @@ package org.dainst.chronontology;
  */
 public class Constants {
 
+    public static final String VERSION = "version";
+    public static final String MODIFIED = "modified";
+    public static final String CREATED = "created";
+
     // A library for getting the status codes is not used on purpose
     // so we don't have to refactor in case it would change. The status codes themselves
     // are considered to be stable.

@@ -14,7 +14,7 @@ public interface DocumentModel {
      * @param oldNode
      * @return
      */
-    DocumentModel mix(final JsonNode oldNode);
+    DocumentModel merge(final JsonNode oldNode);
 
     /**
      * @return the current node.

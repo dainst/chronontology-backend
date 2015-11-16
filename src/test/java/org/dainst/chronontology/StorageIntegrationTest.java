@@ -1,6 +1,7 @@
 package org.dainst.chronontology;
 
 import static org.testng.Assert.assertEquals;
+import static org.dainst.chronontology.TestUtils.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -10,6 +11,8 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+
+
 
 /**
  * @author Daniel M. de Oliveira

@@ -13,6 +13,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static org.testng.Assert.fail;
+import static org.dainst.chronontology.TestUtils.*;
 
 /**
  * @author Daniel M. de Oliveira
