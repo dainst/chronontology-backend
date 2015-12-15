@@ -60,6 +60,4 @@ and should not include the "_search?" prefix but everything after it.
 
 For the Component and Integration Tests to run, you need an elastic search 
 instance on localhost up and running. The index named "jeremy_test" 
-is used. Make sure that the index has the type mapping from
-
-  src/test/resources/mapping.json
+is used and its types and type mappings get created before and deleted after the tests automatically.
