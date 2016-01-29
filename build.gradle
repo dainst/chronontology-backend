@@ -22,7 +22,7 @@ dependencies {
 }
 
 //create a single Jar with all dependencies
-task fatJar(type: Jar) {
+task packageJar(type: Jar) {
     manifest {
         attributes 'Implementation-Title': 'Gradle Jar File Example',
                 'Implementation-Version': '0.1',
