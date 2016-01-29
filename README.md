@@ -11,15 +11,34 @@ file system based. The connected datastore is an elastisearch instance.
 At startup, the application reads the properties from 
 
 ```
-  config.properties
+config.properties
 ```
 
-Make sure you revise the settings before startup!
+You can find one [here](config.properties). Make sure you revise the settings before startup!
+
+For the local datastore to work, you have to create subfolders for every type 
+inside the directory of the local datastore. An example:
+
+```
+datastore/period
+```
+
+is the necessary for the abovementioned config.properties to work properly.
+
+In addition to that, you need an elasticsearch instance running.
 
 A type mapping for every type used is needed, so make sure 
 you didn't forget to add the mapping to the period type!
  
 You'll find it [here](src/main/resources/mapping.json).
+
+To run the application, you need the binary, which can get executed like this:
+
+```
+java -jar all-1.0-SNAPSHOT.jar
+```
+
+How to obtain the binary is desribed [here](#Building and testing the application).
 
 ### POST /:typeName/
 
@@ -96,12 +115,5 @@ The binary with dependencies can be found here:
 build/libs/all-1.0-SNAPSHOT.jar
 ```
 
-To run it, you need to place the binary into an empty directory of your choice, 
-create an empty datastore directory, and place a [config.properties](config.properties) next to the jar-file.
-Execute it by 
-
-```
-java -jar all-1.0-SNAPSHOT.jar
-```
 
 
