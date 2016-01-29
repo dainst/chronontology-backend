@@ -42,6 +42,11 @@ to the stores. This means that it will be enriched by id an date information.
     201 if created successfully.
 ```
 
+### PUT /:typeName/:id
+
+Used to update an existing document. The version number will get incremented
+and a date will be added to the date modified array.
+
 ### GET /:typeName/:id
 
 Get json stored for type with name :typeName and id :id.
