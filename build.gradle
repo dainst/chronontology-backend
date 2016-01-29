@@ -21,6 +21,18 @@ dependencies {
     compile 'com.squareup.okhttp:okhttp:2.5.0'
 }
 
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+                'Implementation-Version': '0.1',
+                'Main-Class': 'org.dainst.chronontology.App'
+    }
+    baseName = 'all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
 test {
     useTestNG()
     scanForTestClasses = false
