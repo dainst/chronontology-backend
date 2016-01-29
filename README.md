@@ -84,7 +84,7 @@ gradle clean packageJar
 To run the application, run
 
 ```
-java -jar  build/libs/all-1.0-SNAPSHOT.jar
+java -jar build/libs/all-1.0-SNAPSHOT.jar
 ```
 
 
