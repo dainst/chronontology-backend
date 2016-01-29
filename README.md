@@ -64,7 +64,7 @@ An example could be
 GET /period/?q=*
 ```
 
-The query string gets handed over to ElasticSearch, so it 
+The query string gets handed over to elasticsearch, so it 
 should be a valid search string for elasticsearch
 and should **not** include the "_search" prefix but everything after it.
 
