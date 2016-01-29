@@ -93,9 +93,15 @@ gradle clean packageJar
 The binary with dependencies can be found here:
 
 ```
-java -jar build/libs/all-1.0-SNAPSHOT.jar
+build/libs/all-1.0-SNAPSHOT.jar
 ```
 
 To run it, you need to place the binary into an empty directory of your choice, 
 create an empty datastore directory, and place a [config.properties](config.properties) next to the jar-file.
+Execute it by 
+
+```
+java -jar all-1.0-SNAPSHOT.jar
+```
+
 
