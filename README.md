@@ -38,7 +38,7 @@ To run the application, you need the binary, which can get executed like this:
 java -jar all-1.0-SNAPSHOT.jar
 ```
 
-How to obtain the binary is desribed [here](#Building and testing the application).
+How to obtain the binary is desribed [here](README.md#building-and-testing-the-application).
 
 ### POST /:typeName/
 
