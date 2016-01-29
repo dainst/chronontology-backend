@@ -10,14 +10,18 @@ file system based. The connected datastore is an elastisearch instance.
 
 At startup, the application reads the properties from 
 
+```
   config.properties
+```
 
 Make sure you revise the settings before startup!
 
 A type mapping for every type used is needed, so make sure 
 you didn't forget to add the mapping to the period type!
  
+```
   type mapping : src/main/resources/mapping.json
+```
 
 ### POST /:typeName/
 
@@ -25,7 +29,9 @@ Post json to store a a document of type :typeName.
 After posting, the location header will contain the id of 
 the created element, if successful. The id will be a string like
 
+```
   /period/TAvlBuaAasWM
+```  
   
 That means, it will contain both the type name as well as a 
 base64 encoded random part.
@@ -33,8 +39,10 @@ base64 encoded random part.
 The response body will contain the json in the form it got send
 to the stores. This means that it will be enriched by id an date information.
 
+```
   Status codes: 
     201 if created successfully.
+```
 
 ### GET /:typeName/:id
 
@@ -56,8 +64,22 @@ contains the json for the search hits.
 The elasticsearchSearchString should be a valid search string for elasticsearch
 and should not include the "_search?" prefix but everything after it.
 
-## Testing
+## Building and testing the application
 
 For the Component and Integration Tests to run, you need an elastic search 
 instance on localhost up and running. The index named "jeremy_test" 
 is used and its types and type mappings get created before and deleted after the tests automatically.
+
+To run the tests, type in
+```
+gradle cleant test
+```
+
+To build the application, type in
+
+```
+gradle packageJar
+```
+
+
+
