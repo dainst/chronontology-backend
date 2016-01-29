@@ -51,20 +51,22 @@ Get json stored for type with name :typeName and id :id.
 Get json stored for type with name :typeName and id :id. the json is retrieved from 
 the main storage this time, not from the connected storage.
 
-### GET /:typeName/:elasticsearchSearchString
+### GET /:typeName/:esQueryString
 
-Performs a search specified by :elasticsearchSearchString 
-over the documents of the type named :typeName. An example could be
+Performs a search specified by :esQueryString 
+over the documents of the type named :typeName.
+Gets a json object with a top level array field named results which
+contains the json for the search hits. 
+
+An example could be
 
 ```
 GET /period/?q=*
 ```
 
-Gets a json object with a top level array field named results which
-contains the json for the search hits. 
-
-The elasticsearchSearchString should be a valid search string for elasticsearch
-and should not include the "_search?" prefix but everything after it.
+The query string gets handed over to ElasticSearch, so it 
+should be a valid search string for elasticsearch
+and should **not** include the "_search" prefix but everything after it.
 
 ## Building and testing the application
 
