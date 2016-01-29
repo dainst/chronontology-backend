@@ -72,7 +72,7 @@ is used and its types and type mappings get created before and deleted after the
 
 To run the tests, type in
 ```
-gradle cleant test
+gradle clean test
 ```
 
 To build the application, type in
