@@ -78,7 +78,13 @@ gradle cleant test
 To build the application, type in
 
 ```
-gradle packageJar
+gradle clean packageJar
+```
+
+To run the application, run
+
+```
+java -jar  build/libs/all-1.0-SNAPSHOT.jar
 ```
 
 
