@@ -19,9 +19,7 @@ Make sure you revise the settings before startup!
 A type mapping for every type used is needed, so make sure 
 you didn't forget to add the mapping to the period type!
  
-```
-  type mapping : src/main/resources/mapping.json
-```
+You'll find it [here](src/main/resources/mapping.json).
 
 ### POST /:typeName/
 
@@ -56,7 +54,11 @@ the main storage this time, not from the connected storage.
 ### GET /:typeName/:elasticsearchSearchString
 
 Performs a search specified by :elasticsearchSearchString 
-over the documents of the type named :typeName.
+over the documents of the type named :typeName. An example could be
+
+```
+GET /period/?q=*
+```
 
 Gets a json object with a top level array field named results which
 contains the json for the search hits. 
