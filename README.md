@@ -2,9 +2,6 @@
 
 ## Using the server
 
-Execution of the main method starts an embedded 
-jetty server.
-
 The application uses two datastores. The main datastore is
 file system based. The connected datastore is an elastisearch instance.
 
@@ -38,6 +35,7 @@ To run the application, you need the binary, which can get executed like this:
 java -jar all-1.0-SNAPSHOT.jar
 ```
 
+Execution of the main method starts an embedded jetty server.
 How to obtain the binary is desribed [here](README.md#building-and-testing-the-application).
 
 ### POST /:typeName/
