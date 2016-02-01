@@ -53,6 +53,21 @@ public class Controller {
         return id;
     }
 
+    /**
+     * Renders information about the internal server state.
+     *
+     * @param res
+     * @return json object with server state details
+     * @throws IOException
+     */
+    Object handleServerStatus(
+            final Response res) throws IOException {
+
+        JsonNode doc = json("{ \"status\" : \"ok\"}");
+        res.status(HTTP_OK);
+        return doc;
+    }
+
     Object handlePost(
             final String typeName,
             final Request req,

@@ -21,6 +21,9 @@ public class Router {
     private void setUpTypeRoutes(
             final String typeName
     ) {
+        get( "/", (req,res) -> {
+           return controller.handleServerStatus(res);
+        });
         get( "/" + typeName + "/", (req,res) -> {
             res.header("location", req.params(ID));
             return controller.handleSearch(typeName,req,res);
