@@ -1,5 +1,5 @@
 group 'de.dainst.idai'
-version '1.0-SNAPSHOT'
+version '0.1.0-SNAPSHOT'
 
 apply plugin: 'java'
 
@@ -28,10 +28,12 @@ task packageJar(type: Jar) {
                 'Implementation-Version': '0.1',
                 'Main-Class': 'org.dainst.chronontology.App'
     }
-    baseName = 'all'
+    baseName = 'connected-backend'
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
+
+packageJar.dependsOn test
 
 test {
     useTestNG()
