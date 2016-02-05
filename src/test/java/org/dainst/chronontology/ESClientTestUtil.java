@@ -10,17 +10,17 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import static org.testng.Assert.fail;
+import static org.dainst.chronontology.TestConstants.*;
 
 /**
  * @author Daniel M. de Oliveira
  */
 public class ESClientTestUtil {
 
-    protected static final String INDEX_NAME = "jeremy_test";
     private static final JsonRestClient esClient = new JsonRestClient(ESServerTestUtil.getUrl());
 
     public static String getIndexName() {
-        return INDEX_NAME;
+        return TEST_INDEX;
     }
 
     public static JsonRestClient getClient() {
@@ -40,11 +40,11 @@ public class ESClientTestUtil {
     }
 
     public static void createEsTypeAndMapping() {
-        esClient.post("/"+INDEX_NAME+"/"+ TestConstants.TEST_TYPE,
+        esClient.post("/"+ TEST_INDEX +"/"+ TestConstants.TEST_TYPE,
                 loadTestTypeMapping(TestConstants.TEST_FOLDER+"mapping.json"));
     }
 
     public static void deleteESTypeAndMapping() {
-        esClient.delete("/"+INDEX_NAME+"/"+TestConstants.TEST_TYPE);
+        esClient.delete("/"+ TEST_INDEX +"/"+TestConstants.TEST_TYPE);
     }
 }

@@ -14,7 +14,8 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 public class ESServerTestUtil {
 
     private static Node esNode = null;
-    private static final String ES_URL= "http://localhost:9200";
+    private static final String HTTP_PORT = "9201";
+    private static final String ES_URL= "http://localhost:"+HTTP_PORT;
     private static final String TEST_ES_DATA = TestConstants.TEST_FOLDER+"/test_es_data";
 
     public static String getUrl() {
@@ -25,6 +26,7 @@ public class ESServerTestUtil {
 
         ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", "chronontology_connected_unit_testing_cluster")
+                .put("http.port",HTTP_PORT)
                 .put("path.data", TEST_ES_DATA);
 
         esNode = nodeBuilder()

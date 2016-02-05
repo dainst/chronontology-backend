@@ -11,6 +11,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static org.testng.Assert.assertEquals;
+import static org.dainst.chronontology.TestConstants.*;
 
 /**
  * @author Daniel M. de Oliveira
@@ -18,10 +19,9 @@ import static org.testng.Assert.assertEquals;
 public class ESRestSearchableKeyValueStoreTest {
 
 
-    private static final String TYPE_NAME= "period";
-    private final JsonRestClient jrc= new JsonRestClient("http://localhost:9200");
+    private final JsonRestClient jrc= new JsonRestClient(ESServerTestUtil.getUrl());
     private final ESRestSearchableKeyValueStore store=
-            new ESRestSearchableKeyValueStore(jrc,"jeremy_test");
+            new ESRestSearchableKeyValueStore(jrc,TEST_INDEX);
 
     private JsonNode sampleJson(final String sampleFieldValue) throws IOException {
         return new ObjectMapper().readTree
@@ -41,23 +41,23 @@ public class ESRestSearchableKeyValueStoreTest {
 
     @AfterMethod
     public void afterMethod() {
-        store.remove(TYPE_NAME, "a");
+        store.remove(TEST_TYPE, "a");
     }
 
     @Test
     public void putAndGetItemForId() throws IOException {
 
-        store.put(TYPE_NAME,"a",sampleJson("a"));
-        assertEquals(store.get(TYPE_NAME,"a"),sampleJson("a"));
+        store.put(TEST_TYPE,"a",sampleJson("a"));
+        assertEquals(store.get(TEST_TYPE,"a"),sampleJson("a"));
     }
 
     @Test
     public void deleteAnItem() throws IOException, InterruptedException {
 
-        store.put(TYPE_NAME,"a",sampleJson("a"));
-        store.remove(TYPE_NAME, "a");
+        store.put(TEST_TYPE,"a",sampleJson("a"));
+        store.remove(TEST_TYPE, "a");
 
         Thread.sleep(100);
-        assertEquals(store.get(TYPE_NAME,"a"), null);
+        assertEquals(store.get(TEST_TYPE,"a"), null);
     }
 }
