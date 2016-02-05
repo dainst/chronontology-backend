@@ -5,11 +5,8 @@ Detailed information on the REST api can be found [here](docs/rest-api-reference
 
 ## Building and testing the application
 
-For the Component and Integration Tests to run, you need an elastic search 
-instance on localhost up and running. The index named "jeremy_test" 
-is used and its types and type mappings get created before and deleted after the tests automatically.
+For the Component and Integration Tests to run, type in
 
-To run the tests, type in
 ```
 gradle clean test
 ```
