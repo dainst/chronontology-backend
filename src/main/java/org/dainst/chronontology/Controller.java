@@ -8,6 +8,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.model.DocumentModel;
 import org.dainst.chronontology.model.DocumentModelFactory;
+import org.dainst.chronontology.store.DataStore;
 import org.dainst.chronontology.store.JsonBucketKeyValueStore;
 import org.dainst.chronontology.store.JsonSearchableBucketKeyValueStore;
 import spark.Request;
@@ -24,6 +25,8 @@ public class Controller {
     final static Logger logger = Logger.getLogger(Controller.class);
 
     public static final String ID = ":id";
+    public static final String DATASTORE_STATUS_DOWN = "down";
+    public static final String DATASTORE_STATUS_OK = "ok";
 
     private final JsonBucketKeyValueStore mainDatastore;
     private final JsonSearchableBucketKeyValueStore connectDatastore;
@@ -63,9 +66,24 @@ public class Controller {
     Object handleServerStatus(
             final Response res) throws IOException {
 
-        JsonNode doc = json("{ \"status\" : \"ok\"}");
+        JsonNode serverStatus= makeServerStatusJson();
         res.status(HTTP_OK);
-        return doc;
+        if (serverStatus.toString().contains(DATASTORE_STATUS_DOWN))
+            res.status(HTTP_NOT_FOUND);
+        return serverStatus;
+    }
+
+    private JsonNode makeServerStatusJson() throws IOException {
+        Results datastores= new Results("datastores");
+        datastores.add(makeDataStoreStatus("main",mainDatastore));
+        datastores.add(makeDataStoreStatus("connect",connectDatastore));
+        return datastores.j();
+    }
+
+    private JsonNode makeDataStoreStatus(String type, DataStore store) throws IOException {
+        String status = DATASTORE_STATUS_DOWN;
+        if (store.isConnected()) status = DATASTORE_STATUS_OK;
+        return json("{ \"type\" : \""+type+"\", \"status\" : \""+status+"\" }");
     }
 
     Object handlePost(

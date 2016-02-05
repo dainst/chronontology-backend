@@ -62,7 +62,25 @@ to the stores. This means that it will be enriched by id an date information.
 ### PUT /:typeName/:id
 
 Used to update an existing document. The version number will get incremented
-and a date will be added to the date modified array.
+and a date will be added to the date modified array. If the document does not exist yet, 
+it will be created.
+
+```
+  Status codes: 
+    200 if updated succesfully.
+    201 if a new document has been created successfully.
+```
+
+### GET /:typeName/:id
+
+Get information regarding the server status. 
+Also Lists information for each datastore individually.
+
+```
+  Status codes:
+    200 if Server is running and all datastores are connected and running.
+    404 if Server is running but at least one datastore is not available.
+```
 
 ### GET /:typeName/:id
 

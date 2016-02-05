@@ -74,4 +74,10 @@ public class FileSystemKeyValueStore implements JsonBucketKeyValueStore {
     public void remove(String bucket, String key) {
         throw new NotImplementedException();
     }
+
+    @Override
+    public boolean isConnected() {
+        // TODO This will be sufficient for now.
+        return true;
+    }
 }

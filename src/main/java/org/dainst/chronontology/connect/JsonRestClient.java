@@ -101,6 +101,11 @@ public class JsonRestClient {
         return restApi(path,"PUT",json);
     }
 
+    /**
+     *
+     * @param path
+     * @return null if there is no response or the response is no proper json.
+     */
     public JsonNode get(String path) {
         return restApi(path,"GET",null);
     }

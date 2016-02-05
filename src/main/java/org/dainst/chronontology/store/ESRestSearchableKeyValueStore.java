@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.Results;
 import org.dainst.chronontology.connect.JsonRestClient;
 
 import java.io.IOException;
@@ -41,6 +42,7 @@ public class ESRestSearchableKeyValueStore implements JsonSearchableBucketKeyVal
      * @return null if item not found.
      * @throws IOException
      */
+    @Override
     public JsonNode get(final String typeName,final String key) {
         return client.get("/" + indexName+ "/" + typeName + "/" + key).get("_source");
     };
@@ -56,6 +58,7 @@ public class ESRestSearchableKeyValueStore implements JsonSearchableBucketKeyVal
      *   The results array can be empty if there where no results.
      *   When errors occur, null gets returned.
      */
+    @Override
     public JsonNode search(
             final String typeName,
             final String queryString) {
@@ -73,7 +76,7 @@ public class ESRestSearchableKeyValueStore implements JsonSearchableBucketKeyVal
     }
 
     private JsonNode makeResults(ArrayNode searchHits) {
-        Results results = new Results();
+        Results results = new Results("results");
         for (JsonNode o:searchHits) {
             try {
                 results.add(o.get("_source"));
@@ -84,31 +87,20 @@ public class ESRestSearchableKeyValueStore implements JsonSearchableBucketKeyVal
         return results.j();
     }
 
-    private class Results {
-        private JsonNode json;
-
-        public Results() {
-            try {
-                json = new ObjectMapper().readTree("{\"results\":[]}");
-            } catch (IOException e) {} // WILL NOT HAPPEN
-        }
-
-        public JsonNode add(final JsonNode jsonToAdd)
-                throws JsonProcessingException {
-            ArrayNode data=(ArrayNode) json.get("results");
-            data.add(jsonToAdd);
-            return json;
-        }
-
-        public JsonNode j() {
-            return json;
-        }
+    @Override
+    public boolean isConnected() {
+        if (client.get("/")==null) return false;
+        return true;
     }
 
+
+
+    @Override
     public void put(final String typeName,final String key,final JsonNode value) {
         client.post("/" + indexName + "/" + typeName + "/" + key, value);
     }
 
+    @Override
     public void remove(final String typeName, final String key) {
         client.delete("/" + indexName + "/" + typeName + "/" + key);
     }

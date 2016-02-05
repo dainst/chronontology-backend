@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * @author Daniel m. de Oliveira
  */
-public interface JsonBucketKeyValueStore {
+public interface JsonBucketKeyValueStore extends DataStore {
 
     /**
      * Creates or updates the item with key.
