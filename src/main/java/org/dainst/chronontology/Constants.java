@@ -10,11 +10,15 @@ public class Constants {
     public static final String CREATED = "created";
 
     // A library for getting the status codes is not used on purpose
-    // so we don't have to refactor in case it would change. The status codes themselves
-    // are considered to be stable.
+    // to protect against dependency change.
     static final int HTTP_CREATED = 201;
     static final int HTTP_FORBIDDEN = 403;
     static final int HTTP_OK = 200;
     static final int HTTP_NOT_FOUND = 404;
     static final int HTTP_UNAUTHORIZED = 401;
+
+    static final String HEADER_AUTH = "Authorization";
+    static final String HEADER_CT = "Content-Type";
+    static final String HEADER_LOC = "location";
+    static final String HEADER_JSON = "application/json";
 }

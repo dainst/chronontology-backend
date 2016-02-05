@@ -4,6 +4,9 @@ import static spark.Spark.*;
 import static org.dainst.chronontology.Constants.*;
 
 import org.apache.log4j.Logger;
+import spark.Request;
+import spark.Response;
+
 import java.util.Base64;
 
 
@@ -13,7 +16,7 @@ import java.util.Base64;
  */
 public class Router {
 
-    final static Logger logger = Logger.getLogger(Router.class);
+    private final static Logger logger = Logger.getLogger(Router.class);
     public static final String ID = ":id";
 
     private final Controller controller;
@@ -22,23 +25,34 @@ public class Router {
             final String typeName
     ) {
         get( "/", (req,res) -> {
-           return controller.handleServerStatus(res);
+            setHeader(res);
+            return controller.handleServerStatus(res);
         });
         get( "/" + typeName + "/", (req,res) -> {
-            res.header("location", req.params(ID));
+            setHeader(res);
             return controller.handleSearch(typeName,req,res);
         });
         get( "/" + typeName + "/" + ID, (req,res) -> {
-            res.header("location", req.params(ID));
+            setHeader(req,res);
             return controller.handleGet(typeName,req,res);
         });
         post("/" + typeName + "/", (req, res) ->  {
+            setHeader(res);
             return controller.handlePost(typeName,req,res);
         });
         put( "/" + typeName + "/" + ID, (req, res) -> {
-            res.header("location", req.params(ID));
+            setHeader(req,res);
             return controller.handlePut(typeName,req,res);
         });
+    }
+
+    private void setHeader(Response res) {
+        res.header(HEADER_CT, HEADER_JSON);
+    }
+
+    private void setHeader(Request req, Response res) {
+        res.header(HEADER_CT, HEADER_JSON);
+        res.header(HEADER_LOC, req.params(ID));
     }
 
     private void setUpAuthorization(String[] credentials) {
@@ -49,12 +63,12 @@ public class Router {
                 return;
 
             boolean authenticated = false;
-            if(request.headers("Authorization") != null
-                    && request.headers("Authorization").startsWith("Basic"))
+            if(request.headers(HEADER_AUTH) != null
+                    && request.headers(HEADER_AUTH).startsWith("Basic"))
             {
                 String decodedCredentials = new String(
                         Base64.getDecoder().decode(
-                                request.headers("Authorization").substring("Basic".length()).trim()));
+                                request.headers(HEADER_AUTH).substring("Basic".length()).trim()));
 
                 for (String cred:credentials)
                     if(decodedCredentials.equals(cred)) authenticated = true;

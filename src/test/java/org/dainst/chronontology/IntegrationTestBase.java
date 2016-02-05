@@ -6,8 +6,6 @@ import com.squareup.okhttp.*;
 import org.dainst.chronontology.connect.JsonRestClient;
 import org.dainst.chronontology.store.ESRestSearchableKeyValueStore;
 import org.dainst.chronontology.store.FileSystemKeyValueStore;
-import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -18,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Base64;
 
 import static org.testng.Assert.fail;
 
@@ -52,8 +51,13 @@ public class IntegrationTestBase {
 
     protected static final FileSystemKeyValueStore mainDatastore
             = new FileSystemKeyValueStore(TEST_FOLDER);
+
     protected static JsonNode json(String s) throws IOException {
         return new ObjectMapper().readTree(s);
+    }
+
+    protected static JsonNode json() throws IOException {
+        return new ObjectMapper().createObjectNode();
     }
 
 

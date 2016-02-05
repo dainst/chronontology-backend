@@ -1,14 +1,10 @@
 package org.dainst.chronontology;
 
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.Base64;
 
 import static org.dainst.chronontology.Constants.*;
 import static org.testng.Assert.assertEquals;
@@ -16,53 +12,29 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Daniel M. de Oliveira
  */
-public class StatusCodesIntegrationTest extends IntegrationTestBase {
-
-    private OkHttpClient ok= new OkHttpClient();
-    private void authorize(String username,String password,Request.Builder b) {
-        b.addHeader("Authorization","Basic "+ new String(
-                Base64.getEncoder().encode((username+":"+password).getBytes())));
-    }
-
-    private Response restApiResponse(String path,String method, JsonNode json,String username,String password) {
-
-        Request.Builder b= client.getBuilder(method, json).url(URL + path);
-        authorize(username,password,b);
-
-        Response response= null;
-        try {
-            response = ok.newCall(b.build()).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return response;
-    }
-
-    private Response restApiResponse(String path,String method, JsonNode json) {
-        return restApiResponse(path,method,json,USER_NAME,PASS_WORD);
-    }
+public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void putUnauthorized() throws IOException {
         assertEquals(
-                restApiResponse(TYPE_ROUTE, "PUT", json("{}"),USER_NAME,"wrong").code(),
-                HTTP_UNAUTHORIZED
+            rest(TYPE_ROUTE, "PUT", json(),USER_NAME,"wrong").code(),
+            HTTP_UNAUTHORIZED
         );
     }
 
     @Test
     public void postUnauthorized() throws IOException {
         assertEquals(
-                restApiResponse(TYPE_ROUTE, "POST", json("{}"),USER_NAME,"wrong").code(),
-                HTTP_UNAUTHORIZED
+            rest(TYPE_ROUTE, "POST", json(),USER_NAME,"wrong").code(),
+            HTTP_UNAUTHORIZED
         );
     }
 
     @Test
     public void deleteUnauthorized() throws IOException {
         assertEquals(
-                restApiResponse(TYPE_ROUTE, "DELETE", json("{}"),USER_NAME,"wrong").code(),
-                HTTP_UNAUTHORIZED
+            rest(TYPE_ROUTE, "DELETE", json(),USER_NAME,"wrong").code(),
+            HTTP_UNAUTHORIZED
         );
     }
 
@@ -70,8 +42,8 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     @Test
     public void documentNotFound() throws IOException {
         assertEquals(
-                restApiResponse(TYPE_ROUTE+"1", "GET", null).code(),
-                HTTP_NOT_FOUND
+            rest(TYPE_ROUTE+"1", "GET", null).code(),
+            HTTP_NOT_FOUND
         );
     }
 
@@ -79,16 +51,16 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     public void documentFound() throws IOException {
         String id= idOf(client.post(TYPE_ROUTE,sampleJson("a")));
         assertEquals(
-                restApiResponse(id, "GET", null).code(),
-                HTTP_OK
+            rest(id, "GET", null).code(),
+            HTTP_OK
         );
     }
 
     @Test
     public void oneTimePost() throws IOException {
         assertEquals(
-                restApiResponse(TYPE_ROUTE, "POST", sampleJson("b")).code(),
-                HTTP_CREATED
+            rest(TYPE_ROUTE, "POST", sampleJson("b")).code(),
+            HTTP_CREATED
         );
     }
 
@@ -97,7 +69,7 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
 
         String id= idOf(client.post(TYPE_ROUTE,sampleJson("a")));
         assertEquals(
-                restApiResponse(id, "PUT", sampleJson("b")).code(),
+                rest(id, "PUT", sampleJson("b")).code(),
                 HTTP_OK
         );
     }
@@ -106,8 +78,8 @@ public class StatusCodesIntegrationTest extends IntegrationTestBase {
     public void createWithPut() throws IOException {
 
         assertEquals(
-                restApiResponse(TYPE_ROUTE+"1", "PUT", sampleJson("b")).code(),
-                HTTP_CREATED
+            rest(TYPE_ROUTE+"1", "PUT", sampleJson("b")).code(),
+            HTTP_CREATED
         );
     }
 }
