@@ -1,7 +1,5 @@
 package org.dainst.chronontology;
 
-import static org.dainst.chronontology.Constants.*;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
@@ -17,6 +15,8 @@ import spark.Response;
 import java.io.IOException;
 import java.util.Random;
 
+import static org.dainst.chronontology.Constants.*;
+
 /**
  * @author Daniel M. de Oliveira
  */
@@ -25,8 +25,6 @@ public class Controller {
     final static Logger logger = Logger.getLogger(Controller.class);
 
     public static final String ID = ":id";
-    public static final String DATASTORE_STATUS_DOWN = "down";
-    public static final String DATASTORE_STATUS_OK = "ok";
 
     private final JsonBucketKeyValueStore mainDatastore;
     private final JsonSearchableBucketKeyValueStore connectDatastore;

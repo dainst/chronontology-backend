@@ -22,11 +22,11 @@ public class Results {
         } catch (IOException e) {} // WILL NOT HAPPEN
     }
 
-    public JsonNode add(final JsonNode jsonToAdd)
+    public Results add(final JsonNode jsonToAdd)
             throws JsonProcessingException {
         ArrayNode data=(ArrayNode) json.get(this.arrayName);
         data.add(jsonToAdd);
-        return json;
+        return this;
     }
 
     public JsonNode j() {

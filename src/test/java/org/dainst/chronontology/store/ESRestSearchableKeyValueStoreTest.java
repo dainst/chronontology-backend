@@ -3,7 +3,9 @@ package org.dainst.chronontology.store;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dainst.chronontology.connect.JsonRestClient;
+import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -26,6 +28,17 @@ public class ESRestSearchableKeyValueStoreTest {
                 ("{\"a\":\"" + sampleFieldValue + "\"}");
     }
 
+    @BeforeClass
+    public void setUp() {
+        ESServerTestUtil.startElasticSearchServer();
+    }
+
+    @AfterClass
+    public void tearDown() {
+        ESServerTestUtil.stopElasticSearchServer();
+    }
+
+
     @AfterMethod
     public void afterMethod() {
         store.remove(TYPE_NAME, "a");
@@ -47,20 +60,4 @@ public class ESRestSearchableKeyValueStoreTest {
         Thread.sleep(100);
         assertEquals(store.get(TYPE_NAME,"a"), null);
     }
-
-
-    /*
-
-
-    @Test
-    public void searchInFields() throws IOException {
-        store.search("a:b", null);
-    }
-
-    @Test
-    public void searchOverAllFields() throws IOException {
-        store.search("b", null);
-    }
-
-    */
 }

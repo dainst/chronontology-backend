@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import static org.dainst.chronontology.Constants.*;
 import static org.testng.Assert.assertEquals;
-import static org.dainst.chronontology.TestUtils.*;
+import static org.dainst.chronontology.JsonTestUtils.*;
 import static org.dainst.chronontology.TestConstants.*;
 
 /**

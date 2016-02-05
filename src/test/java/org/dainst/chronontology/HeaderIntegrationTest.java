@@ -1,16 +1,14 @@
 package org.dainst.chronontology;
 
 
-import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Response;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
 import static org.dainst.chronontology.Constants.*;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertNull;
+import static org.dainst.chronontology.JsonTestUtils.*;
+import static org.testng.Assert.*;
 
 /**
  * @author Daniel M. de Oliveira
@@ -32,7 +30,7 @@ public class HeaderIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void postHeaders() throws IOException {
-        Response res = rest(TYPE_ROUTE, "POST", sampleJson("a"));
+        Response res = rest(TYPE_ROUTE, "POST", json());
         assertEquals(
                 res.header(HEADER_CT),
                 HEADER_JSON

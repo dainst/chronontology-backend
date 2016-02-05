@@ -1,23 +1,22 @@
 package org.dainst.chronontology;
 
-import static org.testng.Assert.assertEquals;
-import static org.dainst.chronontology.TestUtils.*;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.json.JSONException;
 import org.testng.annotations.Test;
 
-import java.io.File;
 import java.io.IOException;
+
+import static org.dainst.chronontology.JsonTestUtils.jsonAssertEquals;
+import static org.testng.Assert.assertEquals;
 
 
 
 /**
  * @author Daniel M. de Oliveira
  */
-public class StorageIntegrationTest extends IntegrationTestBase {
+public class StorageIntegrationTest extends JsonIntegrationTestBase {
 
     @Test
     public void getNonExistingDocument() {
@@ -89,8 +88,8 @@ public class StorageIntegrationTest extends IntegrationTestBase {
     @Test
     public void retrieveDocumentsFromDifferentSources() throws IOException {
 
-        connectDatastore.put(TYPE_NAME,"1",sampleJson("a"));
-        mainDatastore.put(TYPE_NAME,"1",sampleJson("b"));
+        connectDatastore.put(TestConstants.TEST_TYPE,"1",sampleJson("a"));
+        mainDatastore.put(TestConstants.TEST_TYPE,"1",sampleJson("b"));
 
         jsonAssertEquals(
                 client.get(TYPE_ROUTE+"1"),

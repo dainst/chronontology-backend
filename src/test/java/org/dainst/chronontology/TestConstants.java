@@ -5,4 +5,5 @@ package org.dainst.chronontology;
  */
 public class TestConstants {
     public static final String TEST_TYPE= "period";
+    public static final String TEST_FOLDER = "src/test/resources/";
 }

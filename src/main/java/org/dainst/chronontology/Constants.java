@@ -21,4 +21,7 @@ public class Constants {
     static final String HEADER_CT = "Content-Type";
     static final String HEADER_LOC = "location";
     static final String HEADER_JSON = "application/json";
+
+    static final String DATASTORE_STATUS_OK = "ok";
+    static final String DATASTORE_STATUS_DOWN = "down";
 }

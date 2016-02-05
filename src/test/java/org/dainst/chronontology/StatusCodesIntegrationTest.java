@@ -1,12 +1,12 @@
 package org.dainst.chronontology;
 
 
-import com.squareup.okhttp.OkHttpClient;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
 import static org.dainst.chronontology.Constants.*;
+import static org.dainst.chronontology.JsonTestUtils.*;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -49,7 +49,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void documentFound() throws IOException {
-        String id= idOf(client.post(TYPE_ROUTE,sampleJson("a")));
+        String id= idOf(client.post(TYPE_ROUTE,json()));
         assertEquals(
             rest(id, "GET", null).code(),
             HTTP_OK
@@ -59,7 +59,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void oneTimePost() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE, "POST", sampleJson("b")).code(),
+            rest(TYPE_ROUTE, "POST", json()).code(),
             HTTP_CREATED
         );
     }
@@ -67,9 +67,9 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void update() throws IOException {
 
-        String id= idOf(client.post(TYPE_ROUTE,sampleJson("a")));
+        String id= idOf(client.post(TYPE_ROUTE,json()));
         assertEquals(
-                rest(id, "PUT", sampleJson("b")).code(),
+                rest(id, "PUT", json()).code(),
                 HTTP_OK
         );
     }
@@ -78,7 +78,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     public void createWithPut() throws IOException {
 
         assertEquals(
-            rest(TYPE_ROUTE+"1", "PUT", sampleJson("b")).code(),
+            rest(TYPE_ROUTE+"1", "PUT", json()).code(),
             HTTP_CREATED
         );
     }
