@@ -34,7 +34,7 @@ At startup, the application reads the properties from
 config.properties
 ```
 
-You can find one [here](config.properties). Make sure you revise the settings before startup!
+You can find one [here](config.properties.template). Make sure you revise the settings before startup!
 
 For the local datastore to work, you have to create subfolders for every type 
 inside the directory of the local datastore. An example:

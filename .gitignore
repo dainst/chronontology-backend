@@ -7,3 +7,4 @@ gradlew.bat
 gradlew
 .gradle
 datastore
+config.properties

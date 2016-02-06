@@ -8,13 +8,12 @@ import org.dainst.chronontology.store.ESRestSearchableKeyValueStore;
 import org.dainst.chronontology.store.FileSystemKeyValueStore;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Properties;
 
 import static spark.Spark.port;
 
 import org.dainst.chronontology.connect.JsonRestClient;
+
+import static org.dainst.chronontology.PropertiesHolder.*;
 
 /**
  * Main class. Handles application setup.
@@ -35,30 +34,6 @@ public class App {
         return new FileSystemKeyValueStore(datastorePath);
     }
 
-    private static Properties loadProps(String propertiesFilePath) {
-        Properties props = new Properties();
-        try (
-                FileInputStream is =new FileInputStream(new File(propertiesFilePath)))
-        {
-            props.load(is);
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-            System.exit(1);
-        }
-        return props;
-    }
-
-
-
-    private static Properties _validate(final Properties props,final String name) {
-        if (props.get(name)==null) {
-            logger.error("Property "+name+" does not exist");
-            System.exit(1);
-        }
-
-        return props;
-    }
-
     private static String[] getTypes(final String typesString) {
         String[] types= typesString.split(",");
         for (String typeName:types) {
@@ -71,32 +46,22 @@ public class App {
         return types;
     }
 
-    private static Properties validate(Properties props) {
-        _validate(props,"serverPort");
-        _validate(props,"esIndexName");
-        _validate(props,"datastorePath");
-        _validate(props,"esUrl");
-        _validate(props,"credentials");
-        _validate(props,"typeNames");
-        return props;
-    }
-
     public static void main(String [] args) {
 
-        final Properties props= validate(loadProps(DEFAULT_PROPERTIES_FILE_PATH));
+        if (!loadConfiguration(DEFAULT_PROPERTIES_FILE_PATH)) System.exit(1);
 
-        final int serverPort= Integer.parseInt((String)props.get("serverPort"));
+        final int serverPort= Integer.parseInt(getServerPort());
         port(serverPort);
 
         final Controller controller= new Controller(
-                initDS((String)props.get("datastorePath")),
+                initDS(getDataStorePath()),
                 new ESRestSearchableKeyValueStore(
-                        new JsonRestClient((String)props.get("esUrl")),
-                        (String)props.get("esIndexName")));
+                        new JsonRestClient(getEsUrl()),
+                        getEsIndexName()));
 
         new Router(
                 controller,
-                getTypes((String)props.get("typeNames")),
-                ((String)props.get("credentials")).split(","));
+                getTypes(getTypeNames()),
+                getCredentials());
     }
 }
