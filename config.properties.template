@@ -1,26 +1,48 @@
-  # The embedded jetty will then listen on 0.0.0.0:serverPort.
-  # If omitted, serverPort defaults to 4567
-serverPort=4567
+## QUICKSTART
 
-  # hostname of the elasticsearch intance used as connected datastore.
-  # If useEmbeddedES is set, the setting get ignored and can even be ommited.
-esUrl=http://localhost:9200
+# Note that the most basic config.properties
+# that gets you started immediately will only need the following
+# properties.
 
-  # the elasticsearch index to be used.
-esIndexName=jeremy
-
-  # the typenames to be used. Use , to separat them. Don't use whitespaces in between.
 typeNames=period
+credentials=admin:abc
+useEmbeddedES=true
 
-  # Relative path to the main datastore which is file system based.
-  # Defaults to ./datastore/ if omitted. In any case, the directory gets created
-  # at application startup if it does not exist.
-datastorePath=datastore/
 
-  # Pairs of Usenames and Passwords. Separate pairs by ,. Don't use whitespaces.
-credentials=admin:s3cr3t
 
-  # If set to true, an embedded elasticSearchServer gets started along the app server.
-  # The parameter is optional and defaults to false. The embedded elasticsearch instance
-  # will listen on localhost port 9202. Any manual setting for esUrl will be ignored.
-useEmbeddedES=false
+## DETAILED INFORMATION ##
+
+# The embedded jetty will then listen on 0.0.0.0:serverPort.
+# If omitted, serverPort defaults to 4567.
+#
+# serverPort=4567
+
+# hostname of the elasticsearch intance used as connected datastore.
+# If useEmbeddedES is set, the setting get ignored and can even be ommited.
+#
+# esUrl=http://localhost:9200
+
+# The elasticsearch index to be used.
+# If omitted, esIndexName defaults to connect.
+#
+# esIndexName=connect
+
+# the typenames to be used. Use , to separat them. Don't use whitespaces in between.
+#
+# typeNames=period
+
+# Relative path to the main datastore which is file system based.
+# Defaults to ./datastore/ if omitted. In any case, the directory gets created
+# at application startup if it does not exist.
+#
+# datastorePath=datastore/
+
+# Pairs of Usenames and Passwords. Separate pairs by ,. Don't use whitespaces.
+#
+# credentials=admin:s3cr3t
+
+# If set to true, an embedded elasticSearchServer gets started along the app server.
+# The parameter is optional and defaults to false. The embedded elasticsearch instance
+# will listen on localhost port 9202. Any manual setting for esUrl will be ignored.
+#
+# useEmbeddedES=false

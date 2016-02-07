@@ -17,7 +17,7 @@ public class AppConfig {
     final static Logger logger = Logger.getLogger(AppConfig.class);
 
     private String serverPort = Constants.SERVER_PORT;
-    private String esIndexName = null;
+    private String esIndexName = Constants.ES_INDEX_NAME;
     private String dataStorePath = Constants.DATASTORE_PATH;
     private String esUrl = Constants.EMBEDDED_ES_URL;
     private String[] credentials = null;
@@ -100,7 +100,7 @@ public class AppConfig {
     private boolean validate(Properties props) {
         return (
             _validate(props,"serverPort",true) &&
-            _validate(props,"esIndexName") &&
+            _validate(props,"esIndexName",true) &&
             _validate(props,"datastorePath",true) &&
             _validate(props,"useEmbeddedES", true) &&
             _validate(props,"esUrl",(useEmbeddedES)) &&  // must come after useEmbeddedES

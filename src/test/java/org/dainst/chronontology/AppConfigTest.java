@@ -83,8 +83,14 @@ public class AppConfigTest {
     }
 
     @Test
-    public void AllowOmitServerPort() {
+    public void allowOmitServerPort() {
         assertTrue(appConfig.loadConfiguration(propsFile("10")));
+        assertEquals(appConfig.getServerPort(),Constants.SERVER_PORT);
+    }
+
+    @Test
+    public void allowOmitESIndexName() {
+        assertTrue(appConfig.loadConfiguration(propsFile("11")));
         assertEquals(appConfig.getServerPort(),Constants.SERVER_PORT);
     }
 }
