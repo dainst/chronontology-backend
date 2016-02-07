@@ -12,23 +12,23 @@ import java.util.Properties;
 /**
  * @author Daniel M. de Oliveira
  */
-public class PropertiesHolder {
+public class AppConfig {
 
-    final static Logger logger = Logger.getLogger(PropertiesHolder.class);
+    final static Logger logger = Logger.getLogger(AppConfig.class);
 
-    private static String serverPort = null;
-    private static String esIndexName = null;
-    private static String dataStorePath = null;
-    private static String esUrl = null;
-    private static String[] credentials = null;
-    private static String typeNames = null;
+    private String serverPort = null;
+    private String esIndexName = null;
+    private String dataStorePath = null;
+    private String esUrl = null;
+    private String[] credentials = null;
+    private String typeNames = null;
 
     /**
      * @param propertiesFilePath
      * @return true if all the properties for running the application
      *   could be loaded properly. false otherwise.
      */
-    public static boolean loadConfiguration(String propertiesFilePath) {
+    public boolean loadConfiguration(String propertiesFilePath) {
         Properties props = new Properties();
         try (
                 FileInputStream is =new FileInputStream(new File(propertiesFilePath)))
@@ -41,7 +41,7 @@ public class PropertiesHolder {
         return validate(props);
     }
 
-    private static boolean _validate(final Properties props,final String name) {
+    private boolean _validate(final Properties props,final String name) {
         if (props.get(name)==null) {
             logger.error("Property "+name+" does not exist");
             return false;
@@ -59,21 +59,19 @@ public class PropertiesHolder {
      * @param value
      * @return
      */
-    private static boolean invokeSetter(String name, String value) {
+    private boolean invokeSetter(String name, String value) {
 
         Method method= null;
         try {
-            method = Class.forName("org.dainst.chronontology.PropertiesHolder").
+            method = this.getClass().
                     getDeclaredMethod("set"+capitalize(name), String.class);
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
             return false;
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return false;
         }
         try {
-            method.invoke(null,value);
+            System.out.println(method.toString());
+            method.invoke(this,value);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
             return false;
@@ -85,11 +83,11 @@ public class PropertiesHolder {
         return true;
     }
 
-    private static String capitalize(final String line) {
+    private String capitalize(final String line) {
         return Character.toUpperCase(line.charAt(0)) + line.substring(1);
     }
 
-    private static boolean validate(Properties props) {
+    private boolean validate(Properties props) {
         return (
             _validate(props,"serverPort") &&
             _validate(props,"esIndexName") &&
@@ -100,50 +98,51 @@ public class PropertiesHolder {
             );
     }
 
-    public static String getServerPort() {
+    public String getServerPort() {
         return serverPort;
     }
 
-    private static void setServerPort(String serverPort) {
-        PropertiesHolder.serverPort= serverPort;
+    private void setServerPort(String serverPort) {
+        this.serverPort= serverPort;
     }
 
-    public static String getTypeNames() {
-        return typeNames;
+    public String getTypeNames() {
+        return this.typeNames;
     }
 
-    private static void setTypeNames(String typeNames) {
-        PropertiesHolder.typeNames= typeNames;
+    private void setTypeNames(String typeNames) {
+        this.typeNames= typeNames;
     }
 
-    public static String[] getCredentials() {
+    public String[] getCredentials() {
         return credentials;
     }
 
-    private static void setCredentials(String credentials) {
+    private void setCredentials(String credentials) {
+        this.credentials= credentials.split(":");
     }
 
-    public static String getEsUrl() {
+    public String getEsUrl() {
         return esUrl;
     }
 
-    private static void setEsUrl(String esUrl) {
-        PropertiesHolder.esUrl = esUrl;
+    private void setEsUrl(String esUrl) {
+        this.esUrl = esUrl;
     }
 
-    public static String getEsIndexName() {
+    public String getEsIndexName() {
         return esIndexName;
     }
 
-    private static void setEsIndexName(String esIndexName) {
-        PropertiesHolder.esIndexName= esIndexName;
+    private void setEsIndexName(String esIndexName) {
+        this.esIndexName= esIndexName;
     }
 
-    public static String getDataStorePath() {
+    public String getDataStorePath() {
         return dataStorePath;
     }
 
-    private static void setDatastorePath(String dataStorePath) {
-        PropertiesHolder.dataStorePath= dataStorePath;
+    private void setDatastorePath(String dataStorePath) {
+        this.dataStorePath= dataStorePath;
     }
 }

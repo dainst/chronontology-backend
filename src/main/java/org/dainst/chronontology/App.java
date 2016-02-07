@@ -13,10 +13,8 @@ import static spark.Spark.port;
 
 import org.dainst.chronontology.connect.JsonRestClient;
 
-import static org.dainst.chronontology.PropertiesHolder.*;
-
 /**
- * Main class. Handles application setup.
+ * Main class. Handles wiring of application components.
  *
  * @author Daniel M. de Oliveira
  */
@@ -48,20 +46,21 @@ public class App {
 
     public static void main(String [] args) {
 
-        if (!loadConfiguration(DEFAULT_PROPERTIES_FILE_PATH)) System.exit(1);
+        AppConfig appConfig= new AppConfig();
+        if (!appConfig.loadConfiguration(DEFAULT_PROPERTIES_FILE_PATH)) System.exit(1);
 
-        final int serverPort= Integer.parseInt(getServerPort());
+        final int serverPort= Integer.parseInt(appConfig.getServerPort());
         port(serverPort);
 
         final Controller controller= new Controller(
-                initDS(getDataStorePath()),
+                initDS(appConfig.getDataStorePath()),
                 new ESRestSearchableKeyValueStore(
-                        new JsonRestClient(getEsUrl()),
-                        getEsIndexName()));
+                        new JsonRestClient(appConfig.getEsUrl()),
+                        appConfig.getEsIndexName()));
 
         new Router(
                 controller,
-                getTypes(getTypeNames()),
-                getCredentials());
+                getTypes(appConfig.getTypeNames()),
+                appConfig.getCredentials());
     }
 }
