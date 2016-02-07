@@ -77,8 +77,14 @@ public class AppConfigTest {
     }
 
     @Test
-    public void omitDatastorePath() {
+    public void allowOmitDatastorePath() {
         assertTrue(appConfig.loadConfiguration(propsFile("9")));
         assertEquals(appConfig.getDataStorePath(),Constants.DATASTORE_PATH);
+    }
+
+    @Test
+    public void AllowOmitServerPort() {
+        assertTrue(appConfig.loadConfiguration(propsFile("10")));
+        assertEquals(appConfig.getServerPort(),Constants.SERVER_PORT);
     }
 }

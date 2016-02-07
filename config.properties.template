@@ -1,4 +1,5 @@
   # The embedded jetty will then listen on 0.0.0.0:serverPort.
+  # If omitted, serverPort defaults to 4567
 serverPort=4567
 
   # hostname of the elasticsearch intance used as connected datastore.
