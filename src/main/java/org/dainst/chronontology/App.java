@@ -54,7 +54,7 @@ public class App {
         final int serverPort= Integer.parseInt(appConfig.getServerPort());
         port(serverPort);
 
-        final Controller controller= new Controller(
+        final Controller controller= new ConnectController(
                 initDS(appConfig.getDataStorePath()),
                 new ESRestSearchableKeyValueStore(
                         new JsonRestClient(appConfig.getEsUrl()),

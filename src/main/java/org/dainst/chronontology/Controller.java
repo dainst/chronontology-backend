@@ -18,24 +18,26 @@ import java.util.Random;
 import static org.dainst.chronontology.Constants.*;
 
 /**
+ * Template methods are used so subclasses can implement
+ * concrete behaviour for datastore handling.
+ *
  * @author Daniel M. de Oliveira
  */
-public class Controller {
+public abstract class Controller {
 
     final static Logger logger = Logger.getLogger(Controller.class);
 
     public static final String ID = ":id";
 
-    private final JsonBucketKeyValueStore mainDatastore;
-    private final JsonSearchableBucketKeyValueStore connectDatastore;
 
-    public Controller(
-            final JsonBucketKeyValueStore mainDatastore,
-            final JsonSearchableBucketKeyValueStore connectDatastore
-    ) {
-        this.mainDatastore= mainDatastore;
-        this.connectDatastore= connectDatastore;
-    }
+    // Template methods
+    abstract protected JsonNode _get(String bucket, String key);
+    abstract protected void _handlePost(final String bucket,final String key,final JsonNode value);
+    abstract protected void _handlePut(final String bucket,final String key,final JsonNode value);
+    abstract protected JsonNode _handleGet(final String bucket,final String key,Request req);
+    abstract protected JsonNode _handleSearch(String bucket,String query);
+    abstract protected void _addDatatoreStatus(Results r) throws IOException;
+    // Template methods
 
     private String generateId() {
         byte[] r = new byte[9];
@@ -49,10 +51,11 @@ public class Controller {
         JsonNode existingDoc= null;
         do {
             id= generateId();
-            existingDoc = mainDatastore.get(typeName,id);
+            existingDoc = _get(typeName,id);
         } while (existingDoc!=null);
         return id;
     }
+
 
     /**
      * Renders information about the internal server state.
@@ -73,12 +76,12 @@ public class Controller {
 
     private JsonNode makeServerStatusJson() throws IOException {
         Results datastores= new Results("datastores");
-        datastores.add(makeDataStoreStatus("main",mainDatastore));
-        datastores.add(makeDataStoreStatus("connect",connectDatastore));
+        _addDatatoreStatus(datastores);
         return datastores.j();
     }
 
-    private JsonNode makeDataStoreStatus(String type, DataStore store) throws IOException {
+
+    protected JsonNode makeDataStoreStatus(String type, DataStore store) throws IOException {
         String status = DATASTORE_STATUS_DOWN;
         if (store.isConnected()) status = DATASTORE_STATUS_OK;
         return json("{ \"type\" : \""+type+"\", \"status\" : \""+status+"\" }");
@@ -94,13 +97,13 @@ public class Controller {
         JsonNode doc =
                 DocumentModelFactory.create(typeName,id,json(req.body())).j();
 
-        mainDatastore.put(typeName,id, doc);
-        connectDatastore.put(typeName,id, doc);
+        _handlePost(typeName,id,doc);
 
         res.header("location", id);
         res.status(HTTP_CREATED);
         return doc;
     }
+
 
     Object handlePut(
             final String typeName,
@@ -108,7 +111,7 @@ public class Controller {
             final Response res) throws IOException {
 
         String id = req.params(ID);
-        JsonNode oldDoc = mainDatastore.get(typeName,id);
+        JsonNode oldDoc = _get(typeName,id);
 
         DocumentModel dm = DocumentModelFactory.create(typeName,id,json(req.body()));
         JsonNode doc = null;
@@ -120,11 +123,11 @@ public class Controller {
             res.status(HTTP_CREATED);
         }
 
-        mainDatastore.put(typeName,id, doc);
-        connectDatastore.put(typeName,id, doc);
+        _handlePut(typeName,id,doc);
 
         return doc;
     }
+
 
     Object handleGet(
             final String typeName,
@@ -133,9 +136,7 @@ public class Controller {
 
         String id = req.params(ID);
 
-        JsonNode result= shouldBeDirect(req.queryParams("direct"))
-                ? mainDatastore.get(typeName,id)
-                : connectDatastore.get(typeName,id);
+        JsonNode result= _handleGet(typeName,id,req);
 
         if (result==null){
             res.status(HTTP_NOT_FOUND);
@@ -144,22 +145,19 @@ public class Controller {
         return result;
     }
 
+
     Object handleSearch(
             final String typeName,
             final Request req,
             final Response res) throws IOException {
 
-        return connectDatastore.search( typeName,
-                req.queryString()
-        );
+        return _handleSearch(typeName,req.queryString());
     }
+
 
     private static JsonNode json(String s) throws IOException {
         return new ObjectMapper().readTree(s);
     }
 
-    private boolean shouldBeDirect(final String directParam) {
-        return (directParam!=null&&
-                directParam.equals("true"));
-    }
+
 }
