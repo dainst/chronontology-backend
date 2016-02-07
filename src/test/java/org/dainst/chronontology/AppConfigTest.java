@@ -19,9 +19,13 @@ public class AppConfigTest {
         appConfig= new AppConfig();
     }
 
+    private String propsFile(String number) {
+        return TestConstants.TEST_FOLDER+"config."+number+".properties";
+    }
+
     @Test
     public void basic() {
-        appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.1.properties");
+        appConfig.loadConfiguration(propsFile("1"));
         assertEquals(appConfig.getServerPort(),"4567");
         assertEquals(appConfig.getEsIndexName(),"jeremy");
         assertEquals(appConfig.getCredentials()[0],"admin:s3cr3t");
@@ -29,18 +33,18 @@ public class AppConfigTest {
 
     @Test
     public void missingRequiredProperty() {
-        assertFalse(appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.2.properties"));
+        assertFalse(appConfig.loadConfiguration(propsFile("2")));
     }
 
     @Test
     public void useEmbeddedES() {
-        appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.3.properties");
+        appConfig.loadConfiguration(propsFile("3"));
         assertEquals(appConfig.isUseEmbeddedES(),true);
     }
 
     @Test
     public void dontUseEmbeddedESBySettingParamFalse() {
-        appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.4.properties");
+        appConfig.loadConfiguration(propsFile("4"));
         assertEquals(appConfig.isUseEmbeddedES(),false);
     }
 
@@ -49,32 +53,32 @@ public class AppConfigTest {
      */
     @Test
     public void dontUseEmbeddedESByOmittingParam() {
-        assertTrue(appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.5.properties"));
+        assertTrue(appConfig.loadConfiguration(propsFile("5")));
         assertEquals(appConfig.isUseEmbeddedES(),false);
     }
 
     @Test
     public void overrideESUrlWhenUsingEmbeddedES() {
-        assertTrue(appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.6.properties"));
+        assertTrue(appConfig.loadConfiguration(propsFile("6")));
         assertEquals(appConfig.isUseEmbeddedES(),true);
         assertEquals(appConfig.getEsUrl(),Constants.EMBEDDED_ES_URL);
     }
 
     @Test
     public void allowOmitEsUrlWhenUsingEmbeddedES() {
-        assertTrue(appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.7.properties"));
+        assertTrue(appConfig.loadConfiguration(propsFile("7")));
         assertEquals(appConfig.isUseEmbeddedES(),true);
         assertEquals(appConfig.getEsUrl(),Constants.EMBEDDED_ES_URL);
     }
 
     @Test
     public void dontAllowOmitEsUrlWhenNotUsingEmbeddedES() {
-        assertFalse(appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.8.properties"));
+        assertFalse(appConfig.loadConfiguration(propsFile("8")));
     }
 
     @Test
     public void omitDatastorePath() {
-        assertTrue(appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.9.properties"));
+        assertTrue(appConfig.loadConfiguration(propsFile("9")));
         assertEquals(appConfig.getDataStorePath(),Constants.DATASTORE_PATH);
     }
 }
