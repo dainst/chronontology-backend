@@ -1,12 +1,23 @@
   # The embedded jetty will then listen on 0.0.0.0:serverPort.
 serverPort=4567
+
   # hostname of the elasticsearch intance used as connected datastore.
+  # If useEmbeddedES is set, the setting get ignored and can even be ommited.
 esUrl=http://localhost:9200
+
   # the elasticsearch index to be used.
 esIndexName=jeremy
+
   # the typenames to be used. Use , to separat them. Don't use whitespaces in between.
 typeNames=period
+
   # Relative path to the main datastore which is file system based.
 datastorePath=datastore/
+
   # Pairs of Usenames and Passwords. Separate pairs by ,. Don't use whitespaces.
 credentials=admin:s3cr3t
+
+  # If set to true, an embedded elasticSearchServer gets started along the app server.
+  # The parameter is optional and defaults to false. The embedded elasticsearch instance
+  # will listen on localhost port 9202. Any manual setting for esUrl will be ignored.
+useEmbeddedES=false

@@ -49,6 +49,8 @@ public class App {
         AppConfig appConfig= new AppConfig();
         if (!appConfig.loadConfiguration(DEFAULT_PROPERTIES_FILE_PATH)) System.exit(1);
 
+        if (appConfig.isUseEmbeddedES()) new EmbeddedES();
+
         final int serverPort= Integer.parseInt(appConfig.getServerPort());
         port(serverPort);
 
@@ -57,6 +59,7 @@ public class App {
                 new ESRestSearchableKeyValueStore(
                         new JsonRestClient(appConfig.getEsUrl()),
                         appConfig.getEsIndexName()));
+
 
         new Router(
                 controller,

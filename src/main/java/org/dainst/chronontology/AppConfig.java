@@ -19,9 +19,10 @@ public class AppConfig {
     private String serverPort = null;
     private String esIndexName = null;
     private String dataStorePath = null;
-    private String esUrl = null;
+    private String esUrl = Constants.EMBEDDED_ES_URL;
     private String[] credentials = null;
     private String typeNames = null;
+    private boolean useEmbeddedES = false;
 
     /**
      * @param propertiesFilePath
@@ -42,13 +43,23 @@ public class AppConfig {
     }
 
     private boolean _validate(final Properties props,final String name) {
+        return _validate(props,name,false);
+    }
+
+
+    private boolean _validate(final Properties props,final String name, final boolean optional) {
+
         if (props.get(name)==null) {
-            logger.error("Property "+name+" does not exist");
-            return false;
+            if (!optional){
+                logger.error("Property "+name+" does not exist");
+                return false;
+            }
+            return true;
         }
 
         return invokeSetter(name,(String)props.get(name));
     }
+
 
     /**
      * Invokes the static method with the name "set"+name,
@@ -92,7 +103,8 @@ public class AppConfig {
             _validate(props,"serverPort") &&
             _validate(props,"esIndexName") &&
             _validate(props,"datastorePath") &&
-            _validate(props,"esUrl") &&
+            _validate(props,"useEmbeddedES", true) &&
+            _validate(props,"esUrl",(useEmbeddedES)) &&  // must come after useEmbeddedES
             _validate(props,"credentials") &&
             _validate(props,"typeNames")
             );
@@ -119,7 +131,7 @@ public class AppConfig {
     }
 
     private void setCredentials(String credentials) {
-        this.credentials= credentials.split(":");
+        this.credentials= credentials.split(",");
     }
 
     public String getEsUrl() {
@@ -128,6 +140,9 @@ public class AppConfig {
 
     private void setEsUrl(String esUrl) {
         this.esUrl = esUrl;
+
+        // override it
+        if (useEmbeddedES) this.esUrl= Constants.EMBEDDED_ES_URL;
     }
 
     public String getEsIndexName() {
@@ -144,5 +159,15 @@ public class AppConfig {
 
     private void setDatastorePath(String dataStorePath) {
         this.dataStorePath= dataStorePath;
+    }
+
+    public boolean isUseEmbeddedES() {
+        return useEmbeddedES;
+    }
+
+    private void setUseEmbeddedES(String useIt) {
+        if (useIt.equals("true")) {
+            useEmbeddedES= true;
+        }
     }
 }

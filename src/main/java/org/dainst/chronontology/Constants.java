@@ -8,6 +8,8 @@ public class Constants {
     public static final String VERSION = "version";
     public static final String MODIFIED = "modified";
     public static final String CREATED = "created";
+    public static final String EMBEDDED_ES_PORT = "9202";
+    public static final String EMBEDDED_ES_URL = "http://localhost:"+EMBEDDED_ES_PORT;
 
     // A library for getting the status codes is not used on purpose
     // to protect against dependency change.
