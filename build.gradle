@@ -5,7 +5,6 @@ apply plugin: 'java'
 
 sourceCompatibility = 1.8
 
-
 repositories {
     mavenCentral()
 }
@@ -23,18 +22,35 @@ dependencies {
 }
 
 //create a single Jar with all dependencies
-task packageJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'Gradle Jar File Example',
-                'Implementation-Version': '0.1',
-                'Main-Class': 'org.dainst.chronontology.App'
+jar {
+    doFirst {
+        def serviceDir = file("$buildDir/META-INF/services")
+        serviceDir.deleteDir()
+        serviceDir.mkdirs()
+
+        // copy all service files from deps to buildDir
+        for(file in configurations.runtime) {
+            zipTree(file).matching{ include 'META-INF/services/*' }.each { f ->
+                new File(serviceDir, f.name) << f.getText("UTF-8")
+            }
+        }
     }
-    baseName = 'connected-backend'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
+
+    manifest {
+        attributes 'Implementation-Title': project.name,
+                'Main-Class': "org.dainst.chronontology.App"
+        // etc ...
+    }
+
+    from(configurations.runtime.collect{ it.isDirectory() ? it : zipTree(it) }) {
+        exclude 'META-INF/**' // Don't let Gradle merge service files
+    }
+
+    // include service files from the buildDir
+    from fileTree(buildDir).matching{ include 'META-INF/services/*' }
 }
 
-packageJar.dependsOn test
+jar.dependsOn test
 
 test {
     useTestNG()

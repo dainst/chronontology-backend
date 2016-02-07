@@ -14,7 +14,7 @@ gradle clean test
 To build the application, type in
 
 ```
-gradle clean packageJar
+gradle clean jar
 ```
 
 The binary with dependencies can be found here:
