@@ -12,6 +12,8 @@ esIndexName=jeremy
 typeNames=period
 
   # Relative path to the main datastore which is file system based.
+  # Defaults to ./datastore/ if omitted. In any case, the directory gets created
+  # at application startup if it does not exist.
 datastorePath=datastore/
 
   # Pairs of Usenames and Passwords. Separate pairs by ,. Don't use whitespaces.

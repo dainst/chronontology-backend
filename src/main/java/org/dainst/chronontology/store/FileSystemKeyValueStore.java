@@ -21,6 +21,7 @@ public class FileSystemKeyValueStore implements JsonBucketKeyValueStore {
     private final String baseFolder;
 
     public FileSystemKeyValueStore(String baseFolder) {
+        if (!baseFolder.endsWith("/")) baseFolder+="/";
         this.baseFolder=baseFolder;
     }
 
@@ -54,6 +55,8 @@ public class FileSystemKeyValueStore implements JsonBucketKeyValueStore {
     }
 
     /**
+     * TODO create type name dir if it does not exist
+     *
      * Stores or updates the item for key.
      * @param key
      * @param value

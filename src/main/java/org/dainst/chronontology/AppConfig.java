@@ -18,7 +18,7 @@ public class AppConfig {
 
     private String serverPort = null;
     private String esIndexName = null;
-    private String dataStorePath = null;
+    private String dataStorePath = Constants.DATASTORE_PATH;
     private String esUrl = Constants.EMBEDDED_ES_URL;
     private String[] credentials = null;
     private String typeNames = null;
@@ -81,7 +81,6 @@ public class AppConfig {
             return false;
         }
         try {
-            System.out.println(method.toString());
             method.invoke(this,value);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -102,7 +101,7 @@ public class AppConfig {
         return (
             _validate(props,"serverPort") &&
             _validate(props,"esIndexName") &&
-            _validate(props,"datastorePath") &&
+            _validate(props,"datastorePath",true) &&
             _validate(props,"useEmbeddedES", true) &&
             _validate(props,"esUrl",(useEmbeddedES)) &&  // must come after useEmbeddedES
             _validate(props,"credentials") &&

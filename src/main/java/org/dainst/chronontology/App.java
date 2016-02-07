@@ -26,8 +26,8 @@ public class App {
     private static FileSystemKeyValueStore initDS(String datastorePath) {
 
         if (!(new File(datastorePath).exists())) {
-            logger.error("The specified path " + datastorePath + " does not exist.");
-            System.exit(1);
+            logger.error("Creating directory \"" + datastorePath + "\" for usage by main datastore.");
+            new File(datastorePath).mkdirs();
         }
         return new FileSystemKeyValueStore(datastorePath);
     }

@@ -71,4 +71,10 @@ public class AppConfigTest {
     public void dontAllowOmitEsUrlWhenNotUsingEmbeddedES() {
         assertFalse(appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.8.properties"));
     }
+
+    @Test
+    public void omitDatastorePath() {
+        assertTrue(appConfig.loadConfiguration(TestConstants.TEST_FOLDER+"config.9.properties"));
+        assertEquals(appConfig.getDataStorePath(),Constants.DATASTORE_PATH);
+    }
 }
