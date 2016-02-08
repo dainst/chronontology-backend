@@ -1,5 +1,6 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.extra;
 
+import org.dainst.chronontology.Constants;
 import org.elasticsearch.common.settings.ImmutableSettings;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;

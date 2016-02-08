@@ -2,10 +2,14 @@ package org.dainst.chronontology;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.controller.ConnectController;
+import org.dainst.chronontology.controller.Controller;
+import org.dainst.chronontology.controller.SimpleController;
+import org.dainst.chronontology.extra.EmbeddedES;
 import org.dainst.chronontology.model.DocumentModel;
 import org.dainst.chronontology.model.DocumentModelFactory;
-import org.dainst.chronontology.store.ESRestSearchableKeyValueStore;
-import org.dainst.chronontology.store.FileSystemKeyValueStore;
+import org.dainst.chronontology.store.ESRestSearchableDatastore;
+import org.dainst.chronontology.store.FileSystemDatastore;
 
 import java.io.File;
 
@@ -23,13 +27,13 @@ public class App {
     final static Logger logger = Logger.getLogger(App.class);
     private static final String DEFAULT_PROPERTIES_FILE_PATH = "config.properties";
 
-    private static FileSystemKeyValueStore initDS(String datastorePath) {
+    private static FileSystemDatastore initDS(String datastorePath) {
 
         if (!(new File(datastorePath).exists())) {
             logger.error("Creating directory \"" + datastorePath + "\" for usage by main datastore.");
             new File(datastorePath).mkdirs();
         }
-        return new FileSystemKeyValueStore(datastorePath);
+        return new FileSystemDatastore(datastorePath);
     }
 
     private static String[] getTypes(final String typesString) {
@@ -55,8 +59,8 @@ public class App {
         port(serverPort);
 
 
-        ESRestSearchableKeyValueStore searchable=
-                new ESRestSearchableKeyValueStore(
+        ESRestSearchableDatastore searchable=
+                new ESRestSearchableDatastore(
                         new JsonRestClient(appConfig.getEsUrl()),
                         appConfig.getEsIndexName());
 

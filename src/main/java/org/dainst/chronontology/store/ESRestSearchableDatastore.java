@@ -2,10 +2,9 @@ package org.dainst.chronontology.store;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.log4j.Logger;
-import org.dainst.chronontology.Results;
+import org.dainst.chronontology.util.Results;
 import org.dainst.chronontology.connect.JsonRestClient;
 
 import java.io.IOException;
@@ -16,19 +15,19 @@ import java.io.IOException;
  *
  * @author Daniel M. de Oliveira
  */
-public class ESRestSearchableKeyValueStore implements JsonSearchableBucketKeyValueStore {
+public class ESRestSearchableDatastore implements SearchableDatastore {
 
 
-    final static Logger logger = Logger.getLogger(ESRestSearchableKeyValueStore.class);
+    final static Logger logger = Logger.getLogger(ESRestSearchableDatastore.class);
 
     private JsonRestClient client;
 
     private final String indexName;
 
     @SuppressWarnings("unused")
-    private ESRestSearchableKeyValueStore() {indexName=null;};
+    private ESRestSearchableDatastore() {indexName=null;};
 
-    public ESRestSearchableKeyValueStore(
+    public ESRestSearchableDatastore(
             final JsonRestClient client,
             final String indexName) {
 

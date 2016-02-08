@@ -1,4 +1,4 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

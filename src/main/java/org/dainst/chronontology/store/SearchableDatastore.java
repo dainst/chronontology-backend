@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 /**
  * @author Daniel M. de Oliveira
  */
-public interface JsonSearchableBucketKeyValueStore extends JsonBucketKeyValueStore {
+public interface SearchableDatastore extends Datastore {
 
     /**
      * @param bucket

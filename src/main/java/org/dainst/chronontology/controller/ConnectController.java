@@ -1,8 +1,9 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.dainst.chronontology.store.JsonBucketKeyValueStore;
-import org.dainst.chronontology.store.JsonSearchableBucketKeyValueStore;
+import org.dainst.chronontology.util.Results;
+import org.dainst.chronontology.store.Datastore;
+import org.dainst.chronontology.store.SearchableDatastore;
 import spark.Request;
 
 import java.io.IOException;
@@ -15,10 +16,10 @@ import java.io.IOException;
  */
 public class ConnectController extends Controller {
 
-    protected final JsonBucketKeyValueStore mainDatastore;
-    protected final JsonSearchableBucketKeyValueStore connectDatastore;
+    protected final Datastore mainDatastore;
+    protected final SearchableDatastore connectDatastore;
 
-    public ConnectController(JsonBucketKeyValueStore mainDatastore, JsonSearchableBucketKeyValueStore connectDatastore) {
+    public ConnectController(Datastore mainDatastore, SearchableDatastore connectDatastore) {
         this.mainDatastore= mainDatastore;
         this.connectDatastore= connectDatastore;
     }

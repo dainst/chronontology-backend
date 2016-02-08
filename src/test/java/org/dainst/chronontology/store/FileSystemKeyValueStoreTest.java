@@ -31,7 +31,7 @@ public class FileSystemKeyValueStoreTest {
     @Test
     public void putAndGet() throws IOException {
 
-        FileSystemKeyValueStore store = new FileSystemKeyValueStore(BASE_FOLDER);
+        FileSystemDatastore store = new FileSystemDatastore(BASE_FOLDER);
         store.put(TYPE_NAME,"a",sampleJson("a"));
         assertEquals(store.get(TYPE_NAME,"a"), sampleJson("a"));
     }

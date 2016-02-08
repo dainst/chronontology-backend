@@ -15,12 +15,12 @@ import java.nio.file.Paths;
  *
  * @author Daniel M. de Oliveira
  */
-public class FileSystemKeyValueStore implements JsonBucketKeyValueStore {
+public class FileSystemDatastore implements Datastore {
 
     private static final String SUFFIX = ".txt";
     private final String baseFolder;
 
-    public FileSystemKeyValueStore(String baseFolder) {
+    public FileSystemDatastore(String baseFolder) {
         if (!baseFolder.endsWith("/")) baseFolder+="/";
         this.baseFolder=baseFolder;
     }

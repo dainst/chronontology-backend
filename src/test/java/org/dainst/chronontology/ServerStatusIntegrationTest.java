@@ -2,6 +2,7 @@ package org.dainst.chronontology;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.store.ESServerTestUtil;
+import org.dainst.chronontology.util.Results;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

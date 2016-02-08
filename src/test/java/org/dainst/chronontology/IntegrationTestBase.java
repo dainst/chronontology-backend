@@ -4,9 +4,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import org.dainst.chronontology.connect.JsonRestClient;
-import org.dainst.chronontology.store.ESRestSearchableKeyValueStore;
+import org.dainst.chronontology.controller.ConnectController;
+import org.dainst.chronontology.controller.Controller;
+import org.dainst.chronontology.store.ESRestSearchableDatastore;
 import org.dainst.chronontology.store.ESServerTestUtil;
-import org.dainst.chronontology.store.FileSystemKeyValueStore;
+import org.dainst.chronontology.store.FileSystemDatastore;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -39,12 +41,12 @@ public class IntegrationTestBase {
 
 
 
-    protected static final ESRestSearchableKeyValueStore connectDatastore
-            = new ESRestSearchableKeyValueStore(ESClientTestUtil.getClient(),ESClientTestUtil.getIndexName());
+    protected static final ESRestSearchableDatastore connectDatastore
+            = new ESRestSearchableDatastore(ESClientTestUtil.getClient(),ESClientTestUtil.getIndexName());
 
 
-    protected static final FileSystemKeyValueStore mainDatastore
-            = new FileSystemKeyValueStore(TestConstants.TEST_FOLDER);
+    protected static final FileSystemDatastore mainDatastore
+            = new FileSystemDatastore(TestConstants.TEST_FOLDER);
 
 
 

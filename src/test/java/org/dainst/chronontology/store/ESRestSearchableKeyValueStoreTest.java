@@ -20,8 +20,8 @@ public class ESRestSearchableKeyValueStoreTest {
 
 
     private final JsonRestClient jrc= new JsonRestClient(ESServerTestUtil.getUrl());
-    private final ESRestSearchableKeyValueStore store=
-            new ESRestSearchableKeyValueStore(jrc,TEST_INDEX);
+    private final ESRestSearchableDatastore store=
+            new ESRestSearchableDatastore(jrc,TEST_INDEX);
 
     private JsonNode sampleJson(final String sampleFieldValue) throws IOException {
         return new ObjectMapper().readTree

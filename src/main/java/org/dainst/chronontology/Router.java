@@ -4,6 +4,7 @@ import static spark.Spark.*;
 import static org.dainst.chronontology.Constants.*;
 
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.controller.Controller;
 import spark.Request;
 import spark.Response;
 

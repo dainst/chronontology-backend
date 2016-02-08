@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import org.dainst.chronontology.store.ESServerTestUtil;
+import org.dainst.chronontology.util.Results;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;

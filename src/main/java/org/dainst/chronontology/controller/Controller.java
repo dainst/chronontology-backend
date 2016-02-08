@@ -1,14 +1,13 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.util.Results;
 import org.dainst.chronontology.model.DocumentModel;
 import org.dainst.chronontology.model.DocumentModelFactory;
-import org.dainst.chronontology.store.DataStore;
-import org.dainst.chronontology.store.JsonBucketKeyValueStore;
-import org.dainst.chronontology.store.JsonSearchableBucketKeyValueStore;
+import org.dainst.chronontology.store.Connector;
 import spark.Request;
 import spark.Response;
 
@@ -64,7 +63,7 @@ public abstract class Controller {
      * @return json object with server state details
      * @throws IOException
      */
-    Object handleServerStatus(
+    public Object handleServerStatus(
             final Response res) throws IOException {
 
         JsonNode serverStatus= makeServerStatusJson();
@@ -81,13 +80,13 @@ public abstract class Controller {
     }
 
 
-    protected JsonNode makeDataStoreStatus(String type, DataStore store) throws IOException {
+    protected JsonNode makeDataStoreStatus(String type, Connector store) throws IOException {
         String status = DATASTORE_STATUS_DOWN;
         if (store.isConnected()) status = DATASTORE_STATUS_OK;
         return json("{ \"type\" : \""+type+"\", \"status\" : \""+status+"\" }");
     }
 
-    Object handlePost(
+    public Object handlePost(
             final String typeName,
             final Request req,
             final Response res) throws IOException {
@@ -105,7 +104,7 @@ public abstract class Controller {
     }
 
 
-    Object handlePut(
+    public Object handlePut(
             final String typeName,
             final Request req,
             final Response res) throws IOException {
@@ -129,7 +128,7 @@ public abstract class Controller {
     }
 
 
-    Object handleGet(
+    public Object handleGet(
             final String typeName,
             final Request req,
             final Response res) throws IOException {
@@ -146,7 +145,7 @@ public abstract class Controller {
     }
 
 
-    Object handleSearch(
+    public Object handleSearch(
             final String typeName,
             final Request req,
             final Response res) throws IOException {
