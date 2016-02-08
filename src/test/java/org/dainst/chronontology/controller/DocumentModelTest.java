@@ -1,10 +1,12 @@
-package org.dainst.chronontology.model;
+package org.dainst.chronontology.controller;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.dainst.chronontology.controller.DocumentModel;
 import org.json.JSONException;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.testng.annotations.Test;
+
 import java.io.IOException;
 
 import static org.dainst.chronontology.Constants.*;
@@ -15,7 +17,7 @@ import static org.dainst.chronontology.TestConstants.*;
 /**
  * @author Daniel M. de Oliveira
  */
-public class GenericTypeDocumentModelTest {
+public class DocumentModelTest {
 
     public static final String ADMIN = "admin";
 
@@ -43,10 +45,10 @@ public class GenericTypeDocumentModelTest {
     @Test
     public void createdDateStaysSame() throws IOException, InterruptedException {
         JsonNode old=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
+                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
         Thread.sleep(10);
-        GenericTypeDocumentModel dm=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN);
+        DocumentModel dm=
+                new DocumentModel(TEST_TYPE,"1",json(), ADMIN);
 
         jsonAssertEquals(
                 dm.merge(old).j().get(CREATED),
@@ -56,10 +58,10 @@ public class GenericTypeDocumentModelTest {
     @Test
     public void modifiedDatesMerge() throws IOException, InterruptedException, JSONException {
         JsonNode old=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
+                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
         Thread.sleep(10);
-        GenericTypeDocumentModel dm=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN);
+        DocumentModel dm=
+                new DocumentModel(TEST_TYPE,"1",json(), ADMIN);
 
         JsonNode nodeWithDates = nodeWithModifiedDates(old, dm.j());
 
@@ -72,14 +74,14 @@ public class GenericTypeDocumentModelTest {
     public void setVersionOnCreate() throws IOException, InterruptedException, JSONException {
 
         jsonAssertEquals(
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j(),
+                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j(),
                 makeNodeWithVersion(1));
     }
 
     @Test
     public void setCreateUserOnCreate() throws IOException {
         jsonAssertEquals(
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j()
+                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j()
                         .get(CREATED),
                 json("{ \"user\" : \""+ADMIN+"\" }"));
     }
@@ -87,7 +89,7 @@ public class GenericTypeDocumentModelTest {
     @Test
     public void setModifiedUserOnCreate() throws IOException {
         jsonAssertEquals(
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j().
+                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j().
                         get(MODIFIED).get(0),
                 json("{\"user\":\""+ADMIN+"\"}"));
     }
@@ -95,9 +97,9 @@ public class GenericTypeDocumentModelTest {
     @Test
     public void differentUserOnModify() throws IOException {
         JsonNode old=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
-        GenericTypeDocumentModel dm=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), "ove");
+                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
+        DocumentModel dm=
+                new DocumentModel(TEST_TYPE,"1",json(), "ove");
 
         jsonAssertEquals(
                 dm.merge(old).j().
@@ -109,9 +111,9 @@ public class GenericTypeDocumentModelTest {
     @Test
     public void countVersions() throws IOException, InterruptedException, JSONException {
         JsonNode old=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
-        GenericTypeDocumentModel dm=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN);
+                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
+        DocumentModel dm=
+                new DocumentModel(TEST_TYPE,"1",json(), ADMIN);
 
         jsonAssertEquals(dm.merge(old).j(), makeNodeWithVersion(2));
     }

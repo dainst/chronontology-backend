@@ -1,4 +1,4 @@
-package org.dainst.chronontology.model;
+package org.dainst.chronontology.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,14 +11,9 @@ import java.time.format.DateTimeFormatter;
 import static org.dainst.chronontology.Constants.*;
 
 /**
- * Clients outside of this package should never create instances
- * of it directly.
- *
  * @author Daniel M. de Oliveira
  */
-class // Leave package private!
-
-        GenericTypeDocumentModel implements DocumentModel {
+public class DocumentModel {
 
     private final ObjectNode node;
     private final String typeName;
@@ -26,16 +21,12 @@ class // Leave package private!
     private final String userName;
 
     /**
-     * Should not be called directly by clients outside of the model package.
-     * They should use
-     * {@link DocumentModelFactory#create(String, String, JsonNode, String)}
-     * instead.
      * @param typeName
      * @param userName
      * @param node
      * @param id
      */
-    GenericTypeDocumentModel(
+    public DocumentModel(
             final String typeName,
             final String id,
             final JsonNode node,
@@ -55,14 +46,6 @@ class // Leave package private!
         initCreatedAndModifiedDates();
     }
 
-
-    @SuppressWarnings("unused")
-    private GenericTypeDocumentModel() {
-        typeName= null;
-        node = null;
-        id= null;
-        userName= null;
-    }
 
     /**
      * @return ISO 8601 formatted date.
@@ -101,7 +84,7 @@ class // Leave package private!
      * @param oldNode
      * @return
      */
-    public GenericTypeDocumentModel merge(final JsonNode oldNode) {
+    public DocumentModel merge(final JsonNode oldNode) {
 
         setNodeId();
         mergeModifiedDates(oldNode);

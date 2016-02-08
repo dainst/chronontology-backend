@@ -6,8 +6,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.CredentialsDecoder;
 import org.dainst.chronontology.util.Results;
-import org.dainst.chronontology.model.DocumentModel;
-import org.dainst.chronontology.model.DocumentModelFactory;
 import org.dainst.chronontology.store.Connector;
 import spark.Request;
 import spark.Response;
@@ -99,7 +97,7 @@ public abstract class Controller {
         String id= determineFreeId(typeName);
 
         JsonNode doc =
-                DocumentModelFactory.create(
+                new DocumentModel(
                         typeName,id,json(req.body()), user(req)).j();
 
         _handlePost(typeName,id,doc);
@@ -118,7 +116,7 @@ public abstract class Controller {
         String id = req.params(ID);
         JsonNode oldDoc = _get(typeName,id);
 
-        DocumentModel dm = DocumentModelFactory.create(
+        DocumentModel dm = new DocumentModel(
                 typeName,id,json(req.body()), user(req));
         JsonNode doc = null;
         if (oldDoc!=null) {

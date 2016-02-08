@@ -6,8 +6,7 @@ import org.dainst.chronontology.controller.ConnectController;
 import org.dainst.chronontology.controller.Controller;
 import org.dainst.chronontology.controller.SimpleController;
 import org.dainst.chronontology.extra.EmbeddedES;
-import org.dainst.chronontology.model.DocumentModel;
-import org.dainst.chronontology.model.DocumentModelFactory;
+import org.dainst.chronontology.controller.DocumentModel;
 import org.dainst.chronontology.store.ESRestSearchableDatastore;
 import org.dainst.chronontology.store.FileSystemDatastore;
 
@@ -39,7 +38,7 @@ public class App {
     private static String[] getTypes(final String typesString) {
         String[] types= typesString.split(",");
         for (String typeName:types) {
-            DocumentModel dm= DocumentModelFactory.create(typeName, "1", new ObjectMapper().createObjectNode(),"admin");
+            DocumentModel dm= new DocumentModel(typeName, "1", new ObjectMapper().createObjectNode(),"admin");
             if (dm==null) {
                 logger.error("No document model found for "+typeName);
                 System.exit(1);
