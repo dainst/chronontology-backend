@@ -2,7 +2,7 @@ package org.dainst.chronontology.store;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.dainst.chronontology.connect.JsonRestClient;
+import org.dainst.chronontology.util.JsonRestClient;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;

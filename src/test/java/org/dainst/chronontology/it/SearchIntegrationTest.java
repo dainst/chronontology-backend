@@ -1,4 +1,4 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.Request;

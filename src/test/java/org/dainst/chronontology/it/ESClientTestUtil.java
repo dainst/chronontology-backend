@@ -1,8 +1,9 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.dainst.chronontology.connect.JsonRestClient;
+import org.dainst.chronontology.TestConstants;
+import org.dainst.chronontology.util.JsonRestClient;
 import org.dainst.chronontology.store.ESServerTestUtil;
 
 import java.io.IOException;

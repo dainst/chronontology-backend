@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.util.Results;
-import org.dainst.chronontology.connect.JsonRestClient;
+import org.dainst.chronontology.util.JsonRestClient;
 
 import java.io.IOException;
 

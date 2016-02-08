@@ -1,4 +1,4 @@
-package org.dainst.chronontology.connect;
+package org.dainst.chronontology.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,6 +1,8 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dainst.chronontology.Constants;
+import org.dainst.chronontology.it.IntegrationTestBase;
 import org.dainst.chronontology.store.ESServerTestUtil;
 import org.dainst.chronontology.util.Results;
 import org.testng.annotations.Test;
@@ -18,7 +20,7 @@ public class ServerStatusIntegrationTest extends IntegrationTestBase {
     private JsonNode dataStoresJson(String status) {
         Results datastores = new Results("datastores");
         try {
-            datastores.add(json("{ \"type\" : \"main\", \"status\" : \""+Constants.DATASTORE_STATUS_OK+"\" }"));
+            datastores.add(json("{ \"type\" : \"main\", \"status\" : \""+ Constants.DATASTORE_STATUS_OK+"\" }"));
             datastores.add(json("{ \"type\" : \"connect\", \"status\" : \""+status+"\" }"));
             return datastores.j();
         } catch (IOException e) {}

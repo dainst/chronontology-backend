@@ -1,9 +1,11 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
-import org.dainst.chronontology.connect.JsonRestClient;
+import org.dainst.chronontology.Router;
+import org.dainst.chronontology.TestConstants;
+import org.dainst.chronontology.util.JsonRestClient;
 import org.dainst.chronontology.controller.ConnectController;
 import org.dainst.chronontology.controller.Controller;
 import org.dainst.chronontology.store.ESRestSearchableDatastore;

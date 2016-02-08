@@ -1,6 +1,7 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.it;
 
 
+import org.dainst.chronontology.it.ResponseIntegrationTestBase;
 import org.testng.annotations.Test;
 
 import java.io.IOException;

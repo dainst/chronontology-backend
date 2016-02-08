@@ -14,7 +14,7 @@ import java.io.File;
 
 import static spark.Spark.port;
 
-import org.dainst.chronontology.connect.JsonRestClient;
+import org.dainst.chronontology.util.JsonRestClient;
 
 /**
  * Main class. Handles wiring of application components.

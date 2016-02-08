@@ -1,4 +1,4 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.it;
 
 
 import com.squareup.okhttp.Response;
