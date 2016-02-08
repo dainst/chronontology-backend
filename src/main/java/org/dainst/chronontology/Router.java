@@ -67,12 +67,8 @@ public class Router {
             if(request.headers(HEADER_AUTH) != null
                     && request.headers(HEADER_AUTH).startsWith("Basic"))
             {
-                String decodedCredentials = new String(
-                        Base64.getDecoder().decode(
-                                request.headers(HEADER_AUTH).substring("Basic".length()).trim()));
-
                 for (String cred:credentials)
-                    if(decodedCredentials.equals(cred)) authenticated = true;
+                    if(CredentialsDecoder.decode(request.headers(HEADER_AUTH)).equals(cred)) authenticated = true;
             }
             if(!authenticated) {
                 response.header("WWW-Authenticate", "Basic realm=\"Restricted\"");

@@ -39,7 +39,7 @@ public class App {
     private static String[] getTypes(final String typesString) {
         String[] types= typesString.split(",");
         for (String typeName:types) {
-            DocumentModel dm= DocumentModelFactory.create(typeName, "1", new ObjectMapper().createObjectNode());
+            DocumentModel dm= DocumentModelFactory.create(typeName, "1", new ObjectMapper().createObjectNode(),"admin");
             if (dm==null) {
                 logger.error("No document model found for "+typeName);
                 System.exit(1);

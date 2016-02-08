@@ -18,7 +18,7 @@ public class DocumentModelFactory {
      * @param jsonNode
      * @return null if no DocumentModel for typeName has been found.
      */
-    public static DocumentModel create(String typeName,String id,JsonNode jsonNode) {
-        return new GenericTypeDocumentModel(typeName,id,jsonNode);
+    public static DocumentModel create(String typeName,String id,JsonNode jsonNode,String userName) {
+        return new GenericTypeDocumentModel(typeName,id,jsonNode,userName);
     }
 }

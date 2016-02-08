@@ -17,10 +17,10 @@ public class Constants {
     public static final int HTTP_NOT_FOUND = 404;
     static final int HTTP_UNAUTHORIZED = 401;
 
-    static final String HEADER_AUTH = "Authorization";
-    static final String HEADER_CT = "Content-Type";
-    static final String HEADER_LOC = "location";
-    static final String HEADER_JSON = "application/json";
+    public static final String HEADER_AUTH = "Authorization";
+    public static final String HEADER_CT = "Content-Type";
+    public static final String HEADER_LOC = "location";
+    public static final String HEADER_JSON = "application/json";
 
     public static final String DATASTORE_STATUS_OK = "ok";
     public static final String DATASTORE_STATUS_DOWN = "down";

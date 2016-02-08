@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.CredentialsDecoder;
 import org.dainst.chronontology.util.Results;
 import org.dainst.chronontology.model.DocumentModel;
 import org.dainst.chronontology.model.DocumentModelFactory;
@@ -86,6 +87,10 @@ public abstract class Controller {
         return json("{ \"type\" : \""+type+"\", \"status\" : \""+status+"\" }");
     }
 
+    private String user(Request req) {
+        return CredentialsDecoder.decode(req.headers(HEADER_AUTH)).split(":")[0];
+    }
+
     public Object handlePost(
             final String typeName,
             final Request req,
@@ -94,7 +99,8 @@ public abstract class Controller {
         String id= determineFreeId(typeName);
 
         JsonNode doc =
-                DocumentModelFactory.create(typeName,id,json(req.body())).j();
+                DocumentModelFactory.create(
+                        typeName,id,json(req.body()), user(req)).j();
 
         _handlePost(typeName,id,doc);
 
@@ -112,7 +118,8 @@ public abstract class Controller {
         String id = req.params(ID);
         JsonNode oldDoc = _get(typeName,id);
 
-        DocumentModel dm = DocumentModelFactory.create(typeName,id,json(req.body()));
+        DocumentModel dm = DocumentModelFactory.create(
+                typeName,id,json(req.body()), user(req));
         JsonNode doc = null;
         if (oldDoc!=null) {
             doc= dm.merge(oldDoc).j();

@@ -1,6 +1,7 @@
 package org.dainst.chronontology.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -22,24 +23,28 @@ class // Leave package private!
     private final ObjectNode node;
     private final String typeName;
     private final String id;
+    private final String userName;
 
     /**
      * Should not be called directly by clients outside of the model package.
      * They should use
-     * {@link DocumentModelFactory#create(String, String, JsonNode)}
+     * {@link DocumentModelFactory#create(String, String, JsonNode, String)}
      * instead.
      * @param typeName
+     * @param userName
      * @param node
      * @param id
      */
     GenericTypeDocumentModel(
             final String typeName,
             final String id,
-            final JsonNode node) {
+            final JsonNode node,
+            final String userName) {
 
         this.node = (ObjectNode) node;
         this.typeName= typeName;
         this.id= id;
+        this.userName= userName;
 
         initNode();
     }
@@ -56,6 +61,7 @@ class // Leave package private!
         typeName= null;
         node = null;
         id= null;
+        userName= null;
     }
 
     /**
@@ -72,10 +78,12 @@ class // Leave package private!
     }
 
     private void initCreatedAndModifiedDates() {
-        String date = date();
-        node.put(CREATED, date);
+        ObjectNode created= (ObjectNode) new ObjectMapper().createObjectNode();
+        created.put("user",userName);
+        created.put("date",date());
+        node.put(CREATED, created);
         ArrayNode a = node.putArray(MODIFIED);
-        a.add(date);
+        a.add(created);
     }
 
     public JsonNode j() {
@@ -113,7 +121,7 @@ class // Leave package private!
     }
 
     private void overwriteCreatedDate(JsonNode oldNode) {
-        String dateCreated = oldNode.get(CREATED).asText();
+        JsonNode dateCreated = oldNode.get(CREATED);
         node.put(CREATED, dateCreated);
     }
 

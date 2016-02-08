@@ -17,9 +17,7 @@ import static org.dainst.chronontology.TestConstants.*;
  */
 public class GenericTypeDocumentModelTest {
 
-    private String extractDateCreated(JsonNode n) {
-        return n.get(CREATED).toString().replace("\"", "");
-    }
+    public static final String ADMIN = "admin";
 
     /**
      * Produces a node whose modified dates array
@@ -31,8 +29,8 @@ public class GenericTypeDocumentModelTest {
     private JsonNode nodeWithModifiedDates(JsonNode old, JsonNode niew) {
         ObjectNode example= (ObjectNode) json();
         ArrayNode a = example.putArray(MODIFIED);
-        a.add(extractDateCreated(old));
-        a.add(extractDateCreated(niew));
+        a.add(old.get(MODIFIED).get(0));
+        a.add(niew.get(MODIFIED).get(0));
         return example;
     }
 
@@ -45,23 +43,23 @@ public class GenericTypeDocumentModelTest {
     @Test
     public void createdDateStaysSame() throws IOException, InterruptedException {
         JsonNode old=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json()).j();
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
         Thread.sleep(10);
         GenericTypeDocumentModel dm=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json());
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN);
 
-        assertEquals(
-                extractDateCreated(dm.merge(old).j()),
-                extractDateCreated(old));
+        jsonAssertEquals(
+                dm.merge(old).j().get(CREATED),
+                old.get(CREATED));
     }
 
     @Test
     public void modifiedDatesMerge() throws IOException, InterruptedException, JSONException {
         JsonNode old=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json()).j();
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
         Thread.sleep(10);
         GenericTypeDocumentModel dm=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json());
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN);
 
         JsonNode nodeWithDates = nodeWithModifiedDates(old, dm.j());
 
@@ -74,17 +72,46 @@ public class GenericTypeDocumentModelTest {
     public void setVersionOnCreate() throws IOException, InterruptedException, JSONException {
 
         jsonAssertEquals(
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json()).j(),
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j(),
                 makeNodeWithVersion(1));
+    }
+
+    @Test
+    public void setCreateUserOnCreate() throws IOException {
+        jsonAssertEquals(
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j()
+                        .get(CREATED),
+                json("{ \"user\" : \""+ADMIN+"\" }"));
+    }
+
+    @Test
+    public void setModifiedUserOnCreate() throws IOException {
+        jsonAssertEquals(
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j().
+                        get(MODIFIED).get(0),
+                json("{\"user\":\""+ADMIN+"\"}"));
+    }
+
+    @Test
+    public void differentUserOnModify() throws IOException {
+        JsonNode old=
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
+        GenericTypeDocumentModel dm=
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), "ove");
+
+        jsonAssertEquals(
+                dm.merge(old).j().
+                        get(MODIFIED).get(1),
+                json("{\"user\":\"ove\"}"));
     }
 
 
     @Test
     public void countVersions() throws IOException, InterruptedException, JSONException {
         JsonNode old=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json()).j();
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
         GenericTypeDocumentModel dm=
-                new GenericTypeDocumentModel(TEST_TYPE,"1",json());
+                new GenericTypeDocumentModel(TEST_TYPE,"1",json(), ADMIN);
 
         jsonAssertEquals(dm.merge(old).j(), makeNodeWithVersion(2));
     }
