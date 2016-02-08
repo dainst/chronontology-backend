@@ -23,6 +23,7 @@ public class AppConfig {
     private String[] credentials = null;
     private String typeNames = null;
     private boolean useEmbeddedES = false;
+    private boolean useConnect = true;
 
     /**
      * @param propertiesFilePath
@@ -105,7 +106,9 @@ public class AppConfig {
             _validate(props,"useEmbeddedES", true) &&
             _validate(props,"esUrl",(useEmbeddedES)) &&  // must come after useEmbeddedES
             _validate(props,"credentials") &&
-            _validate(props,"typeNames")
+            _validate(props,"typeNames") &&
+            _validate(props,"useConnect",true)
+
             );
     }
 
@@ -165,8 +168,14 @@ public class AppConfig {
     }
 
     private void setUseEmbeddedES(String useIt) {
-        if (useIt.equals("true")) {
-            useEmbeddedES= true;
-        }
+        if (useIt.equals("true")) useEmbeddedES= true;
+    }
+
+    public boolean isUseConnect() {
+        return useConnect;
+    }
+
+    private void setUseConnect(String useIt) {
+        if (useIt.equals("false")) useConnect = false;
     }
 }

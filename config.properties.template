@@ -7,7 +7,7 @@
 typeNames=period
 credentials=admin:abc
 useEmbeddedES=true
-
+useConnect=false
 
 
 ## DETAILED INFORMATION ##
@@ -31,7 +31,9 @@ useEmbeddedES=true
 #
 # typeNames=period
 
-# Relative path to the main datastore which is file system based.
+# If connect is active, that is if useConnect is set to true (default),
+# then a file system datastore is used as a main datastore.
+# The parameter then is the relative path to the main datastore which is file system based.
 # Defaults to ./datastore/ if omitted. In any case, the directory gets created
 # at application startup if it does not exist.
 #
@@ -46,3 +48,9 @@ useEmbeddedES=true
 # will listen on localhost port 9202. Any manual setting for esUrl will be ignored.
 #
 # useEmbeddedES=false
+
+# If set to true the connected mode gets activated where data gets sent to an
+# authoritative as well as a connected datastore.
+# Paremeter can be ommited in which case it defaults to true.
+#
+# useConnect=true

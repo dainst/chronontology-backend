@@ -54,11 +54,19 @@ public class App {
         final int serverPort= Integer.parseInt(appConfig.getServerPort());
         port(serverPort);
 
-        final Controller controller= new ConnectController(
-                initDS(appConfig.getDataStorePath()),
+
+        ESRestSearchableKeyValueStore searchable=
                 new ESRestSearchableKeyValueStore(
                         new JsonRestClient(appConfig.getEsUrl()),
-                        appConfig.getEsIndexName()));
+                        appConfig.getEsIndexName());
+
+
+        Controller controller= null;
+        if (appConfig.isUseConnect())
+            controller= new ConnectController(
+                    initDS(appConfig.getDataStorePath()),searchable);
+        else
+            controller= new SimpleController(searchable);
 
 
         new Router(

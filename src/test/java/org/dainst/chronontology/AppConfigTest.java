@@ -29,6 +29,7 @@ public class AppConfigTest {
         assertEquals(appConfig.getServerPort(),"4567");
         assertEquals(appConfig.getEsIndexName(),"jeremy");
         assertEquals(appConfig.getCredentials()[0],"admin:s3cr3t");
+        assertEquals(appConfig.isUseConnect(),true);
     }
 
     @Test
@@ -92,5 +93,11 @@ public class AppConfigTest {
     public void allowOmitESIndexName() {
         assertTrue(appConfig.loadConfiguration(propsFile("11")));
         assertEquals(appConfig.getServerPort(),Constants.SERVER_PORT);
+    }
+
+    @Test
+    public void dontUseConnect() {
+        assertTrue(appConfig.loadConfiguration(propsFile("12")));
+        assertEquals(appConfig.isUseConnect(),false);
     }
 }
