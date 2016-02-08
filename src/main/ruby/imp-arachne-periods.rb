@@ -9,13 +9,15 @@ require "unicode_utils"
 ops = eval(File.open('config.rb') {|f| f.read })
 db_user = ops[:db_user]
 db_password = ops[:db_password]
+db_url = ops[:db_url]
 api_user = ops[:api_user]
 api_password = ops[:api_password]
+api_url = ops[:api_url]
 
-db = DBI.connect("DBI:Mysql:arachne:arachne.uni-koeln.de", db_user, db_password)
+db = DBI.connect('DBI:Mysql:arachne:'+db_url, db_user, db_password)
 db.execute("SET NAMES 'utf8'")
 
-api = RestClient::Resource.new("0.0.0.0:4567", :user => api_user, :password => api_password)
+api = RestClient::Resource.new(api_url, :user => api_user, :password => api_password)
 
 sql = "SELECT Inhalt FROM `wertelisten` WHERE  `FS_WlID` = 88"
 result = db.execute(sql)
