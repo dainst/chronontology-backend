@@ -5,9 +5,9 @@ package org.dainst.chronontology.config;
  *
  * @author Daniel M. de Oliveira
  */
-public class ConfigException extends RuntimeException {
+public class ConfigValidationException extends RuntimeException {
 
-    public ConfigException(String violation) {
+    public ConfigValidationException(String violation) {
         super("Constraint violation in configuration: " + violation);
     }
 }

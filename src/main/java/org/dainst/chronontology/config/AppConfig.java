@@ -1,7 +1,6 @@
 package org.dainst.chronontology.config;
 
 import org.apache.log4j.Logger;
-import org.dainst.chronontology.Constants;
 
 import java.util.Properties;
 
@@ -12,25 +11,13 @@ public class AppConfig extends Config {
 
     final static Logger logger = Logger.getLogger(AppConfig.class);
 
-    private String serverPort = Constants.SERVER_PORT;
-    private String esPort = Constants.EMBEDDED_ES_PORT;
+    private String serverPort = ConfigConstants.SERVER_PORT;
     private String[] credentials = null;
     private String typeNames = null;
     private boolean useEmbeddedES = false;
     private boolean useConnect = true;
     private DatastoreConfig[] datastoreConfigs = new DatastoreConfig[2];
-
-
-    private boolean validateDatastores(Properties props) {
-        boolean datastoresValidated= true;
-        datastoreConfigs[0]= new DatastoreConfig("datastores.0.");
-        if (!datastoreConfigs[0].validate(props)) datastoresValidated=false;
-        if (useConnect) {
-            datastoreConfigs[1]= new DatastoreConfig("datastores.1.");
-            if (!datastoreConfigs[1].validate(props)) datastoresValidated=false;
-        }
-        return datastoresValidated;
-    }
+    private ElasticsearchServerConfig elasticsearchServerConfig = null;
 
     /**
      * @param props
@@ -41,14 +28,34 @@ public class AppConfig extends Config {
     public boolean validate(Properties props) {
 
         return (
-            _validate(props,"useConnect",true) &&
-            validateDatastores(props) && // must come after useConnect
+            validateDatastores(props) &&
             _validate(props,"serverPort",true) &&
-            _validate(props,"useEmbeddedES", true) &&
-            _validate(props,"esPort",(useEmbeddedES)) &&  // must come after useEmbeddedES
+            validateEsServer(props) &&
             _validate(props,"credentials") &&
             _validate(props,"typeNames")
             );
+    }
+
+    private boolean validateDatastores(Properties props) {
+        if (!_validate(props,"useConnect",true)) return false;
+
+        boolean datastoresValidated= true;
+        datastoreConfigs[0]= new DatastoreConfig("0");
+        if (!datastoreConfigs[0].validate(props)) datastoresValidated=false;
+        if (useConnect) {
+            datastoreConfigs[1]= new DatastoreConfig("1");
+            if (!datastoreConfigs[1].validate(props)) datastoresValidated=false;
+        }
+        return datastoresValidated;
+    }
+
+    private boolean validateEsServer(Properties props) {
+        if (!_validate(props,"useEmbeddedES", true)) return false;
+        if (useEmbeddedES) {
+            elasticsearchServerConfig= new ElasticsearchServerConfig();
+            return elasticsearchServerConfig.validate(props);
+        }
+        return true;
     }
 
     public String getServerPort() {
@@ -75,18 +82,6 @@ public class AppConfig extends Config {
         this.credentials= credentials.split(",");
     }
 
-    public String getEsPort() {
-        return esPort;
-    }
-
-    void setEsPort(String esPort) {
-        this.esPort = esPort;
-    }
-
-    public boolean isUseEmbeddedES() {
-        return useEmbeddedES;
-    }
-
     void setUseEmbeddedES(String useIt) {
         if (useIt.equals("true")) useEmbeddedES= true;
     }
@@ -101,5 +96,9 @@ public class AppConfig extends Config {
 
     public DatastoreConfig[] getDatastoreConfigs() {
         return datastoreConfigs;
+    }
+
+    public ElasticsearchServerConfig getElasticsearchServerConfig() {
+        return elasticsearchServerConfig;
     }
 }

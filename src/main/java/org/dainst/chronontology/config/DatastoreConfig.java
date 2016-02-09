@@ -1,7 +1,5 @@
 package org.dainst.chronontology.config;
 
-import org.dainst.chronontology.Constants;
-
 import java.util.Properties;
 
 /**
@@ -9,16 +7,16 @@ import java.util.Properties;
  */
 public class DatastoreConfig
         extends Config
-        implements ElasticSearchConfig, FilesystemDatastoreConfig {
+        implements ElasticsearchDatastoreConfig, FilesystemDatastoreConfig {
 
     public static final String TYPE_ELASTICSEARCH = "elasticsearch";
-    private String indexName = Constants.ES_INDEX_NAME;
-    private String url = Constants.EMBEDDED_ES_URL;
+    private String indexName = ConfigConstants.ES_INDEX_NAME;
+    private String url = ConfigConstants.EMBEDDED_ES_URL;
     private String type = "elasticsearch";
-    private String path = Constants.DATASTORE_PATH;
+    private String path = ConfigConstants.DATASTORE_PATH;
 
-    public DatastoreConfig(String prefix) {
-        this.prefix= prefix;
+    public DatastoreConfig(String id) {
+        this.prefix= "datastores."+id+".";
     }
 
     @Override

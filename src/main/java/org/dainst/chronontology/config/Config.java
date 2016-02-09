@@ -61,7 +61,7 @@ public abstract class Config {
             e.printStackTrace();
             return false;
         } catch (InvocationTargetException e) {
-            if (e.getCause().getClass().equals(ConfigException.class))
+            if (e.getCause().getClass().equals(ConfigValidationException.class))
                 logger.error(e.getCause().getMessage());
             else
                 e.printStackTrace();

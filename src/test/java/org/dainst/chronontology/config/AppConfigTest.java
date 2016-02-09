@@ -1,13 +1,9 @@
 package org.dainst.chronontology.config;
 
-import org.dainst.chronontology.Constants;
-import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 /**
  * @author Daniel M. de Oliveira
@@ -37,13 +33,13 @@ public class AppConfigTest extends ConfigTestBase {
     @Test
     public void useEmbeddedES() {
         appConfig.validate(props("3"));
-        assertEquals(appConfig.isUseEmbeddedES(),true);
+        assertNotNull(appConfig.getElasticsearchServerConfig());
     }
 
     @Test
     public void dontUseEmbeddedESBySettingParamFalse() {
         appConfig.validate(props("4"));
-        assertEquals(appConfig.isUseEmbeddedES(),false);
+        assertNull(appConfig.getElasticsearchServerConfig());
     }
 
     /**
@@ -52,38 +48,19 @@ public class AppConfigTest extends ConfigTestBase {
     @Test
     public void dontUseEmbeddedESByOmittingParam() {
         assertTrue(appConfig.validate(props("5")));
-        assertEquals(appConfig.isUseEmbeddedES(),false);
-    }
-
-    @Test
-    public void useSpecifiedESUrlWithUsingEmbeddedES() {
-        assertTrue(appConfig.validate(props("6")));
-        assertEquals(appConfig.isUseEmbeddedES(),true);
-        assertEquals(appConfig.getEsPort(),"9200");
-    }
-
-    @Test
-    public void allowOmitEsUrlIfUsingEmbeddedES() {
-        assertTrue(appConfig.validate(props("7")));
-        assertEquals(appConfig.isUseEmbeddedES(),true);
-        Assert.assertEquals(appConfig.getEsPort(), Constants.EMBEDDED_ES_PORT);
-    }
-
-    @Test
-    public void dontAllowOmitEsUrlWhenNotUsingEmbeddedES() {
-        assertFalse(appConfig.validate(props("8")));
+        assertNull(appConfig.getElasticsearchServerConfig());
     }
 
     @Test
     public void allowOmitServerPort() {
         assertTrue(appConfig.validate(props("10")));
-        assertEquals(appConfig.getServerPort(),Constants.SERVER_PORT);
+        assertEquals(appConfig.getServerPort(), ConfigConstants.SERVER_PORT);
     }
 
     @Test
     public void allowOmitESIndexName() {
         assertTrue(appConfig.validate(props("11")));
-        assertEquals(appConfig.getServerPort(),Constants.SERVER_PORT);
+        assertEquals(appConfig.getServerPort(), ConfigConstants.SERVER_PORT);
     }
 
     @Test
@@ -102,7 +79,13 @@ public class AppConfigTest extends ConfigTestBase {
     @Test
     public void omitDedicatedEsConfig() {
         assertTrue(appConfig.validate(props("14")));
-        assertEquals(appConfig.getDatastoreConfigs()[0].getIndexName(),Constants.ES_INDEX_NAME);
-        assertEquals(appConfig.getDatastoreConfigs()[0].getUrl(),Constants.EMBEDDED_ES_URL);
+        assertEquals(appConfig.getDatastoreConfigs()[0].getIndexName(), ConfigConstants.ES_INDEX_NAME);
+        assertEquals(appConfig.getDatastoreConfigs()[0].getUrl(), ConfigConstants.EMBEDDED_ES_URL);
+    }
+
+    @Test
+    public void elasticSearchServerConfig() {
+        assertTrue(appConfig.validate(props("15")));
+        assertEquals(appConfig.getElasticsearchServerConfig().getPort(), ConfigConstants.EMBEDDED_ES_PORT);
     }
 }

@@ -60,7 +60,8 @@ public class App {
         AppConfig appConfig= new AppConfig();
         if (appConfig.validate(props)==false) System.exit(1);
 
-        if (appConfig.isUseEmbeddedES()) new EmbeddedES(appConfig.getEsPort());
+        if (appConfig.getElasticsearchServerConfig()!=null) new EmbeddedES(
+                appConfig.getElasticsearchServerConfig());
 
         final int serverPort= Integer.parseInt(appConfig.getServerPort());
         port(serverPort);

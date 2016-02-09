@@ -24,11 +24,4 @@ public class Constants {
 
     public static final String DATASTORE_STATUS_OK = "ok";
     public static final String DATASTORE_STATUS_DOWN = "down";
-
-    // Default settings
-    public static final String EMBEDDED_ES_PORT = "9202";
-    public static final String EMBEDDED_ES_URL = "http://localhost:"+EMBEDDED_ES_PORT;
-    public static final String DATASTORE_PATH = "datastore/";
-    public static final String SERVER_PORT = "4567";
-    public static final String ES_INDEX_NAME = "connect";
 }

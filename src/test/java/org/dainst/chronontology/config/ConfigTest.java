@@ -34,7 +34,7 @@ public class ConfigTest {
         }
         void setTest(String test) {
             if (test.equals("badvalue"))
-                throw new ConfigException(test);
+                throw new ConfigValidationException(test);
         }
     }
 
