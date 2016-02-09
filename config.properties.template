@@ -12,6 +12,14 @@ useConnect=false
 
 ## DETAILED INFORMATION ##
 
+
+
+
+# Detailed information about the datastore configuration can be found
+# at docs/datastore-configuration-reference.md
+
+
+
 # The embedded jetty will then listen on 0.0.0.0:serverPort.
 # If omitted, serverPort defaults to 4567.
 #
@@ -28,35 +36,10 @@ useConnect=false
 #
 # esPort=9200
 
-# hostname of the elasticsearch intance used as connected datastore.
-# If useEmbeddedES is set, the setting can even be ommited and will
-# default to http://localhost:9202 in that case.
-#
-# datastores.0.url=http://localhost:9200
-
-# The elasticsearch index to be used.
-# If omitted, esIndexName defaults to connect.
-#
-# datastores.0.indexName=connect
-
 # the typenames to be used. Use , to separat them. Don't use whitespaces in between.
 #
 # typeNames=period
 
-# If connect is active, that is if useConnect is set to true (default),
-# then a file system datastore is used as a main datastore.
-# The parameter then is the relative path to the main datastore which is file system based.
-# Defaults to ./datastore/ if omitted. In any case, the directory gets created
-# at application startup if it does not exist.
-#
-# datastorePath=datastore/
-
 # Pairs of Usenames and Passwords. Separate pairs by ,. Don't use whitespaces.
 #
 # credentials=admin:s3cr3t
-
-# If set to true the connected mode gets activated where data gets sent to an
-# authoritative as well as a connected datastore.
-# Paremeter can be ommited in which case it defaults to true.
-#
-# useConnect=true
