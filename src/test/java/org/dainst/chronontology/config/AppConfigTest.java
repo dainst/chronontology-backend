@@ -1,5 +1,7 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.config;
 
+import org.dainst.chronontology.Constants;
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -10,7 +12,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Daniel M. de Oliveira
  */
-public class AppConfigTest {
+public class AppConfigTest extends ConfigTestBase {
 
     private AppConfig appConfig;
 
@@ -19,33 +21,28 @@ public class AppConfigTest {
         appConfig= new AppConfig();
     }
 
-    private String propsFile(String number) {
-        return TestConstants.TEST_FOLDER+"config."+number+".properties";
-    }
-
     @Test
     public void basic() {
-        appConfig.loadConfiguration(propsFile("1"));
+        appConfig.validate(props("1"));
         assertEquals(appConfig.getServerPort(),"4567");
-        assertEquals(appConfig.getEsIndexName(),"jeremy");
         assertEquals(appConfig.getCredentials()[0],"admin:s3cr3t");
         assertEquals(appConfig.isUseConnect(),true);
     }
 
     @Test
     public void missingRequiredProperty() {
-        assertFalse(appConfig.loadConfiguration(propsFile("2")));
+        assertFalse(appConfig.validate(props("2")));
     }
 
     @Test
     public void useEmbeddedES() {
-        appConfig.loadConfiguration(propsFile("3"));
+        appConfig.validate(props("3"));
         assertEquals(appConfig.isUseEmbeddedES(),true);
     }
 
     @Test
     public void dontUseEmbeddedESBySettingParamFalse() {
-        appConfig.loadConfiguration(propsFile("4"));
+        appConfig.validate(props("4"));
         assertEquals(appConfig.isUseEmbeddedES(),false);
     }
 
@@ -54,50 +51,64 @@ public class AppConfigTest {
      */
     @Test
     public void dontUseEmbeddedESByOmittingParam() {
-        assertTrue(appConfig.loadConfiguration(propsFile("5")));
+        assertTrue(appConfig.validate(props("5")));
         assertEquals(appConfig.isUseEmbeddedES(),false);
     }
 
     @Test
     public void useSpecifiedESUrlWithUsingEmbeddedES() {
-        assertTrue(appConfig.loadConfiguration(propsFile("6")));
+        assertTrue(appConfig.validate(props("6")));
         assertEquals(appConfig.isUseEmbeddedES(),true);
-        assertEquals(appConfig.getEsUrl(),"http://localhost:9200");
+        assertEquals(appConfig.getEsPort(),"9200");
     }
 
     @Test
     public void allowOmitEsUrlIfUsingEmbeddedES() {
-        assertTrue(appConfig.loadConfiguration(propsFile("7")));
+        assertTrue(appConfig.validate(props("7")));
         assertEquals(appConfig.isUseEmbeddedES(),true);
-        assertEquals(appConfig.getEsUrl(),Constants.EMBEDDED_ES_URL);
+        Assert.assertEquals(appConfig.getEsPort(), Constants.EMBEDDED_ES_PORT);
     }
 
     @Test
     public void dontAllowOmitEsUrlWhenNotUsingEmbeddedES() {
-        assertFalse(appConfig.loadConfiguration(propsFile("8")));
+        assertFalse(appConfig.validate(props("8")));
     }
 
     @Test
     public void allowOmitDatastorePath() {
-        assertTrue(appConfig.loadConfiguration(propsFile("9")));
+        assertTrue(appConfig.validate(props("9")));
         assertEquals(appConfig.getDataStorePath(),Constants.DATASTORE_PATH);
     }
 
     @Test
     public void allowOmitServerPort() {
-        assertTrue(appConfig.loadConfiguration(propsFile("10")));
+        assertTrue(appConfig.validate(props("10")));
         assertEquals(appConfig.getServerPort(),Constants.SERVER_PORT);
     }
 
     @Test
     public void allowOmitESIndexName() {
-        assertTrue(appConfig.loadConfiguration(propsFile("11")));
+        assertTrue(appConfig.validate(props("11")));
         assertEquals(appConfig.getServerPort(),Constants.SERVER_PORT);
     }
 
     @Test
     public void dontUseConnect() {
-        assertTrue(appConfig.loadConfiguration(propsFile("12")));
+        assertTrue(appConfig.validate(props("12")));
         assertEquals(appConfig.isUseConnect(),false);
+    }
+
+    @Test
+    public void esConfig() {
+        assertTrue(appConfig.validate(props("13")));
+        assertEquals(appConfig.getDatastoreConfig().getIndexName(),"index");
+        assertEquals(appConfig.getDatastoreConfig().getUrl(),"http://localhost:9200");
+    }
+
+    @Test
+    public void omitDedicatedEsConfig() {
+        assertTrue(appConfig.validate(props("14")));
+        assertEquals(appConfig.getDatastoreConfig().getIndexName(),Constants.ES_INDEX_NAME);
+        assertEquals(appConfig.getDatastoreConfig().getUrl(),Constants.EMBEDDED_ES_URL);
     }
 }

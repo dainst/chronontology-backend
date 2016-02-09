@@ -2,6 +2,8 @@ package org.dainst.chronontology;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.config.AppConfig;
+import org.dainst.chronontology.config.PropertiesLoader;
 import org.dainst.chronontology.controller.ConnectController;
 import org.dainst.chronontology.controller.Controller;
 import org.dainst.chronontology.controller.SimpleController;
@@ -11,6 +13,7 @@ import org.dainst.chronontology.store.ESRestSearchableDatastore;
 import org.dainst.chronontology.store.FileSystemDatastore;
 
 import java.io.File;
+import java.util.Properties;
 
 import static spark.Spark.port;
 
@@ -49,10 +52,12 @@ public class App {
 
     public static void main(String [] args) {
 
+        Properties props= PropertiesLoader.loadConfiguration(DEFAULT_PROPERTIES_FILE_PATH);
+        if (props==null) System.exit(1);
         AppConfig appConfig= new AppConfig();
-        if (!appConfig.loadConfiguration(DEFAULT_PROPERTIES_FILE_PATH)) System.exit(1);
+        if (appConfig.validate(props)==false) System.exit(1);
 
-        if (appConfig.isUseEmbeddedES()) new EmbeddedES();
+        if (appConfig.isUseEmbeddedES()) new EmbeddedES(appConfig.getEsPort());
 
         final int serverPort= Integer.parseInt(appConfig.getServerPort());
         port(serverPort);
@@ -60,8 +65,8 @@ public class App {
 
         ESRestSearchableDatastore searchable=
                 new ESRestSearchableDatastore(
-                        new JsonRestClient(appConfig.getEsUrl()),
-                        appConfig.getEsIndexName());
+                        new JsonRestClient(appConfig.getDatastoreConfig().getUrl()),
+                        appConfig.getDatastoreConfig().getIndexName());
 
 
         Controller controller= null;

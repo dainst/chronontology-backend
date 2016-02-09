@@ -17,16 +17,27 @@ useConnect=false
 #
 # serverPort=4567
 
+# If set to true, an embedded elasticSearchServer gets started along the app server.
+# The parameter is optional and defaults to false. The embedded elasticsearch instance
+# will listen on localhost.
+#
+# useEmbeddedES=false
+
+# Elasticsearch server port for the embedded es instance.
+# Defaults to 9202 if ommitted.
+#
+# esPort=9200
+
 # hostname of the elasticsearch intance used as connected datastore.
 # If useEmbeddedES is set, the setting can even be ommited and will
 # default to http://localhost:9202 in that case.
 #
-# esUrl=http://localhost:9200
+# datastores.es.url=http://localhost:9200
 
 # The elasticsearch index to be used.
 # If omitted, esIndexName defaults to connect.
 #
-# esIndexName=connect
+# datastores.es.indexName=connect
 
 # the typenames to be used. Use , to separat them. Don't use whitespaces in between.
 #
@@ -43,12 +54,6 @@ useConnect=false
 # Pairs of Usenames and Passwords. Separate pairs by ,. Don't use whitespaces.
 #
 # credentials=admin:s3cr3t
-
-# If set to true, an embedded elasticSearchServer gets started along the app server.
-# The parameter is optional and defaults to false. The embedded elasticsearch instance
-# will listen on localhost port 9202. Any manual setting for esUrl will be ignored.
-#
-# useEmbeddedES=false
 
 # If set to true the connected mode gets activated where data gets sent to an
 # authoritative as well as a connected datastore.
