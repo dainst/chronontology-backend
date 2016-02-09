@@ -59,14 +59,14 @@ public class AppConfigTest {
     }
 
     @Test
-    public void overrideESUrlWhenUsingEmbeddedES() {
+    public void useSpecifiedESUrlWithUsingEmbeddedES() {
         assertTrue(appConfig.loadConfiguration(propsFile("6")));
         assertEquals(appConfig.isUseEmbeddedES(),true);
-        assertEquals(appConfig.getEsUrl(),Constants.EMBEDDED_ES_URL);
+        assertEquals(appConfig.getEsUrl(),"http://localhost:9200");
     }
 
     @Test
-    public void allowOmitEsUrlWhenUsingEmbeddedES() {
+    public void allowOmitEsUrlIfUsingEmbeddedES() {
         assertTrue(appConfig.loadConfiguration(propsFile("7")));
         assertEquals(appConfig.isUseEmbeddedES(),true);
         assertEquals(appConfig.getEsUrl(),Constants.EMBEDDED_ES_URL);

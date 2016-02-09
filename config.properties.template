@@ -18,7 +18,8 @@ useConnect=false
 # serverPort=4567
 
 # hostname of the elasticsearch intance used as connected datastore.
-# If useEmbeddedES is set, the setting get ignored and can even be ommited.
+# If useEmbeddedES is set, the setting can even be ommited and will
+# default to http://localhost:9202 in that case.
 #
 # esUrl=http://localhost:9200
 

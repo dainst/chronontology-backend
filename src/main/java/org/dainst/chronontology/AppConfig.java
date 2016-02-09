@@ -142,9 +142,6 @@ public class AppConfig {
 
     private void setEsUrl(String esUrl) {
         this.esUrl = esUrl;
-
-        // override it
-        if (useEmbeddedES) this.esUrl= Constants.EMBEDDED_ES_URL;
     }
 
     public String getEsIndexName() {
