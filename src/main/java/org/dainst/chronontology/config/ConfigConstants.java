@@ -13,4 +13,9 @@ public class ConfigConstants {
     public static final String ES_INDEX_NAME = "connect";
     public static final String ES_SERVER_DATA_PATH = "embedded_es_data";
     public static final String ES_SERVER_CLUSTER_NAME = "chronontology_connected_embedded_es";
+
+    public static final String MSG_CONSTRAINT_VIOLATION = "Constraint violation in configuration: ";
+
+    public static final String DATASTORE_TYPE_ES = "elasticsearch";
+    public static final String DATASTORE_TYPE_FS = "filesystem";
 }

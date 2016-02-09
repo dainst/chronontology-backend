@@ -8,6 +8,6 @@ package org.dainst.chronontology.config;
 public class ConfigValidationException extends RuntimeException {
 
     public ConfigValidationException(String violation) {
-        super("Constraint violation in configuration: " + violation);
+        super(ConfigConstants.MSG_CONSTRAINT_VIOLATION + violation);
     }
 }

@@ -88,4 +88,9 @@ public class AppConfigTest extends ConfigTestBase {
         assertTrue(appConfig.validate(props("15")));
         assertEquals(appConfig.getElasticsearchServerConfig().getPort(), ConfigConstants.EMBEDDED_ES_PORT);
     }
+
+    @Test
+    public void firstDatastoreNotOfTypeES() {
+        assertFalse(appConfig.validate(props("16")));
+    }
 }

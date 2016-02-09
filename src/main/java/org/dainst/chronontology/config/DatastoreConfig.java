@@ -10,7 +10,7 @@ public class DatastoreConfig extends Config {
     public static final String TYPE_ELASTICSEARCH = "elasticsearch";
     private String indexName = ConfigConstants.ES_INDEX_NAME;
     private String url = ConfigConstants.EMBEDDED_ES_URL;
-    private String type = "elasticsearch";
+    private String type = ConfigConstants.DATASTORE_TYPE_ES;
     private String path = ConfigConstants.DATASTORE_PATH;
 
     public DatastoreConfig(String id) {
@@ -19,7 +19,7 @@ public class DatastoreConfig extends Config {
 
     @Override
     public boolean validate(Properties props) {
-        _validate(props,"type", true);
+        if (!_validate(props,"type", true)) return false;
 
         if (type.equals(TYPE_ELASTICSEARCH))
             return (
@@ -57,6 +57,15 @@ public class DatastoreConfig extends Config {
     }
 
     void setType(String type) {
+        if (!(type.equals(ConfigConstants.DATASTORE_TYPE_ES)
+                ||type.equals(ConfigConstants.DATASTORE_TYPE_FS)))
+            throw new ConfigValidationException("Datastore must either be of type \""
+                    +ConfigConstants.DATASTORE_TYPE_ES+"\" or of type \""+ConfigConstants.DATASTORE_TYPE_FS+"\".");
+
         this.type= type;
+    }
+
+    public String getType() {
+        return this.type;
     }
 }

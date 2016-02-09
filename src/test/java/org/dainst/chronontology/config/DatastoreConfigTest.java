@@ -3,6 +3,7 @@ package org.dainst.chronontology.config;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -30,5 +31,11 @@ public class DatastoreConfigTest extends ConfigTestBase {
         DatastoreConfig config= new DatastoreConfig("1");
         assertTrue(config.validate(props("52")));
         assertEquals(config.getPath(),"datastore/");
+    }
+
+    @Test
+    public void constraintViolationWrongDatastoreType() {
+        DatastoreConfig config= new DatastoreConfig("0");
+        assertFalse(config.validate(props("53")));
     }
 }
