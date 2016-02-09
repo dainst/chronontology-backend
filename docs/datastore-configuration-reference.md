@@ -30,21 +30,21 @@ datastores.[id].type=elasticsearch
 datastores.[id].type=filesystem
 ```
 
-If ommitted, it will default to filesystem.
+If ommitted, it will default to "elasticsearch".
 
 Depending on which type you choose for the datastore,
 different properties are necessary.
 
 ### Elasticsearch datastore configuration
 
-The url param can be ommitted and defaults to http://localhost:9202, which is 
+The url param can be ommitted and defaults to "http://localhost:9202", which is 
 also the default of the embedded elasticsearch server.
 
 ```
 datastores.[id].url=http://localhost:9200
 ```
 
-The indexName can be ommitted and defaults to connect.
+The indexName can be ommitted and defaults to "connect".
 
 ```
 datastores.[id].indexName=myIndex
@@ -64,7 +64,7 @@ datastores.[id].url=http://localhost:9202
 The path param is a relative path to the folder where the data get stored
 into. If it does not exist, it will get created at application start.
 
-The path param can be empty and default to datastore/
+The path param can be empty and default to "datastore/".
 
 ```
 datastores.[id].path=myDataStorePath/
@@ -77,7 +77,7 @@ would be just
 datastores.[id].type=filesystem
 ```
 
-which is necessary, because otherwise it would default to elasticsearch.
+which is necessary, because otherwise it would default to "elasticsearch".
 
 ## Simple Configuration examples
 
@@ -109,7 +109,7 @@ The simples possible configuration for single mode is
 
 ```
 useConnect=false
-``
+```
 
 which equals
 
