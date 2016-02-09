@@ -60,6 +60,12 @@ public class App {
         AppConfig appConfig= new AppConfig();
         if (appConfig.validate(props)==false) System.exit(1);
 
+        configureApp(appConfig);
+    }
+
+
+    private static void configureApp(AppConfig appConfig) {
+
         if (appConfig.getElasticsearchServerConfig()!=null) new EmbeddedES(
                 appConfig.getElasticsearchServerConfig());
 
