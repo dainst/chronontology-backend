@@ -5,9 +5,7 @@ import java.util.Properties;
 /**
  * @author Daniel M. de Oliveira
  */
-public class DatastoreConfig
-        extends Config
-        implements ElasticsearchDatastoreConfig, FilesystemDatastoreConfig {
+public class DatastoreConfig extends Config {
 
     public static final String TYPE_ELASTICSEARCH = "elasticsearch";
     private String indexName = ConfigConstants.ES_INDEX_NAME;
@@ -34,12 +32,10 @@ public class DatastoreConfig
             );
     }
 
-    @Override
     public String getIndexName() {
         return indexName;
     }
 
-    @Override
     public String getUrl() {
         return url;
     }
@@ -52,7 +48,6 @@ public class DatastoreConfig
         this.indexName= indexName;
     }
 
-    @Override
     public String getPath() {
         return path;
     }
