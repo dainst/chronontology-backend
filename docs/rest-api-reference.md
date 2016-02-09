@@ -17,30 +17,52 @@ base64 encoded random part.
 The response body will contain the json in the form it got send
 to the stores. This means that it will be enriched by id an date information.
 
+The request body must be valid JSON.
+
+### Status codes: 
+
 ```
-  Status codes: 
     201 if created successfully.
+    500 if there is an error. Like for example if the request body 
+      could not get JSON-parsed properly
 ```
 
 ## PUT /:typeName/:id
 
 Used to update an existing document. The version number will get incremented
 and a date will be added to the date modified array. If the document does not exist yet, 
-it will be created.
+it will be created. 
+
+The request body must be valid JSON.
+
+### Status codes: 
 
 ```
-  Status codes: 
     200 if updated succesfully.
     201 if a new document has been created successfully.
+    500 if there is an error. Like for example if the request body 
+      could not get JSON-parsed properly
 ```
 
-## GET /:typeName/:id
+## GET /
 
 Get information regarding the server status. 
 Also Lists information for each datastore individually.
 
+The response body will look similiar to this:
+
 ```
-  Status codes:
+  { 
+    "datastores" : [
+      { "type" : "main", "status" : "ok" },
+      { "type" : "connect", "status" : "down" }
+    ]
+  }
+```
+
+### Status codes:
+
+```
     200 if Server is running and all datastores are connected and running.
     404 if Server is running but at least one datastore is not available.
 ```
