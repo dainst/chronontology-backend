@@ -14,12 +14,32 @@ public class DatastoreConfigTest extends ConfigTestBase {
     public void test() {
         DatastoreConfig config= new DatastoreConfig(
                 props("50"),
-                "datastores.es.");
+                "datastores.0.");
 
         assertTrue(config.validate());
 
         ElasticSearchConfig esc= (ElasticSearchConfig) config;
         assertEquals(esc.getIndexName(),"connect");
         assertEquals(esc.getUrl(),"http://localhost:9200");
+    }
+
+    @Test
+    public void testFilesystem() {
+        DatastoreConfig config= new DatastoreConfig(
+                props("51"),
+                "datastores.1.");
+
+        assertTrue(config.validate());
+        assertEquals(config.getPath(),"ds/");
+    }
+
+    @Test
+    public void omitPathWithFilesystem() {
+        DatastoreConfig config= new DatastoreConfig(
+                props("52"),
+                "datastores.1.");
+
+        assertTrue(config.validate());
+        assertEquals(config.getPath(),"datastore/");
     }
 }

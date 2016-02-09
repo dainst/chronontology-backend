@@ -3,6 +3,7 @@ package org.dainst.chronontology;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.config.AppConfig;
+import org.dainst.chronontology.config.DatastoreConfig;
 import org.dainst.chronontology.config.PropertiesLoader;
 import org.dainst.chronontology.controller.ConnectController;
 import org.dainst.chronontology.controller.Controller;
@@ -29,7 +30,9 @@ public class App {
     final static Logger logger = Logger.getLogger(App.class);
     private static final String DEFAULT_PROPERTIES_FILE_PATH = "config.properties";
 
-    private static FileSystemDatastore initDS(String datastorePath) {
+    private static FileSystemDatastore initDS(DatastoreConfig datastoreConfig) {
+
+        String datastorePath= datastoreConfig.getPath();
 
         if (!(new File(datastorePath).exists())) {
             logger.error("Creating directory \"" + datastorePath + "\" for usage by main datastore.");
@@ -65,14 +68,14 @@ public class App {
 
         ESRestSearchableDatastore searchable=
                 new ESRestSearchableDatastore(
-                        new JsonRestClient(appConfig.getDatastoreConfig().getUrl()),
-                        appConfig.getDatastoreConfig().getIndexName());
+                        new JsonRestClient(appConfig.getDatastoreConfigs()[0].getUrl()),
+                        appConfig.getDatastoreConfigs()[0].getIndexName());
 
 
         Controller controller= null;
         if (appConfig.isUseConnect())
             controller= new ConnectController(
-                    initDS(appConfig.getDataStorePath()),searchable);
+                    initDS(appConfig.getDatastoreConfigs()[1]),searchable);
         else
             controller= new SimpleController(searchable);
 

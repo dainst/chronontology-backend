@@ -75,12 +75,6 @@ public class AppConfigTest extends ConfigTestBase {
     }
 
     @Test
-    public void allowOmitDatastorePath() {
-        assertTrue(appConfig.validate(props("9")));
-        assertEquals(appConfig.getDataStorePath(),Constants.DATASTORE_PATH);
-    }
-
-    @Test
     public void allowOmitServerPort() {
         assertTrue(appConfig.validate(props("10")));
         assertEquals(appConfig.getServerPort(),Constants.SERVER_PORT);
@@ -101,14 +95,14 @@ public class AppConfigTest extends ConfigTestBase {
     @Test
     public void esConfig() {
         assertTrue(appConfig.validate(props("13")));
-        assertEquals(appConfig.getDatastoreConfig().getIndexName(),"index");
-        assertEquals(appConfig.getDatastoreConfig().getUrl(),"http://localhost:9200");
+        assertEquals(appConfig.getDatastoreConfigs()[0].getIndexName(),"index");
+        assertEquals(appConfig.getDatastoreConfigs()[0].getUrl(),"http://localhost:9200");
     }
 
     @Test
     public void omitDedicatedEsConfig() {
         assertTrue(appConfig.validate(props("14")));
-        assertEquals(appConfig.getDatastoreConfig().getIndexName(),Constants.ES_INDEX_NAME);
-        assertEquals(appConfig.getDatastoreConfig().getUrl(),Constants.EMBEDDED_ES_URL);
+        assertEquals(appConfig.getDatastoreConfigs()[0].getIndexName(),Constants.ES_INDEX_NAME);
+        assertEquals(appConfig.getDatastoreConfigs()[0].getUrl(),Constants.EMBEDDED_ES_URL);
     }
 }

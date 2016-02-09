@@ -13,14 +13,24 @@ public class AppConfig extends Config {
     final static Logger logger = Logger.getLogger(AppConfig.class);
 
     private String serverPort = Constants.SERVER_PORT;
-    private String dataStorePath = Constants.DATASTORE_PATH;
     private String esPort = Constants.EMBEDDED_ES_PORT;
     private String[] credentials = null;
     private String typeNames = null;
     private boolean useEmbeddedES = false;
     private boolean useConnect = true;
-    private DatastoreConfig datastoreConfig= null;
+    private DatastoreConfig[] datastoreConfigs = new DatastoreConfig[2];
 
+
+    private boolean validateDatastores(Properties props) {
+        boolean datastoresValidated= true;
+        datastoreConfigs[0]= new DatastoreConfig(props,"datastores.0.");
+        if (!datastoreConfigs[0].validate()) datastoresValidated=false;
+        if (useConnect) {
+            datastoreConfigs[1]= new DatastoreConfig(props,"datastores.1.");
+            if (!datastoreConfigs[1].validate()) datastoresValidated=false;
+        }
+        return datastoresValidated;
+    }
 
     /**
      * @param props
@@ -28,16 +38,15 @@ public class AppConfig extends Config {
      *   could be loaded properly. false otherwise.
      */
     public boolean validate(Properties props) {
-        datastoreConfig= new DatastoreConfig(props,"datastores.es.");
+
         return (
+            _validate(props,"useConnect",true) &&
+            validateDatastores(props) && // must come after useConnect
             _validate(props,"serverPort",true) &&
-            _validate(props,"datastorePath",true) &&
             _validate(props,"useEmbeddedES", true) &&
             _validate(props,"esPort",(useEmbeddedES)) &&  // must come after useEmbeddedES
             _validate(props,"credentials") &&
-            _validate(props,"typeNames") &&
-            _validate(props,"useConnect",true) &&
-            datastoreConfig.validate()
+            _validate(props,"typeNames")
             );
     }
 
@@ -73,14 +82,6 @@ public class AppConfig extends Config {
         this.esPort = esPort;
     }
 
-    public String getDataStorePath() {
-        return dataStorePath;
-    }
-
-    void setDatastorePath(String dataStorePath) {
-        this.dataStorePath= dataStorePath;
-    }
-
     public boolean isUseEmbeddedES() {
         return useEmbeddedES;
     }
@@ -97,7 +98,7 @@ public class AppConfig extends Config {
         if (useIt.equals("false")) useConnect = false;
     }
 
-    public DatastoreConfig getDatastoreConfig() {
-        return datastoreConfig;
+    public DatastoreConfig[] getDatastoreConfigs() {
+        return datastoreConfigs;
     }
 }

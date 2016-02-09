@@ -32,12 +32,12 @@ useConnect=false
 # If useEmbeddedES is set, the setting can even be ommited and will
 # default to http://localhost:9202 in that case.
 #
-# datastores.es.url=http://localhost:9200
+# datastores.0.url=http://localhost:9200
 
 # The elasticsearch index to be used.
 # If omitted, esIndexName defaults to connect.
 #
-# datastores.es.indexName=connect
+# datastores.0.indexName=connect
 
 # the typenames to be used. Use , to separat them. Don't use whitespaces in between.
 #
