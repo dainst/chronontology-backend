@@ -13,10 +13,11 @@ useConnect=false
 ## DETAILED INFORMATION ##
 
 
-
-
 # Detailed information about the datastore configuration can be found
 # at docs/datastore-configuration-reference.md
+
+# Detailed information about the embedded elasticsearch server configuration can be found
+# at docs/elasticsearch-server-configuration-reference.md
 
 
 
@@ -24,17 +25,6 @@ useConnect=false
 # If omitted, serverPort defaults to 4567.
 #
 # serverPort=4567
-
-# If set to true, an embedded elasticSearchServer gets started along the app server.
-# The parameter is optional and defaults to false. The embedded elasticsearch instance
-# will listen on localhost.
-#
-# useEmbeddedES=false
-
-# Elasticsearch server port for the embedded es instance.
-# Defaults to 9202 if ommitted.
-#
-# esPort=9200
 
 # the typenames to be used. Use , to separat them. Don't use whitespaces in between.
 #
