@@ -15,6 +15,9 @@ public abstract class Config {
 
     protected String prefix= "";
 
+
+    abstract public boolean validate(Properties props);
+
     boolean _validate(final Properties props, final String name) {
         return _validate(props,name,false);
     }
@@ -24,7 +27,7 @@ public abstract class Config {
 
         if (props.get(prefix+name)==null) {
             if (!optional){
-                logger.error("Property "+prefix+name+" does not exist");
+                logger.error("Property \""+prefix+name+"\" does not exist.");
                 return false;
             }
             return true;
@@ -58,9 +61,13 @@ public abstract class Config {
             e.printStackTrace();
             return false;
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            if (e.getCause().getClass().equals(ConfigException.class))
+                logger.error(e.getCause().getMessage());
+            else
+                e.printStackTrace();
             return false;
         }
+
 
         return true;
     }

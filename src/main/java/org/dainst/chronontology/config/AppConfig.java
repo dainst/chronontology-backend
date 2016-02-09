@@ -23,11 +23,11 @@ public class AppConfig extends Config {
 
     private boolean validateDatastores(Properties props) {
         boolean datastoresValidated= true;
-        datastoreConfigs[0]= new DatastoreConfig(props,"datastores.0.");
-        if (!datastoreConfigs[0].validate()) datastoresValidated=false;
+        datastoreConfigs[0]= new DatastoreConfig("datastores.0.");
+        if (!datastoreConfigs[0].validate(props)) datastoresValidated=false;
         if (useConnect) {
-            datastoreConfigs[1]= new DatastoreConfig(props,"datastores.1.");
-            if (!datastoreConfigs[1].validate()) datastoresValidated=false;
+            datastoreConfigs[1]= new DatastoreConfig("datastores.1.");
+            if (!datastoreConfigs[1].validate(props)) datastoresValidated=false;
         }
         return datastoresValidated;
     }
@@ -37,6 +37,7 @@ public class AppConfig extends Config {
      * @return true if all the properties for running the application
      *   could be loaded properly. false otherwise.
      */
+    @Override
     public boolean validate(Properties props) {
 
         return (

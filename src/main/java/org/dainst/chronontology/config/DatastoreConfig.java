@@ -12,18 +12,17 @@ public class DatastoreConfig
         implements ElasticSearchConfig, FilesystemDatastoreConfig {
 
     public static final String TYPE_ELASTICSEARCH = "elasticsearch";
-    Properties props = null;
     private String indexName = Constants.ES_INDEX_NAME;
     private String url = Constants.EMBEDDED_ES_URL;
     private String type = "elasticsearch";
     private String path = Constants.DATASTORE_PATH;
 
-    public DatastoreConfig(Properties props,String prefix) {
+    public DatastoreConfig(String prefix) {
         this.prefix= prefix;
-        this.props= props;
     }
 
-    public boolean validate() {
+    @Override
+    public boolean validate(Properties props) {
         _validate(props,"type", true);
 
         if (type.equals(TYPE_ELASTICSEARCH))
