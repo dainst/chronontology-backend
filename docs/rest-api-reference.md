@@ -151,10 +151,6 @@ Get json stored for type with name :typeName and id :id.
         {
             "user": "karl",
             "date": "2016-02-09T10:21:15.721Z"
-        },
-        {
-            "user": "ove",
-            "date": "2016-02-09T10:32:50.702Z"
         }
     ]
 }
@@ -190,10 +186,6 @@ the main storage this time, not from the connected storage.
         {
             "user": "karl",
             "date": "2016-02-09T10:21:15.721Z"
-        },
-        {
-            "user": "ove",
-            "date": "2016-02-09T10:32:50.702Z"
         }
     ]
 }
@@ -270,6 +262,8 @@ contains the json for the search hits.
     ]
 }
 ```
+
+### Status codes:
 
 ```
 200 if there are documents for the bucket.
