@@ -58,24 +58,38 @@ public class Router {
 
     private void setUpAuthorization(String[] credentials) {
 
-        before("/*", (request, response) -> {
+        before("/*", (req, res) -> {
 
-            if (request.requestMethod().equals("GET"))
+            if (req.requestMethod().equals("GET"))
                 return;
 
             boolean authenticated = false;
-            if(request.headers(HEADER_AUTH) != null
-                    && request.headers(HEADER_AUTH).startsWith("Basic"))
+            if(req.headers(HEADER_AUTH) != null
+                    && req.headers(HEADER_AUTH).startsWith("Basic"))
             {
                 for (String cred:credentials)
-                    if(CredentialsDecoder.decode(request.headers(HEADER_AUTH)).equals(cred)) authenticated = true;
+                    if(decode(req.headers(HEADER_AUTH)).equals(cred)) {
+                        req.attribute("user",cred.split(":")[0]);
+                        authenticated = true;
+                    }
             }
+
             if(!authenticated) {
-                response.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
-                response.status(HTTP_UNAUTHORIZED);
+                res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
+                res.status(HTTP_UNAUTHORIZED);
                 halt(HTTP_UNAUTHORIZED);
             }
         });
+    }
+
+    /**
+     * @param toDecode the value of request header "Authorization".
+     * @return
+     */
+    private String decode(String toDecode) {
+        return new String(
+                java.util.Base64.getDecoder().decode(
+                        toDecode.substring("Basic".length()).trim()));
     }
 
     public Router(
