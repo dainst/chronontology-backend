@@ -12,24 +12,23 @@ import java.io.File;
 /**
  * @author Daniel M. de Oliveira
  */
-public class DatastoreConfigurator implements Configurator<Datastore> {
+public class DatastoreConfigurator implements Configurator<Datastore,DatastoreConfig> {
 
     final static Logger logger = Logger.getLogger(DatastoreConfigurator.class);
 
-    public Datastore configure(Config config) {
-        DatastoreConfig datastoreConfig= (DatastoreConfig) config;
+    public Datastore configure(DatastoreConfig config) {
 
-        if (datastoreConfig.getType().equals(ConfigConstants.DATASTORE_TYPE_ES)) {
+        if (config.getType().equals(ConfigConstants.DATASTORE_TYPE_ES)) {
             return new ESRestSearchableDatastore(
-                    new JsonRestClient(datastoreConfig.getUrl()),datastoreConfig.getIndexName());
+                    new JsonRestClient(config.getUrl()),config.getIndexName());
         } else {
-            return initDS(datastoreConfig);
+            return initDS(config);
         }
     }
 
-    private FileSystemDatastore initDS(DatastoreConfig datastoreConfig) {
+    private FileSystemDatastore initDS(DatastoreConfig config) {
 
-        String datastorePath= datastoreConfig.getPath();
+        String datastorePath= config.getPath();
 
         if (!(new File(datastorePath).exists())) {
             logger.error("Creating directory \"" + datastorePath + "\" for usage by main datastore.");

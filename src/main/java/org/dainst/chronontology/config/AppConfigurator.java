@@ -12,24 +12,23 @@ import static spark.Spark.port;
 /**
  * @author Daniel M. de Oliveira
  */
-public class AppConfigurator implements Configurator<App> {
+public class AppConfigurator implements Configurator<App,AppConfig> {
 
     final static Logger logger = Logger.getLogger(AppConfigurator.class);
 
     @Override
-    public App configure(Config config) {
+    public App configure(AppConfig config) {
 
-        AppConfig appConfig= (AppConfig) config;
-        if (appConfig.getElasticsearchServerConfig()!=null) new EmbeddedES(
-                appConfig.getElasticsearchServerConfig());
+        if (config.getElasticsearchServerConfig()!=null) new EmbeddedES(
+                config.getElasticsearchServerConfig());
 
-        final int serverPort= Integer.parseInt(appConfig.getServerPort());
+        final int serverPort= Integer.parseInt(config.getServerPort());
         port(serverPort);
 
         Router router= new Router(
-                new ControllerConfigurator().configure(appConfig.getControllerConfig()),
-                getTypes(appConfig.getTypeNames()),
-                appConfig.getCredentials());
+                new ControllerConfigurator().configure(config.getControllerConfig()),
+                getTypes(config.getTypeNames()),
+                config.getCredentials());
 
         return new App(router);
     }

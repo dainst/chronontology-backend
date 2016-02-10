@@ -12,18 +12,17 @@ import java.io.File;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ControllerConfigurator implements Configurator<Controller> {
+public class ControllerConfigurator implements Configurator<Controller,ControllerConfig> {
 
-    public Controller configure(Config config) {
-        ControllerConfig controllerConfig= (ControllerConfig) config;
+    public Controller configure(ControllerConfig config) {
 
         ESRestSearchableDatastore searchable= (ESRestSearchableDatastore)
-                new DatastoreConfigurator().configure(controllerConfig.getDatastoreConfigs()[0]);
+                new DatastoreConfigurator().configure(config.getDatastoreConfigs()[0]);
 
         Controller controller= null;
-        if (controllerConfig.isUseConnect())
+        if (config.isUseConnect())
             controller= new ConnectController(
-                    new DatastoreConfigurator().configure(controllerConfig.getDatastoreConfigs()[1]),
+                    new DatastoreConfigurator().configure(config.getDatastoreConfigs()[1]),
                     searchable);
         else
             controller= new SimpleController(searchable);

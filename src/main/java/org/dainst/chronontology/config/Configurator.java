@@ -3,7 +3,7 @@ package org.dainst.chronontology.config;
 /**
  * @author Daniel M. de Oliveira
  */
-interface Configurator<T> {
+interface Configurator<T,U> {
 
-    T configure(Config config);
+    T configure(U config);
 }
