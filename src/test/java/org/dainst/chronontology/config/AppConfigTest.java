@@ -10,7 +10,7 @@ import static org.testng.Assert.*;
 /**
  * @author Daniel M. de Oliveira
  */
-public class AppConfigTest extends ConfigTestBase {
+public class AppConfigTest {
 
     private AppConfig appConfig;
     private Properties props= null;
@@ -30,7 +30,6 @@ public class AppConfigTest extends ConfigTestBase {
         appConfig.validate(props);
         assertEquals(appConfig.getServerPort(),"4567");
         assertEquals(appConfig.getCredentials()[0],"abc:def");
-        assertEquals(appConfig.isUseConnect(),true);
     }
 
     /**
@@ -85,42 +84,6 @@ public class AppConfigTest extends ConfigTestBase {
         assertEquals(appConfig.getServerPort(), ConfigConstants.SERVER_PORT);
     }
 
-    @Test
-    public void dontUseConnect() {
-        props.put("typeNames","period");
-        props.put("credentials","abc:def");
-        props.put("useEmbeddedES","true");
-        props.put("useConnect","false");
-
-        assertTrue(appConfig.validate(props));
-        assertEquals(appConfig.isUseConnect(),false);
-    }
-
-    @Test
-    public void esConfig() {
-        props.put("typeNames","period");
-        props.put("credentials","abc:def");
-        props.put("useEmbeddedES","true");
-        props.put("useConnect","false");
-        props.put("datastores.0.indexName","index");
-        props.put("datastores.0.url","http://localhost:9200");
-
-        assertTrue(appConfig.validate(props));
-        assertEquals(appConfig.getDatastoreConfigs()[0].getIndexName(),"index");
-        assertEquals(appConfig.getDatastoreConfigs()[0].getUrl(),"http://localhost:9200");
-    }
-
-    @Test
-    public void omitDedicatedEsConfig() {
-        props.put("typeNames","period");
-        props.put("credentials","abc:def");
-        props.put("useEmbeddedES","true");
-        props.put("useConnect","false");
-
-        assertTrue(appConfig.validate(props));
-        assertEquals(appConfig.getDatastoreConfigs()[0].getIndexName(), ConfigConstants.ES_INDEX_NAME);
-        assertEquals(appConfig.getDatastoreConfigs()[0].getUrl(), ConfigConstants.EMBEDDED_ES_URL);
-    }
 
     @Test
     public void elasticSearchServerConfig() {
@@ -142,5 +105,16 @@ public class AppConfigTest extends ConfigTestBase {
         props.put("datastores.0.type",ConfigConstants.DATASTORE_TYPE_FS);
 
         assertFalse(appConfig.validate(props));
+    }
+
+    @Test
+    public void controller() {
+        props.put("typeNames","period");
+        props.put("credentials","abc:def");
+        props.put("useEmbeddedES","true");
+        props.put("useConnect","true");
+
+        assertTrue(appConfig.validate(props));
+        assertEquals(appConfig.getControllerConfig().isUseConnect(),true);
     }
 }

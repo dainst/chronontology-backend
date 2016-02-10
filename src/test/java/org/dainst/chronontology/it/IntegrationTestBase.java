@@ -18,6 +18,7 @@ import org.testng.annotations.BeforeMethod;
 import spark.Spark;
 
 import java.io.File;
+import java.util.Properties;
 
 
 /**
@@ -91,6 +92,8 @@ public class IntegrationTestBase {
 
 
     protected static void startServer() throws InterruptedException {
+
+        Properties props= new Properties();
 
         Controller controller= new ConnectController(
                 mainDatastore,connectDatastore);

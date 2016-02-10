@@ -15,9 +15,8 @@ public class AppConfig extends Config {
     private String[] credentials = null;
     private String typeNames = null;
     private boolean useEmbeddedES = false;
-    private boolean useConnect = true;
-    private DatastoreConfig[] datastoreConfigs = new DatastoreConfig[2];
     private ElasticsearchServerConfig elasticsearchServerConfig = null;
+    private ControllerConfig controllerConfig = new ControllerConfig();
 
     /**
      * @param props
@@ -28,7 +27,7 @@ public class AppConfig extends Config {
     public boolean validate(Properties props) {
 
         return (
-            validateDatastores(props) &&
+            controllerConfig.validate(props) &&
             _validate(props,"serverPort",true) &&
             validateEsServer(props) &&
             _validate(props,"credentials") &&
@@ -36,24 +35,7 @@ public class AppConfig extends Config {
             );
     }
 
-    private boolean validateDatastores(Properties props) {
-        if (!_validate(props,"useConnect",true)) return false;
 
-        boolean datastoresValidated= true;
-        datastoreConfigs[0]= new DatastoreConfig("0");
-        if (!datastoreConfigs[0].validate(props)) return false;
-        if (!datastoreConfigs[0].getType().equals(ConfigConstants.DATASTORE_TYPE_ES)) {
-            logger.error(ConfigConstants.MSG_CONSTRAINT_VIOLATION+"datastores.0 must be of type \""+
-                    ConfigConstants.DATASTORE_TYPE_ES+"\".");
-            return false;
-        }
-
-        if (useConnect) {
-            datastoreConfigs[1]= new DatastoreConfig("1");
-            if (!datastoreConfigs[1].validate(props)) datastoresValidated=false;
-        }
-        return datastoresValidated;
-    }
 
     private boolean validateEsServer(Properties props) {
         if (!_validate(props,"useEmbeddedES", true)) return false;
@@ -92,19 +74,11 @@ public class AppConfig extends Config {
         if (useIt.equals("true")) useEmbeddedES= true;
     }
 
-    public boolean isUseConnect() {
-        return useConnect;
-    }
-
-    void setUseConnect(String useIt) {
-        if (useIt.equals("false")) useConnect = false;
-    }
-
-    public DatastoreConfig[] getDatastoreConfigs() {
-        return datastoreConfigs;
-    }
-
     public ElasticsearchServerConfig getElasticsearchServerConfig() {
         return elasticsearchServerConfig;
+    }
+
+    public ControllerConfig getControllerConfig() {
+        return controllerConfig;
     }
 }

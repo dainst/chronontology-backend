@@ -12,7 +12,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Daniel M. de Oliveira
  */
-public class DatastoreConfigTest extends ConfigTestBase {
+public class DatastoreConfigTest {
 
     Properties props = null;
 

@@ -11,7 +11,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ElasticsearchServerConfigTest extends ConfigTestBase {
+public class ElasticsearchServerConfigTest {
 
     Properties props = null;
 
