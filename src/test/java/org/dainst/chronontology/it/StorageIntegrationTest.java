@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dainst.chronontology.TestConstants;
-import org.dainst.chronontology.it.JsonIntegrationTestBase;
 import org.json.JSONException;
 import org.testng.annotations.Test;
 
@@ -29,7 +28,7 @@ public class StorageIntegrationTest extends JsonIntegrationTestBase {
 
     @Test
      public void postUnauthorized() {
-        client.authenticate(USER_NAME,"wrong");
+        client.authenticate(TestConstants.USER_NAME,"wrong");
         client.post(TYPE_ROUTE, sampleJson("b"));
         assertEquals(
                 client.get(TYPE_ROUTE+"1"),
@@ -38,7 +37,7 @@ public class StorageIntegrationTest extends JsonIntegrationTestBase {
 
     @Test
     public void putUnauthorized() {
-        client.authenticate(USER_NAME,"wrong");
+        client.authenticate(TestConstants.USER_NAME,"wrong");
         client.put(TYPE_ROUTE+"1", sampleJson("b"));
         assertEquals(
                 client.get(TYPE_ROUTE+"1"),

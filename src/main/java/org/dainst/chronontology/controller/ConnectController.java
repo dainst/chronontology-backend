@@ -64,4 +64,11 @@ public class ConnectController extends Controller {
         return (directParam!=null&&
                 directParam.equals("true"));
     }
+
+    public Datastore[] getDatatores() {
+        Datastore[] datastores= new Datastore[2];
+        datastores[0]= connectDatastore;
+        datastores[1]= mainDatastore;
+        return datastores;
+    }
 }

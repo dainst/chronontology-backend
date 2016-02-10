@@ -16,6 +16,8 @@ public class App {
 
     final static Logger logger = Logger.getLogger(App.class);
     private static final String DEFAULT_PROPERTIES_FILE_PATH = "config.properties";
+    private Router router = null;
+
 
     public static void main(String [] args) {
 
@@ -27,5 +29,11 @@ public class App {
         new AppConfigurator().configure(appConfig);
     }
 
-    public App(Router router) {}
+    public App(Router router) {
+        this.router= router;
+    }
+
+    public Router getRouter() {
+        return router;
+    }
 }

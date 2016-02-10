@@ -1,13 +1,12 @@
 package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
-import org.dainst.chronontology.Router;
+import org.dainst.chronontology.App;
 import org.dainst.chronontology.TestConstants;
+import org.dainst.chronontology.config.*;
 import org.dainst.chronontology.util.JsonRestClient;
 import org.dainst.chronontology.controller.ConnectController;
-import org.dainst.chronontology.controller.Controller;
 import org.dainst.chronontology.store.ESRestSearchableDatastore;
 import org.dainst.chronontology.store.ESServerTestUtil;
 import org.dainst.chronontology.store.FileSystemDatastore;
@@ -26,33 +25,16 @@ import java.util.Properties;
  */
 public class IntegrationTestBase {
 
-    protected static final String USER_NAME = "admin";
-    protected static final String PASS_WORD = "s3cr3t";
-
     protected static final String TYPE_ROUTE = "/" + TestConstants.TEST_TYPE + "/";
 
-    protected static final String URL = "http://0.0.0.0:4567";
-
-
-
-    protected static final MediaType JSON
-            = MediaType.parse("application/json; charset=utf-8");
-
-    protected static final JsonRestClient client = new JsonRestClient(URL);
-
+    // A client speaking to the rest api of the app under design
+    protected static final JsonRestClient client = new JsonRestClient(TestConstants.SERVER_URL);
     protected static final OkHttpClient ok= new OkHttpClient();
 
-
-
-    protected static final ESRestSearchableDatastore connectDatastore
-            = new ESRestSearchableDatastore(ESClientTestUtil.getClient(),ESClientTestUtil.getIndexName());
-
-
-    protected static final FileSystemDatastore mainDatastore
-            = new FileSystemDatastore(TestConstants.TEST_FOLDER);
-
-
-
+    // To allow direct data manipulation for testing purposes
+    protected static ESRestSearchableDatastore connectDatastore = null;
+    // To allow direct data manipulation for testing purposes
+    protected static FileSystemDatastore mainDatastore = null;
 
 
     @BeforeClass
@@ -72,7 +54,7 @@ public class IntegrationTestBase {
 
     @BeforeMethod
     public void beforeMethod() {
-        client.authenticate(USER_NAME, PASS_WORD);
+        client.authenticate(TestConstants.USER_NAME, TestConstants.PASS_WORD);
         ESClientTestUtil.createEsTypeAndMapping();
     }
 
@@ -90,19 +72,30 @@ public class IntegrationTestBase {
     }
 
 
+    private static AppConfig makeAppConfig() {
+
+        Properties props= new Properties();
+        props.put("serverPort",TestConstants.SERVER_PORT);
+        props.put("datastores.0.indexName",ESClientTestUtil.getIndexName());
+        props.put("datastores.0.url",ESServerTestUtil.getUrl());
+        props.put("datastores.1.path",TestConstants.TEST_FOLDER);
+        props.put("datastores.1.type", ConfigConstants.DATASTORE_TYPE_FS);
+        props.put("typeNames",TestConstants.TEST_TYPE);
+        props.put("credentials", TestConstants.USER_NAME+":"+ TestConstants.PASS_WORD);
+
+        AppConfig config= new AppConfig();
+        config.validate(props);
+        return config;
+    }
 
     protected static void startServer() throws InterruptedException {
 
-        Properties props= new Properties();
+        App app=  new AppConfigurator().configure(makeAppConfig());
+        ConnectController controller= (ConnectController) app.getRouter().getController();
 
-        Controller controller= new ConnectController(
-                mainDatastore,connectDatastore);
+        mainDatastore= (FileSystemDatastore) controller.getDatatores()[1];
+        connectDatastore= (ESRestSearchableDatastore) controller.getDatatores()[0];
 
-        new Router(
-                controller,
-                new String[]{TestConstants.TEST_TYPE},
-                new String[]{USER_NAME+":"+PASS_WORD}
-        );
         Thread.sleep(1000);
     }
 

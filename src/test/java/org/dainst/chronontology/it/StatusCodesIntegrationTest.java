@@ -1,7 +1,7 @@
 package org.dainst.chronontology.it;
 
 
-import org.dainst.chronontology.it.ResponseIntegrationTestBase;
+import org.dainst.chronontology.TestConstants;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void putUnauthorized() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE, "PUT", json(),USER_NAME,"wrong").code(),
+            rest(TYPE_ROUTE, "PUT", json(), TestConstants.USER_NAME,"wrong").code(),
             HTTP_UNAUTHORIZED
         );
     }
@@ -26,7 +26,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void postUnauthorized() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE, "POST", json(),USER_NAME,"wrong").code(),
+            rest(TYPE_ROUTE, "POST", json(), TestConstants.USER_NAME,"wrong").code(),
             HTTP_UNAUTHORIZED
         );
     }
@@ -34,7 +34,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void deleteUnauthorized() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE, "DELETE", json(),USER_NAME,"wrong").code(),
+            rest(TYPE_ROUTE, "DELETE", json(), TestConstants.USER_NAME,"wrong").code(),
             HTTP_UNAUTHORIZED
         );
     }
