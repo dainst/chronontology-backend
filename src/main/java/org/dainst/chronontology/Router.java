@@ -104,4 +104,8 @@ public class Router {
 
         setUpAuthorization(credentials);
     }
+
+    public Controller getController() {
+        return controller;
+    }
 }

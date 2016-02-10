@@ -3,6 +3,7 @@ package org.dainst.chronontology.it;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
+import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.store.ESServerTestUtil;
 import org.dainst.chronontology.util.Results;
 import org.json.JSONException;
@@ -30,7 +31,7 @@ public class SearchIntegrationTest extends JsonIntegrationTestBase {
     }
 
     private void refreshES() {
-        RequestBody body = RequestBody.create(JSON, "{}");
+        RequestBody body = RequestBody.create(TestConstants.JSON, "{}");
         Request.Builder b = new Request.Builder()
                 .url(ESServerTestUtil.getUrl()+ "/" + ESClientTestUtil.getIndexName() + "/_refresh").post(body);
         try {

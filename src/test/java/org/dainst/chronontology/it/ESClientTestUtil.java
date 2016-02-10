@@ -24,10 +24,6 @@ public class ESClientTestUtil {
         return TEST_INDEX;
     }
 
-    public static JsonRestClient getClient() {
-        return esClient;
-    }
-
     private static JsonNode loadTestTypeMapping(String path) {
         JsonNode n= null;
         try {
