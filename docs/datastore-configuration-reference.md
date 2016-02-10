@@ -11,7 +11,8 @@ In **single** mode there is only one datastore (id "0").
 
 
 A datastore with the id 0 is of type elasticsearch in any case.
-A additonal datastore with the id 1 in **connect**-mode is of type filesystem.
+A additonal datastore with the id 1 in **connect**-mode 
+can be either of type "filesystem" or of type "elasticsearch".
 
 The "connect" mode is default but can be turned off with using the property
 
@@ -21,8 +22,8 @@ useConnect=false
 
 ## Datestore configuration
 
-A datastore can be either an elasticsearch datastore or 
-a filesystem datastore. This can be specified explicitely by
+A datastore can be either an "elasticsearch" datastore or 
+a "filesystem" datastore. This can be specified explicitely by
 the property
 
 ```
@@ -86,7 +87,8 @@ lean configurations.
 
 ### Connect mode
 
-The simplest possible configuration for connect mode would be
+According to the defaulting rules as described in the paragraphs above 
+the simplest possible configuration for connect mode would either be
 
 ```
 datastores.1.type=filesystem
@@ -97,10 +99,28 @@ which equals
 ```
 useConnect=true
 datastores.0.type=elasticsearch
-datastores.0.indexName=myIndex
+datastores.0.indexName=connect
 datastores.0.url=http://localhost:9202
 datastores.1.type=filesystem
 datastores.1.path=datastore/
+```
+
+or be
+
+```
+datastores.1.indexName=main
+```
+
+which equals 
+
+```
+useConnect=true
+datastores.0.type=elasticsearch
+datastores.0.indexName=connect
+datastores.0.url=http://localhost:9202
+datastores.1.type=elasticsearch
+datastores.1.indexName=main
+datastores.1.url=http://localhost:9202
 ```
 
 ### Single mode
