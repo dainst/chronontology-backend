@@ -12,25 +12,29 @@ import static spark.Spark.port;
 /**
  * @author Daniel M. de Oliveira
  */
-public class AppConfigurator {
+public class AppConfigurator implements Configurator<App> {
 
     final static Logger logger = Logger.getLogger(AppConfigurator.class);
 
-    public static void configure(AppConfig appConfig) {
+    @Override
+    public App configure(Config config) {
+
+        AppConfig appConfig= (AppConfig) config;
         if (appConfig.getElasticsearchServerConfig()!=null) new EmbeddedES(
                 appConfig.getElasticsearchServerConfig());
 
         final int serverPort= Integer.parseInt(appConfig.getServerPort());
         port(serverPort);
 
-        new Router(
-                ControllerConfigurator.configure(appConfig.getControllerConfig()),
+        Router router= new Router(
+                new ControllerConfigurator().configure(appConfig.getControllerConfig()),
                 getTypes(appConfig.getTypeNames()),
                 appConfig.getCredentials());
 
+        return new App(router);
     }
 
-    private static String[] getTypes(final String typesString) {
+    private String[] getTypes(final String typesString) {
         String[] types= typesString.split(",");
         for (String typeName:types) {
             DocumentModel dm= new DocumentModel(typeName, "1", new ObjectMapper().createObjectNode(),"admin");

@@ -24,6 +24,8 @@ public class App {
         AppConfig appConfig= new AppConfig();
         if (appConfig.validate(props)==false) System.exit(1);
 
-        AppConfigurator.configure(appConfig);
+        new AppConfigurator().configure(appConfig);
     }
+
+    public App(Router router) {}
 }

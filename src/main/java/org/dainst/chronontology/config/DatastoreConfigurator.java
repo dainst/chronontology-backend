@@ -1,6 +1,7 @@
 package org.dainst.chronontology.config;
 
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.store.Connector;
 import org.dainst.chronontology.store.Datastore;
 import org.dainst.chronontology.store.ESRestSearchableDatastore;
 import org.dainst.chronontology.store.FileSystemDatastore;
@@ -11,11 +12,12 @@ import java.io.File;
 /**
  * @author Daniel M. de Oliveira
  */
-public class DatastoreConfigurator {
+public class DatastoreConfigurator implements Configurator<Datastore> {
 
     final static Logger logger = Logger.getLogger(DatastoreConfigurator.class);
 
-    static Datastore configure(DatastoreConfig datastoreConfig) {
+    public Datastore configure(Config config) {
+        DatastoreConfig datastoreConfig= (DatastoreConfig) config;
 
         if (datastoreConfig.getType().equals(ConfigConstants.DATASTORE_TYPE_ES)) {
             return new ESRestSearchableDatastore(
@@ -25,7 +27,7 @@ public class DatastoreConfigurator {
         }
     }
 
-    private static FileSystemDatastore initDS(DatastoreConfig datastoreConfig) {
+    private FileSystemDatastore initDS(DatastoreConfig datastoreConfig) {
 
         String datastorePath= datastoreConfig.getPath();
 
