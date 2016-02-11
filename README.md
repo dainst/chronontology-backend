@@ -44,13 +44,13 @@ You can find one [here](config.properties.template).
 Make sure you revise the settings before startup!
 
 For information on how to configure the abovementioned datastores, have a look at the
-[datastore configuration reference](datastore-configuration-reference.md). 
+[datastore configuration reference](docs/datastore-configuration-reference.md). 
 
 In any case, the application will need access to at least one elasticsearch instance in order
 to work. You can either use an external elasticsearch instance on any machine you have 
 access to or you can launch the application with an embedded elasticsearch server. Information
 on how to configure the application can be found at the
-[elasticsearch server configuration reference](elasticsearch-server-configuration-reference.md).
+[elasticsearch server configuration reference](docs/elasticsearch-server-configuration-reference.md).
 
 Note that you may need type mappings for every type used. So make sure 
 you didn't forget to add the mapping to the period type!
