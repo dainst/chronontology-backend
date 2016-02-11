@@ -42,25 +42,36 @@ public class ControllerConfig extends Config {
                 && (datastoreConfigs[0].getIndexName().equals(datastoreConfigs[1].getIndexName())));
     }
 
-    private boolean validateDatastores(Properties props) {
-        boolean datastoresValidated= true;
+    private boolean validateFirstDatastore(Properties props) {
         datastoreConfigs[0]= new DatastoreConfig("0");
         if (!datastoreConfigs[0].validate(props)) return false;
+
         if (!datastoreConfigs[0].getType().equals(ConfigConstants.DATASTORE_TYPE_ES)) {
             constraintViolations.add(ConfigConstants.MSG_CONSTRAINT_VIOLATION+MSG_MUST_TYPE_ES);
             return false;
         }
+        return true;
+    }
+
+    private boolean validateSecondDatastore(Properties props) {
+        datastoreConfigs[1]= new DatastoreConfig("1");
+        return (datastoreConfigs[1].validate(props));
+    }
+
+
+
+    private boolean validateDatastores(Properties props) {
+
+        if (!validateFirstDatastore(props)) return false;
 
         if (useConnect) {
-            datastoreConfigs[1]= new DatastoreConfig("1");
-            if (!datastoreConfigs[1].validate(props)) datastoresValidated=false;
-
+            if (!validateSecondDatastore(props)) return false;
             if (esConfigsClash()) {
                 constraintViolations.add(ConfigConstants.MSG_CONSTRAINT_VIOLATION+MSG_ES_CLASH);
                 return false;
             }
         }
-        return datastoresValidated;
+        return true;
     }
 
     void setUseConnect(String useIt) {
