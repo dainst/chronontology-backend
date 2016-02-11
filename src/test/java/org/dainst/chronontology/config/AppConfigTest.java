@@ -98,16 +98,7 @@ public class AppConfigTest {
         assertEquals(appConfig.getElasticsearchServerConfig().getPort(), ConfigConstants.EMBEDDED_ES_PORT);
     }
 
-    @Test
-    public void firstDatastoreNotOfTypeES() {
-        props.put("typeNames","period");
-        props.put("credentials","abc:def");
-        props.put("useEmbeddedES","true");
-        props.put("useConnect","false");
-        props.put("datastores.0.type",ConfigConstants.DATASTORE_TYPE_FS);
 
-        assertFalse(appConfig.validate(props));
-    }
 
     @Test
     public void controller() {
@@ -133,10 +124,17 @@ public class AppConfigTest {
     }
 
     @Test
-    public void datastore0isNotES() {
-        props.put("serverPort","4567");
-        props.put("typeNames","period");
-        props.put("credentials","abc:def");
+    public void datastore0isNotES_single() {
+        props.put("useConnect","false");
+        props.put("datastores.0.type",ConfigConstants.DATASTORE_TYPE_FS);
+
+        assertFalse(appConfig.validate(props));
+        assertTrue(appConfig.getConstraintViolations().contains(
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ControllerConfig.MSG_MUST_TYPE_ES));
+    }
+
+    @Test
+    public void datastore0isNotES_connect() {
         props.put("datastores.0.type","filesystem");
 
         assertFalse(appConfig.validate(props));
