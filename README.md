@@ -25,40 +25,39 @@ build/libs/chronontology-connected-0.1.0-SNAPSHOT.jar
 
 ## Using the server
 
-The application uses two datastores. The main datastore is
-file system based. The connected datastore is an elastisearch instance.
+The application can be used in two modes. In "connect" and in "single" mode.
+While in "single" mode a single datastore is used, in "connect" mode two datastores 
+are used, one for storing the authoritative versions and one for sharing these 
+data with other applications, so that they can get enriched by the yet to be developed
+"connect" component.
 
-At startup, the application reads the properties from 
+### Configuring the application
+
+Depending on which configuration you want, and also for configuring other application details,
+you have to have a config file at application startup.
 
 ```
 config.properties
 ```
 
-You can find one [here](config.properties.template). Make sure you revise the settings before startup!
+You can find one [here](config.properties.template). 
+Make sure you revise the settings before startup!
 
-For the local datastore to work, you have to create subfolders for every type 
-inside the directory of the local datastore. An example:
+For information on how to configure the abovementioned datastores, have a look at the
+[datastore configuration reference](datastore-configuration-reference.md). 
 
-```
-datastore/period
-```
+In any case, the application will need access to at least one elasticsearch instance in order
+to work. You can either use an external elasticsearch instance on any machine you have 
+access to or you can launch the application with an embedded elasticsearch server. Information
+on how to configure the application can be found at the
+[elasticsearch server configuration reference](elasticsearch-server-configuration-reference.md).
 
-is the necessary for the abovementioned config.properties to work properly.
-
-In addition to that, you need an elasticsearch instance running.
-
-A type mapping for every type used is needed, so make sure 
+Note that you may need type mappings for every type used. So make sure 
 you didn't forget to add the mapping to the period type!
  
 You'll find it [here](src/main/resources/mapping.json).
 
-To summarize, your directory should look like this:
-
-```
-connected-backend-0.1.0-SNAPSHOT.jar
-datastore/period
-config.properties
-```
+### Starting the application
 
 To run the application, you need the binary, which can get executed like this:
 
