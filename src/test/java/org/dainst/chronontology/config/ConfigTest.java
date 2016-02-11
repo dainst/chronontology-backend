@@ -2,6 +2,7 @@ package org.dainst.chronontology.config;
 
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 import static org.testng.Assert.assertEquals;
@@ -19,6 +20,9 @@ public class ConfigTest {
         public boolean validate(Properties props) {
             return _validate(props,"test");
         }
+
+        @Override public ArrayList<String> getConstraintViolations() { return null; }
+
         void setTest(String test) {
             this.test= test;
         }
@@ -32,6 +36,9 @@ public class ConfigTest {
         public boolean validate(Properties props) {
             return _validate(props,"test");
         }
+
+        @Override public ArrayList<String> getConstraintViolations() { return constraintViolations; }
+
         void setTest(String test) {
             if (test.equals("badvalue"))
                 throw new ConfigValidationException(test);
@@ -43,6 +50,9 @@ public class ConfigTest {
         public boolean validate(Properties props) {
             return _validate(props,"test");
         }
+
+        @Override public ArrayList<String> getConstraintViolations() { return null; }
+
         void setTest(String test) {}
     }
 
@@ -65,6 +75,8 @@ public class ConfigTest {
         Properties props= new Properties();
         props.setProperty("test", "badvalue");
         assertFalse(config.validate(props));
+        assertEquals(config.getConstraintViolations().get(0),
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+"badvalue");
     }
 
     @Test

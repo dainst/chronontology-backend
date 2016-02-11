@@ -1,5 +1,6 @@
 package org.dainst.chronontology.config;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -30,6 +31,11 @@ public class DatastoreConfig extends Config {
             return (
                 _validate(props,"path", true)
             );
+    }
+
+    @Override
+    public ArrayList<String> getConstraintViolations() {
+        return constraintViolations;
     }
 
     public String getIndexName() {

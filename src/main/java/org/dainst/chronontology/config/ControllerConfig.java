@@ -1,5 +1,7 @@
 package org.dainst.chronontology.config;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -7,19 +9,37 @@ import java.util.Properties;
  */
 public class ControllerConfig extends Config {
 
+    static final String MSG_MUST_TYPE_ES= "datastores.0 must be of type \""+
+        ConfigConstants.DATASTORE_TYPE_ES+"\".";
+    static final String MSG_ES_CLASH= "When both datastores use the same elasticsearch url, the index names must be different.";
+
     private DatastoreConfig[] datastoreConfigs = new DatastoreConfig[2];
     private boolean useConnect = true;
-
-
-
-
 
     @Override
     public boolean validate(Properties props) {
         return (
-            _validate(props,"useConnect",true) &&
+            _validate(props,"useConnect",true) &
             validateDatastores(props)
         );
+    }
+
+    @Override
+    public ArrayList<String> getConstraintViolations() {
+        ArrayList<String> allViolations= new ArrayList<String>();
+        allViolations.addAll(constraintViolations);
+        for (DatastoreConfig config: Arrays.asList(datastoreConfigs)) {
+            if (config!=null)
+                allViolations.addAll(config.getConstraintViolations());
+        }
+        return allViolations;
+    }
+
+    private boolean esConfigsClash() {
+        // TODO implement equals
+        return ((datastoreConfigs[0].getType().equals(datastoreConfigs[1].getType()))
+                && (datastoreConfigs[0].getUrl().equals(datastoreConfigs[1].getUrl()))
+                && (datastoreConfigs[0].getIndexName().equals(datastoreConfigs[1].getIndexName())));
     }
 
     private boolean validateDatastores(Properties props) {
@@ -27,14 +47,18 @@ public class ControllerConfig extends Config {
         datastoreConfigs[0]= new DatastoreConfig("0");
         if (!datastoreConfigs[0].validate(props)) return false;
         if (!datastoreConfigs[0].getType().equals(ConfigConstants.DATASTORE_TYPE_ES)) {
-            logger.error(ConfigConstants.MSG_CONSTRAINT_VIOLATION+"datastores.0 must be of type \""+
-                    ConfigConstants.DATASTORE_TYPE_ES+"\".");
+            constraintViolations.add(ConfigConstants.MSG_CONSTRAINT_VIOLATION+MSG_MUST_TYPE_ES);
             return false;
         }
 
         if (useConnect) {
             datastoreConfigs[1]= new DatastoreConfig("1");
             if (!datastoreConfigs[1].validate(props)) datastoresValidated=false;
+
+            if (esConfigsClash()) {
+                constraintViolations.add(ConfigConstants.MSG_CONSTRAINT_VIOLATION+MSG_ES_CLASH);
+                return false;
+            }
         }
         return datastoresValidated;
     }

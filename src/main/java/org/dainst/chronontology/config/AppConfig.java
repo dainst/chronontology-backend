@@ -2,6 +2,7 @@ package org.dainst.chronontology.config;
 
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Properties;
  */
 public class AppConfig extends Config {
 
-    final static Logger logger = Logger.getLogger(AppConfig.class);
+    final static String MSG_SERVER_PORT_NAN= "Server port must be a number, but is: ";
 
     private String serverPort = ConfigConstants.SERVER_PORT;
     private String[] credentials = null;
@@ -27,14 +28,21 @@ public class AppConfig extends Config {
     public boolean validate(Properties props) {
 
         return (
-            controllerConfig.validate(props) &&
-            _validate(props,"serverPort",true) &&
-            validateEsServer(props) &&
-            _validate(props,"credentials") &&
+            controllerConfig.validate(props) &
+            _validate(props,"serverPort",true) &
+            validateEsServer(props) &
+            _validate(props,"credentials") &
             _validate(props,"typeNames")
             );
     }
 
+    @Override
+    public ArrayList<String> getConstraintViolations() {
+        ArrayList<String> allViolations= new ArrayList<String>();
+        allViolations.addAll(constraintViolations);
+        allViolations.addAll(controllerConfig.getConstraintViolations());
+        return allViolations;
+    }
 
 
     private boolean validateEsServer(Properties props) {
@@ -51,6 +59,11 @@ public class AppConfig extends Config {
     }
 
     void setServerPort(String serverPort) {
+        try {
+            Integer.parseInt(serverPort);
+        } catch (NumberFormatException e) {
+            throw new ConfigValidationException(MSG_SERVER_PORT_NAN+"\""+serverPort+"\".");
+        }
         this.serverPort= serverPort;
     }
 

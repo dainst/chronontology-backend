@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import java.util.Properties;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -60,4 +61,31 @@ public class ControllerConfigTest {
         assertEquals(controllerConfig.getDatastoreConfigs()[0].getIndexName(), ConfigConstants.ES_INDEX_NAME);
         assertEquals(controllerConfig.getDatastoreConfigs()[0].getUrl(), ConfigConstants.EMBEDDED_ES_URL);
     }
+
+    @Test
+    public void twoEShaveSameUrlIndexName() {
+        props.put("useConnect","true");
+        props.put("datastores.0.indexName","index");
+        props.put("datastores.0.url","http://localhost:9200");
+        props.put("datastores.1.indexName","index");
+        props.put("datastores.1.url","http://localhost:9200");
+
+        assertFalse(controllerConfig.validate(props));
+        assertTrue(controllerConfig.getConstraintViolations().contains(
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ControllerConfig.MSG_ES_CLASH));
+    }
+
+    @Test
+    public void twoEShaveSameUrlButDifferentIndexName() {
+        props.put("useConnect","true");
+        props.put("datastores.0.indexName","index1");
+        props.put("datastores.0.url","http://localhost:9200");
+        props.put("datastores.1.indexName","index2");
+        props.put("datastores.1.url","http://localhost:9200");
+
+        assertTrue(controllerConfig.validate(props));
+        assertTrue(controllerConfig.getConstraintViolations().isEmpty());
+    }
+
+
 }

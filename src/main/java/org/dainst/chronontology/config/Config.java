@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -11,11 +12,30 @@ import java.util.Properties;
  */
 public abstract class Config {
 
-    final static Logger logger = Logger.getLogger(Config.class);
-
     protected String prefix= "";
 
+    protected ArrayList<String> constraintViolations = new ArrayList<String>();
 
+    /**
+     * It is recommended that implementations
+     * follow this pattern for validating the properties considered to be
+     * part of the configuration of the component Config belongs to:
+     *
+     * <pre>
+     *
+     * return (
+     *   _validate(props,"propA") &
+     *   _validate(props,"propB") &
+     * );
+     * </pre>
+     *
+     * Using the & makes sure that all validations get executed and
+     * all validation messages get collected so that a caller can
+     * retrieve them via {@link #getConstraintViolations()}.
+     *
+     * @param props
+     * @return
+     */
     abstract public boolean validate(Properties props);
 
     boolean _validate(final Properties props, final String name) {
@@ -27,7 +47,7 @@ public abstract class Config {
 
         if (props.get(prefix+name)==null) {
             if (!optional){
-                logger.error("Property \""+prefix+name+"\" does not exist.");
+                constraintViolations.add("Property \""+prefix+name+"\" does not exist.");
                 return false;
             }
             return true;
@@ -48,27 +68,28 @@ public abstract class Config {
     private boolean invokeSetter(String name, String value) {
 
         Method method= null;
+        String constraintViolation= null;
         try {
             method = this.getClass().
                     getDeclaredMethod("set"+capitalize(name), String.class);
         } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            return false;
+            constraintViolation= e.getStackTrace().toString();
         }
         try {
             method.invoke(this,value);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return false;
+            constraintViolation= e.getStackTrace().toString();
         } catch (InvocationTargetException e) {
             if (e.getCause().getClass().equals(ConfigValidationException.class))
-                logger.error(e.getCause().getMessage());
+                constraintViolation= e.getCause().getMessage();
             else
-                e.printStackTrace();
-            return false;
+                constraintViolation= e.getStackTrace().toString();
         }
 
-
+        if (constraintViolation!=null) {
+            constraintViolations.add(constraintViolation);
+            return false;
+        }
         return true;
     }
 
@@ -76,4 +97,24 @@ public abstract class Config {
         return Character.toUpperCase(line.charAt(0)) + line.substring(1);
     }
 
+    /**
+     * To collect all error messages from the actual Config
+     * object as well as all other messages from the Config hierarchy,
+     * it is recommended that implementors follow this pattern
+     *
+     * <pre>
+     *
+     *   ArrayList<String> allViolations= new ArrayList<String>();
+     *   allViolations.addAll(constraintViolations);
+     *   allViolations.addAll(childConfig.getConstraintViolations());
+     *   return allViolations;
+     * </pre>
+     *
+     * where childConfig denotes some field of the actual object, which also
+     * is of a subtype of Config.
+     *
+     * @return all the validation violation error messages from a hierarchy
+     *   of subtypes of Config.
+     */
+    abstract public ArrayList<String> getConstraintViolations();
 }

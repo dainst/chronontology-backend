@@ -1,5 +1,6 @@
 package org.dainst.chronontology.config;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 /**
@@ -22,6 +23,11 @@ public class ElasticsearchServerConfig extends Config {
             _validate(props,"dataPath", true) &&
             _validate(props,"clusterName", true)
         );
+    }
+
+    @Override
+    public ArrayList<String> getConstraintViolations() {
+        return constraintViolations;
     }
 
     public String getPort() {

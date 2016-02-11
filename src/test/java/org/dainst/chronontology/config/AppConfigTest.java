@@ -69,6 +69,7 @@ public class AppConfigTest {
     public void dontUseEmbeddedESByOmittingParam() {
         props.put("typeNames","period");
         props.put("credentials","abc:def");
+        props.put("useConnect","false");
 
         assertTrue(appConfig.validate(props));
         assertNull(appConfig.getElasticsearchServerConfig());
@@ -79,6 +80,7 @@ public class AppConfigTest {
         props.put("typeNames","period");
         props.put("credentials","abc:def");
         props.put("useEmbeddedES","true");
+        props.put("useConnect","false");
 
         assertTrue(appConfig.validate(props));
         assertEquals(appConfig.getServerPort(), ConfigConstants.SERVER_PORT);
@@ -113,8 +115,46 @@ public class AppConfigTest {
         props.put("credentials","abc:def");
         props.put("useEmbeddedES","true");
         props.put("useConnect","true");
+        props.put("datastores.1.type","filesystem");
 
         assertTrue(appConfig.validate(props));
         assertEquals(appConfig.getControllerConfig().isUseConnect(),true);
+    }
+
+    @Test
+    public void serverPortNotANumber() {
+        props.put("serverPort","a7");
+        props.put("typeNames","period");
+        props.put("credentials","abc:def");
+
+        assertFalse(appConfig.validate(props));
+        assertTrue(appConfig.getConstraintViolations().get(0).contains(
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+AppConfig.MSG_SERVER_PORT_NAN));
+    }
+
+    @Test
+    public void datastore0isNotES() {
+        props.put("serverPort","4567");
+        props.put("typeNames","period");
+        props.put("credentials","abc:def");
+        props.put("datastores.0.type","filesystem");
+
+        assertFalse(appConfig.validate(props));
+        assertTrue(appConfig.getConstraintViolations().contains(
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ControllerConfig.MSG_MUST_TYPE_ES));
+    }
+
+    @Test
+    public void mergeMessagesWithControllerMessages() {
+        props.put("serverPort","a7");
+        props.put("typeNames","period");
+        props.put("credentials","abc:def");
+        props.put("datastores.0.type","filesystem");
+
+        assertFalse(appConfig.validate(props));
+        assertTrue(appConfig.getConstraintViolations().contains(
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+AppConfig.MSG_SERVER_PORT_NAN+"\"a7\"."));
+        assertTrue(appConfig.getConstraintViolations().contains(
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ControllerConfig.MSG_MUST_TYPE_ES));
     }
 }

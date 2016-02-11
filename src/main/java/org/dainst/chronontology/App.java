@@ -18,13 +18,16 @@ public class App {
     private static final String DEFAULT_PROPERTIES_FILE_PATH = "config.properties";
     private Router router = null;
 
-
     public static void main(String [] args) {
 
         Properties props= PropertiesLoader.loadConfiguration(DEFAULT_PROPERTIES_FILE_PATH);
-        if (props==null) System.exit(1);
         AppConfig appConfig= new AppConfig();
-        if (appConfig.validate(props)==false) System.exit(1);
+        if ((props==null) || (appConfig.validate(props)==false)) {
+            for (String err: appConfig.getConstraintViolations()) {
+                logger.error(err);
+            }
+            System.exit(1);
+        }
 
         new AppConfigurator().configure(appConfig);
     }
