@@ -80,8 +80,11 @@ public abstract class Config {
         } catch (IllegalAccessException e) {
             constraintViolation= e.getStackTrace().toString();
         } catch (InvocationTargetException e) {
-            if (e.getCause().getClass().equals(ConfigValidationException.class))
-                constraintViolation= e.getCause().getMessage();
+            if (e.getCause().getClass().equals(ConfigValidationException.class)) {
+
+                if (e.getCause().getMessage()!=null)
+                    constraintViolation= e.getCause().getMessage();
+            }
             else
                 constraintViolation= e.getStackTrace().toString();
         }

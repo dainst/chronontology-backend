@@ -1,7 +1,5 @@
 package org.dainst.chronontology.config;
 
-import org.apache.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -15,9 +13,9 @@ public class AppConfig extends Config {
     private String serverPort = ConfigConstants.SERVER_PORT;
     private String[] credentials = null;
     private String typeNames = null;
-    private boolean useEmbeddedES = false;
     private ElasticsearchServerConfig elasticsearchServerConfig = null;
     private ControllerConfig controllerConfig = new ControllerConfig();
+    private Properties props = null;
 
     /**
      * @param props
@@ -26,11 +24,12 @@ public class AppConfig extends Config {
      */
     @Override
     public boolean validate(Properties props) {
+        this.props= props;
 
         return (
             controllerConfig.validate(props) &
             _validate(props,"serverPort",true) &
-            validateEsServer(props) &
+            _validate(props,"useEmbeddedES", true) &
             _validate(props,"credentials") &
             _validate(props,"typeNames")
             );
@@ -45,14 +44,6 @@ public class AppConfig extends Config {
     }
 
 
-    private boolean validateEsServer(Properties props) {
-        if (!_validate(props,"useEmbeddedES", true)) return false;
-        if (useEmbeddedES) {
-            elasticsearchServerConfig= new ElasticsearchServerConfig();
-            return elasticsearchServerConfig.validate(props);
-        }
-        return true;
-    }
 
     public String getServerPort() {
         return serverPort;
@@ -84,7 +75,11 @@ public class AppConfig extends Config {
     }
 
     void setUseEmbeddedES(String useIt) {
-        if (useIt.equals("true")) useEmbeddedES= true;
+        if (useIt.equals("true")) {
+            elasticsearchServerConfig= new ElasticsearchServerConfig();
+            if (!elasticsearchServerConfig.validate(props)) throw
+                new ConfigValidationException();
+        }
     }
 
     public ElasticsearchServerConfig getElasticsearchServerConfig() {

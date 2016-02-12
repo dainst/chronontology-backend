@@ -6,6 +6,7 @@ import org.testng.annotations.Test;
 import java.util.Properties;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -28,6 +29,16 @@ public class ElasticsearchServerConfigTest {
         assertTrue(config.validate(props));
         assertEquals(config.getPort(),"9200");
     }
+
+    @Test
+    public void portNotANUmber() {
+        props.put("esServer.port","92a0");
+
+        ElasticsearchServerConfig config= new ElasticsearchServerConfig();
+        assertFalse(config.validate(props));
+        assertTrue(config.getConstraintViolations().get(0).contains("92a0"));
+    }
+
 
     @Test
     public void omitPort() {

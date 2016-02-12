@@ -8,6 +8,8 @@ import java.util.Properties;
  */
 public class ElasticsearchServerConfig extends Config {
 
+    private static final String MSG_PORT_NAN = "Embedded Elasticsearch server port must be a number, but is: ";
+
     private String port = ConfigConstants.EMBEDDED_ES_PORT;
     private String dataPath = ConfigConstants.ES_SERVER_DATA_PATH;
     private String clusterName = ConfigConstants.ES_SERVER_CLUSTER_NAME;
@@ -35,6 +37,11 @@ public class ElasticsearchServerConfig extends Config {
     }
 
     void setPort(String port) {
+        try {
+            Integer.parseInt(port);
+        } catch (NumberFormatException e) {
+            throw new ConfigValidationException(MSG_PORT_NAN+"\""+port+"\".");
+        }
         this.port= port;
     }
 
