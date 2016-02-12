@@ -10,7 +10,7 @@ public class AppConfig extends Config {
 
     final static String MSG_SERVER_PORT_NAN= "Server port must be a number, but is: ";
 
-    private String serverPort = ConfigConstants.SERVER_PORT;
+    private String serverPort= null;
     private String[] credentials = null;
     private String typeNames = null;
     private ElasticsearchServerConfig elasticsearchServerConfig = null;
@@ -28,8 +28,8 @@ public class AppConfig extends Config {
 
         return (
             controllerConfig.validate(props) &
-            _validate(props,"serverPort",true) &
-            _validate(props,"useEmbeddedES", true) &
+            _validate(props,"serverPort",ConfigConstants.SERVER_PORT) &
+            _validate(props,"useEmbeddedES", "false") &
             _validate(props,"credentials") &
             _validate(props,"typeNames")
             );
@@ -77,8 +77,7 @@ public class AppConfig extends Config {
     void setUseEmbeddedES(String useIt) {
         if (useIt.equals("true")) {
             elasticsearchServerConfig= new ElasticsearchServerConfig();
-            if (!elasticsearchServerConfig.validate(props)) throw
-                new ConfigValidationException();
+            if (!elasticsearchServerConfig.validate(props)) throw new ConfigValidationException();
         }
     }
 

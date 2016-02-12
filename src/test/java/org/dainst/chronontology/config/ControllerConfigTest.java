@@ -88,4 +88,23 @@ public class ControllerConfigTest {
     }
 
 
+    @Test
+    public void datastore0isNotES_single() {
+        props.put("useConnect","false");
+        props.put("datastores.0.type",ConfigConstants.DATASTORE_TYPE_FS);
+
+        assertFalse(controllerConfig.validate(props));
+        assertTrue(controllerConfig.getConstraintViolations().contains(
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ControllerConfig.MSG_MUST_TYPE_ES));
+    }
+
+    @Test
+    public void datastore0isNotES_connect() {
+        props.put("datastores.0.type","filesystem");
+
+        assertFalse(controllerConfig.validate(props));
+        assertTrue(controllerConfig.getConstraintViolations().contains(
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ControllerConfig.MSG_MUST_TYPE_ES));
+    }
+
 }

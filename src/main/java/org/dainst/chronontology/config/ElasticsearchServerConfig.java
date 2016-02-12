@@ -10,9 +10,9 @@ public class ElasticsearchServerConfig extends Config {
 
     private static final String MSG_PORT_NAN = "Embedded Elasticsearch server port must be a number, but is: ";
 
-    private String port = ConfigConstants.EMBEDDED_ES_PORT;
-    private String dataPath = ConfigConstants.ES_SERVER_DATA_PATH;
-    private String clusterName = ConfigConstants.ES_SERVER_CLUSTER_NAME;
+    private String port= null;
+    private String dataPath= null;
+    private String clusterName= null;
 
     public ElasticsearchServerConfig() {
         this.prefix= "esServer.";
@@ -21,9 +21,9 @@ public class ElasticsearchServerConfig extends Config {
     @Override
     public boolean validate(Properties props) {
         return (
-            _validate(props,"port", true) &&
-            _validate(props,"dataPath", true) &&
-            _validate(props,"clusterName", true)
+            _validate(props,"port", ConfigConstants.EMBEDDED_ES_PORT) &&
+            _validate(props,"dataPath", ConfigConstants.ES_SERVER_DATA_PATH) &&
+            _validate(props,"clusterName", ConfigConstants.ES_SERVER_CLUSTER_NAME)
         );
     }
 

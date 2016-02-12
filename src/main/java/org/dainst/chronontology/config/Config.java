@@ -8,6 +8,18 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 /**
+ * Config objects are designed to validate, extract and arrange the properties
+ * required for the creation of specific application components.
+ * Config objects are designed for consumption by their
+ * corresponding {@link Configurator} objects.
+ *
+ * <pre>
+ *
+ * Application component name: Component
+ * Config object: ComponentConfig
+ * Configurator object: ComponentConfigurator&lt;Component,ComponentConfig&gt;
+ * </pre>
+ *
  * @author Daniel M. de Oliveira
  */
 public abstract class Config {
@@ -17,6 +29,9 @@ public abstract class Config {
     protected ArrayList<String> constraintViolations = new ArrayList<String>();
 
     /**
+     * Used to prepare the Config object for consumption
+     * by its corresponding {@link Configurator} object.
+     *
      * It is recommended that implementations
      * follow this pattern for validating the properties considered to be
      * part of the configuration of the component Config belongs to:
@@ -34,26 +49,61 @@ public abstract class Config {
      * retrieve them via {@link #getConstraintViolations()}.
      *
      * @param props
-     * @return
+     * @return true if the Config object can be used for configuring a component.
      */
     abstract public boolean validate(Properties props);
 
+    /**
+     * Validates the properties objects property with the name specified
+     * by the "name" parameter. For doing this, it will call a setter generated from
+     * the "name" parameter, and taking the value from the property as its only string argument,
+     * following the pattern
+     * <pre>
+     *
+     * Property: myProp=abc
+     * Setter name: setMyProp(abc)
+     * </pre>
+     *
+     * It is the responsibility of implementors of Config subclasses to create these
+     * setters for each property to validate. It is also the responsibility of implementors
+     * to signal each error encountered by throwing {@link ConfigValidationException}.
+     *
+     * @param props
+     * @param name
+     * @return false if the setter does not exist or cannot be accessed.
+     *   false if a {@link ConfigValidationException}
+     *   got thrown from the setter. false if
+     */
     boolean _validate(final Properties props, final String name) {
-        return _validate(props,name,false);
+        return _validate(props,name,null);
     }
 
 
-    boolean _validate(final Properties props, final String name, final boolean optional) {
+    /**
+     * Works the same as {@link Config#_validate(Properties, String)}, with the exception
+     * that if the property does not exist in props, a defaultval is used to pass it
+     * to the setter.
+     *
+     * @param props
+     * @param name
+     * @param defaultval if set to null, it behaves as specified in {@link Config#_validate(Properties, String)}.
+     *   However, it is recommended to use that method instead from {@link Config#validate(Properties)}.
+     * @return
+     */
+    boolean _validate(final Properties props, final String name, final String defaultval) {
 
+        String value= null;
         if (props.get(prefix+name)==null) {
-            if (!optional){
+
+            if (defaultval==null){
                 constraintViolations.add("Property \""+prefix+name+"\" does not exist.");
                 return false;
             }
-            return true;
-        }
+            value= defaultval;
+        } else
+            value= (String)props.get(prefix+name);
 
-        return invokeSetter(name,(String)props.get(prefix+name));
+        return invokeSetter(name,value);
     }
 
     /**
@@ -68,13 +118,37 @@ public abstract class Config {
     private boolean invokeSetter(String name, String value) {
 
         Method method= null;
-        String constraintViolation= null;
         try {
             method = this.getClass().
                     getDeclaredMethod("set"+capitalize(name), String.class);
         } catch (NoSuchMethodException e) {
-            constraintViolation= e.getStackTrace().toString();
+            constraintViolations.add(e.getStackTrace().toString());
+            return false;
         }
+        return invokeMethod(method,value);
+
+    }
+
+    /**
+     * Invokes a method. In any but one case for every exception
+     * an error message gets added to {@link Config#constraintViolations}
+     *
+     * For exceptions of type {@link ConfigValidationException} with no messages
+     * nothing gets added to {@link Config#constraintViolations}. This is as designed because
+     * it is expected that the constructor {@link ConfigValidationException#ConfigValidationException()}
+     * gets used only after validation of a child component in which case the
+     * child componenents Config subtyped object adds its encountered error messages
+     * to this objects own {@link Config#constraintViolations}. It is the responsibility of
+     * the implementor of {@link Config#getConstraintViolations()} then to collect all the messages
+     * and pass them to the caller.
+     *
+     * @param method
+     * @param value
+     * @return
+     */
+    private boolean invokeMethod(Method method,String value) {
+
+        String constraintViolation= null;
         try {
             method.invoke(this,value);
         } catch (IllegalAccessException e) {
@@ -95,6 +169,7 @@ public abstract class Config {
         }
         return true;
     }
+
 
     private String capitalize(final String line) {
         return Character.toUpperCase(line.charAt(0)) + line.substring(1);

@@ -9,10 +9,10 @@ import java.util.Properties;
 public class DatastoreConfig extends Config {
 
     public static final String TYPE_ELASTICSEARCH = "elasticsearch";
-    private String indexName = ConfigConstants.ES_INDEX_NAME;
-    private String url = ConfigConstants.EMBEDDED_ES_URL;
-    private String type = ConfigConstants.DATASTORE_TYPE_ES;
-    private String path = ConfigConstants.DATASTORE_PATH;
+    private String indexName= null;
+    private String url= null;
+    private String type= null;
+    private String path= null;
 
     public DatastoreConfig(String id) {
         this.prefix= "datastores."+id+".";
@@ -20,16 +20,16 @@ public class DatastoreConfig extends Config {
 
     @Override
     public boolean validate(Properties props) {
-        if (!_validate(props,"type", true)) return false;
+        if (!_validate(props,"type", ConfigConstants.DATASTORE_TYPE_ES)) return false;
 
         if (type.equals(TYPE_ELASTICSEARCH))
             return (
-                _validate(props,"indexName", true) &&
-                _validate(props,"url", true)
+                _validate(props,"indexName", ConfigConstants.ES_INDEX_NAME) &&
+                _validate(props,"url", ConfigConstants.EMBEDDED_ES_URL)
             );
         else
             return (
-                _validate(props,"path", true)
+                _validate(props,"path", ConfigConstants.DATASTORE_PATH)
             );
     }
 

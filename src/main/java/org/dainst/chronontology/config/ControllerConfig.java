@@ -16,11 +16,13 @@ public class ControllerConfig extends Config {
     private DatastoreConfig[] datastoreConfigs = new DatastoreConfig[2];
     private boolean useConnect = true;
 
+    private Properties props= null;
+
     @Override
     public boolean validate(Properties props) {
+        this.props= props;
         return (
-            _validate(props,"useConnect",true) &
-            validateDatastores(props)
+            _validate(props,"useConnect","true")
         );
     }
 
@@ -42,40 +44,32 @@ public class ControllerConfig extends Config {
                 && (datastoreConfigs[0].getIndexName().equals(datastoreConfigs[1].getIndexName())));
     }
 
-    private boolean validateFirstDatastore(Properties props) {
+    private void validateFirstDatastore() {
         datastoreConfigs[0]= new DatastoreConfig("0");
-        if (!datastoreConfigs[0].validate(props)) return false;
+        if (!datastoreConfigs[0].validate(props)) throw new ConfigValidationException();
 
         if (!datastoreConfigs[0].getType().equals(ConfigConstants.DATASTORE_TYPE_ES)) {
-            constraintViolations.add(ConfigConstants.MSG_CONSTRAINT_VIOLATION+MSG_MUST_TYPE_ES);
-            return false;
+            throw new ConfigValidationException(MSG_MUST_TYPE_ES);
         }
-        return true;
     }
 
-    private boolean validateSecondDatastore(Properties props) {
+    private boolean validateSecondDatastore() {
         datastoreConfigs[1]= new DatastoreConfig("1");
         return (datastoreConfigs[1].validate(props));
     }
 
 
+    void setUseConnect(String useIt) {
 
-    private boolean validateDatastores(Properties props) {
+        validateFirstDatastore();
 
-        if (!validateFirstDatastore(props)) return false;
-
+        if (useIt.equals("false")) useConnect = false;
         if (useConnect) {
-            if (!validateSecondDatastore(props)) return false;
+            if (!validateSecondDatastore()) throw new ConfigValidationException();
             if (esConfigsClash()) {
-                constraintViolations.add(ConfigConstants.MSG_CONSTRAINT_VIOLATION+MSG_ES_CLASH);
-                return false;
+                throw new ConfigValidationException(MSG_ES_CLASH);
             }
         }
-        return true;
-    }
-
-    void setUseConnect(String useIt) {
-        if (useIt.equals("false")) useConnect = false;
     }
 
     public boolean isUseConnect() {
