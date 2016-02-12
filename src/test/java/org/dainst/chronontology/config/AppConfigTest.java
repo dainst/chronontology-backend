@@ -144,7 +144,6 @@ public class AppConfigTest {
         props.put("datastores.0.type","filesystem");
 
         assertFalse(appConfig.validate(props));
-        System.out.println(appConfig.getConstraintViolations().get(1));
 
         assertTrue(appConfig.getConstraintViolations().contains(
                 ConfigConstants.MSG_CONSTRAINT_VIOLATION+AppConfig.MSG_SERVER_PORT_NAN+"\"a7\"."));
