@@ -44,33 +44,23 @@ public class ControllerConfig extends Config {
                 && (datastoreConfigs[0].getIndexName().equals(datastoreConfigs[1].getIndexName())));
     }
 
-    private void validateFirstDatastore() {
-
-        datastoreConfigs[0]= new DatastoreConfig("0");
-        if (!datastoreConfigs[0].validate(props)) throw new ConfigValidationException();
-
-        if (!datastoreConfigs[0].getType().equals(ConfigConstants.DATASTORE_TYPE_ES)) {
-            throw new ConfigValidationException(MSG_MUST_TYPE_ES);
-        }
-    }
-
-    private boolean validateSecondDatastore() {
-        datastoreConfigs[1]= new DatastoreConfig("1");
-        return (datastoreConfigs[1].validate(props));
+    private void validateDatastore(Integer nr) {
+        datastoreConfigs[nr]= new DatastoreConfig(nr.toString());
+        if (!datastoreConfigs[nr].validate(props)) throw new ConfigValidationException();
     }
 
 
     void setUseConnect(String useIt) {
 
-        validateFirstDatastore();
+        validateDatastore(0);
+        if (!datastoreConfigs[0].getType().equals(ConfigConstants.DATASTORE_TYPE_ES))
+            throw new ConfigValidationException(MSG_MUST_TYPE_ES);
 
-        if (useIt.equals("false")) useConnect = false;
-        if (useConnect) {
-            if (!validateSecondDatastore()) throw new ConfigValidationException();
-            if (esConfigsClash()) {
-                throw new ConfigValidationException(MSG_ES_CLASH);
-            }
-        }
+        if (!useIt.equals("false")) {
+            validateDatastore(1);
+            if (esConfigsClash()) throw new ConfigValidationException(MSG_ES_CLASH);
+        } else
+            useConnect= false;
     }
 
     public boolean isUseConnect() {
