@@ -45,6 +45,7 @@ public class ControllerConfig extends Config {
     }
 
     private void validateFirstDatastore() {
+
         datastoreConfigs[0]= new DatastoreConfig("0");
         if (!datastoreConfigs[0].validate(props)) throw new ConfigValidationException();
 

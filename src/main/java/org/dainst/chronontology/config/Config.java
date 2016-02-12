@@ -148,24 +148,22 @@ public abstract class Config {
      */
     private boolean invokeMethod(Method method,String value) {
 
-        String constraintViolation= null;
         try {
             method.invoke(this,value);
         } catch (IllegalAccessException e) {
-            constraintViolation= e.getStackTrace().toString();
+            constraintViolations.add(e.getStackTrace().toString());
+            return false;
         } catch (InvocationTargetException e) {
             if (e.getCause().getClass().equals(ConfigValidationException.class)) {
 
                 if (e.getCause().getMessage()!=null)
-                    constraintViolation= e.getCause().getMessage();
+                    constraintViolations.add(e.getCause().getMessage());
+                return false;
             }
-            else
-                constraintViolation= e.getStackTrace().toString();
-        }
-
-        if (constraintViolation!=null) {
-            constraintViolations.add(constraintViolation);
-            return false;
+            else {
+                constraintViolations.add(e.getStackTrace().toString());
+                return false;
+            }
         }
         return true;
     }

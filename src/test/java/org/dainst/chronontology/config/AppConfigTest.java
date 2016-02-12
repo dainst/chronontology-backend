@@ -98,6 +98,17 @@ public class AppConfigTest {
         assertEquals(appConfig.getElasticsearchServerConfig().getPort(), ConfigConstants.EMBEDDED_ES_PORT);
     }
 
+    @Test
+    public void addMsgsFromESServerValidation() {
+        props.put("typeNames","period");
+        props.put("credentials","abc:def");
+        props.put("useEmbeddedES","true");
+        props.put("useConnect","false");
+        props.put("esServer.port","aa");
+
+        assertFalse(appConfig.validate(props));
+        assertTrue(appConfig.getConstraintViolations().get(0).contains("aa"));
+    }
 
 
     @Test
@@ -133,6 +144,8 @@ public class AppConfigTest {
         props.put("datastores.0.type","filesystem");
 
         assertFalse(appConfig.validate(props));
+        System.out.println(appConfig.getConstraintViolations().get(1));
+
         assertTrue(appConfig.getConstraintViolations().contains(
                 ConfigConstants.MSG_CONSTRAINT_VIOLATION+AppConfig.MSG_SERVER_PORT_NAN+"\"a7\"."));
         assertTrue(appConfig.getConstraintViolations().contains(

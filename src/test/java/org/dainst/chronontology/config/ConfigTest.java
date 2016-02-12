@@ -45,6 +45,21 @@ public class ConfigTest {
         }
     }
 
+    private class ExceptionConfigWithBasicConstructorForException extends Config {
+        @Override
+        public boolean validate(Properties props) {
+            return _validate(props,"test","abc");
+            // make sure to use default value constructor to not have false positive
+            // by setTest not beeing called.
+        }
+
+        @Override public ArrayList<String> getConstraintViolations() { return constraintViolations; }
+
+        void setTest(String test) {
+            throw new ConfigValidationException();
+        }
+    }
+
     private class MissingPropertyConfig extends Config {
         @Override
         public boolean validate(Properties props) {
@@ -82,6 +97,14 @@ public class ConfigTest {
     @Test
     public void missingPropertyFail() {
         MissingPropertyConfig config= new MissingPropertyConfig();
+        Properties props= new Properties();
+        assertFalse(config.validate(props));
+    }
+
+    @Test
+    public void mustFailWithWithBasicConstructorForException() {
+        ExceptionConfigWithBasicConstructorForException config=
+                new ExceptionConfigWithBasicConstructorForException();
         Properties props= new Properties();
         assertFalse(config.validate(props));
     }

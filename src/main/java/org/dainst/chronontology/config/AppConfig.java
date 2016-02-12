@@ -40,6 +40,8 @@ public class AppConfig extends Config {
         ArrayList<String> allViolations= new ArrayList<String>();
         allViolations.addAll(constraintViolations);
         allViolations.addAll(controllerConfig.getConstraintViolations());
+        if (elasticsearchServerConfig!=null)
+            allViolations.addAll(elasticsearchServerConfig.getConstraintViolations());
         return allViolations;
     }
 
