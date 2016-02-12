@@ -14,7 +14,7 @@ public interface Datastore extends Connector {
      * @param key
      * @param value
      */
-    void put(final String bucket,final String key,final JsonNode value);
+    boolean put(final String bucket,final String key,final JsonNode value);
 
     /**
      * @param bucket

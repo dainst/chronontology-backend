@@ -56,6 +56,8 @@ in the rest of the document.
 201 if created successfully.
 500 if there is an error. Like for example if the request body 
   could not get JSON-parsed properly
+500 if object could not be updated or created due to an internal server error,
+  like missing access to a datastore.
 ```
 
 ## PUT /:typeName/:id
@@ -94,8 +96,8 @@ be valid JSON, for example:
 }
 ```
 
-In case of update of an existing document t
-he version number will get incremented
+In case of update of an existing document 
+the version number will get incremented
 and a date will be added to the date modified array. 
 
 ### Status codes: 
@@ -105,6 +107,8 @@ and a date will be added to the date modified array.
 201 if a new document has been created successfully.
 500 if there is an error. Like for example if the request body 
   could not get JSON-parsed properly
+500 if object could not be updated or created due to an internal server error,
+  like missing access to a datastore.
 ```
 
 ## GET /

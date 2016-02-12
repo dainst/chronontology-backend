@@ -95,8 +95,9 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
 
 
     @Override
-    public void put(final String typeName,final String key,final JsonNode value) {
+    public boolean put(final String typeName,final String key,final JsonNode value) {
         client.post("/" + indexName + "/" + typeName + "/" + key, value);
+        return true; // TODO improve
     }
 
     @Override

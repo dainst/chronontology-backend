@@ -34,14 +34,13 @@ public class SimpleController extends Controller {
     }
 
     @Override
-    protected void _handlePost(String bucket, String key, JsonNode value) {
-        connectDatastore.put(bucket,key, value);
+    protected boolean _handlePost(String bucket, String key, JsonNode value) {
+        return connectDatastore.put(bucket,key, value);
     }
 
     @Override
-    protected void _handlePut(String bucket, String key, JsonNode value) {
-        connectDatastore.put(bucket,key, value);
-        connectDatastore.put(bucket,key, value);
+    protected boolean _handlePut(String bucket, String key, JsonNode value) {
+        return connectDatastore.put(bucket,key, value);
     }
 
     @Override

@@ -2,8 +2,10 @@ package org.dainst.chronontology.store;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -16,6 +18,8 @@ import java.nio.file.Paths;
  * @author Daniel M. de Oliveira
  */
 public class FileSystemDatastore implements Datastore {
+
+    final static Logger logger = Logger.getLogger(FileSystemDatastore.class);
 
     private static final String SUFFIX = ".txt";
     private final String baseFolder;
@@ -61,7 +65,7 @@ public class FileSystemDatastore implements Datastore {
      * @param key
      * @param value
      */
-    public void put(
+    public boolean put(
             final String typeName,
             String key,
             JsonNode value) {
@@ -69,8 +73,10 @@ public class FileSystemDatastore implements Datastore {
             Files.write( path(typeName,key)
                     , value.toString().getBytes());
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
+            return false;
         }
+        return true;
     }
 
     @Override

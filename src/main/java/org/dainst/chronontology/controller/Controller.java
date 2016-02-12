@@ -29,8 +29,8 @@ public abstract class Controller {
 
     // Template methods
     abstract protected JsonNode _get(String bucket, String key);
-    abstract protected void _handlePost(final String bucket,final String key,final JsonNode value);
-    abstract protected void _handlePut(final String bucket,final String key,final JsonNode value);
+    abstract protected boolean _handlePost(final String bucket,final String key,final JsonNode value);
+    abstract protected boolean _handlePut(final String bucket,final String key,final JsonNode value);
     abstract protected JsonNode _handleGet(final String bucket,final String key,Request req);
     abstract protected JsonNode _handleSearch(String bucket,String query);
     abstract protected void _addDatatoreStatus(Results r) throws IOException;
@@ -95,10 +95,12 @@ public abstract class Controller {
                 new DocumentModel(
                         typeName,id,json(req.body()), req.attribute("user")).j();
 
-        _handlePost(typeName,id,doc);
+        if (!_handlePost(typeName,id,doc))
+            res.status(HTTP_INTERNAL_SERVER_ERROR);
+        else
+            res.status(HTTP_CREATED);
 
         res.header("location", id);
-        res.status(HTTP_CREATED);
         return doc;
     }
 
@@ -114,15 +116,20 @@ public abstract class Controller {
         DocumentModel dm = new DocumentModel(
                 typeName,id,json(req.body()), req.attribute("user"));
         JsonNode doc = null;
+
+        int status;
         if (oldDoc!=null) {
             doc= dm.merge(oldDoc).j();
-            res.status(HTTP_OK);
+            status= HTTP_OK;
         } else {
             doc= dm.j();
-            res.status(HTTP_CREATED);
+            status= HTTP_CREATED;
         }
 
-        _handlePut(typeName,id,doc);
+        if (!_handlePut(typeName,id,doc))
+            res.status(HTTP_INTERNAL_SERVER_ERROR);
+        else
+            res.status(status);
 
         return doc;
     }
