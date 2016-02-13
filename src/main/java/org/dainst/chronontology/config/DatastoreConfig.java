@@ -1,5 +1,7 @@
 package org.dainst.chronontology.config;
 
+import org.dainst.chronontology.Constants;
+
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -20,6 +22,8 @@ public class DatastoreConfig extends Config {
 
     @Override
     public boolean validate(Properties props) {
+        if (props==null) throw new IllegalArgumentException(Constants.MSG_PROPS_NOT_NULL);
+
         if (!_validate(props,"type", ConfigConstants.DATASTORE_TYPE_ES)) return false;
 
         if (type.equals(TYPE_ELASTICSEARCH))

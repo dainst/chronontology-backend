@@ -1,9 +1,7 @@
 package org.dainst.chronontology;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.config.*;
-import org.dainst.chronontology.controller.DocumentModel;
 
 import java.util.Properties;
 
@@ -20,16 +18,29 @@ public class App {
 
     public static void main(String [] args) {
 
-        Properties props= PropertiesLoader.loadConfiguration(DEFAULT_PROPERTIES_FILE_PATH);
+        new AppConfigurator().configure(
+                makeAppConfigFrom(properties(DEFAULT_PROPERTIES_FILE_PATH)));
+    }
+
+    private static Properties properties(String path) {
+        Properties props= PropertiesLoader.loadConfiguration(path);
+        if (props==null) {
+            logger.error("Could not load properties from file: config.properties.");
+            System.exit(1);
+        }
+        return props;
+    }
+
+    private static AppConfig makeAppConfigFrom(Properties props) {
+
         AppConfig appConfig= new AppConfig();
-        if ((props==null) || (appConfig.validate(props)==false)) {
+        if (appConfig.validate(props)==false) {
             for (String err: appConfig.getConstraintViolations()) {
                 logger.error(err);
             }
             System.exit(1);
         }
-
-        new AppConfigurator().configure(appConfig);
+        return appConfig;
     }
 
     public App(Router router) {

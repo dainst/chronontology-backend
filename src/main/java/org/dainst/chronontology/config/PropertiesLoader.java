@@ -12,15 +12,16 @@ import java.util.Properties;
  */
 public class PropertiesLoader {
 
-    final static Logger logger = Logger.getLogger(AppConfig.class);
+    final static Logger logger = Logger.getLogger(PropertiesLoader.class);
 
     public static Properties loadConfiguration(String propertiesFilePath) {
         Properties props = new Properties();
         try (
-                FileInputStream is =new FileInputStream(new File(propertiesFilePath)))
+            FileInputStream is =new FileInputStream(new File(propertiesFilePath)))
         {
             props.load(is);
         } catch (IOException e) {
+            logger.error(e.getMessage());
             return null;
         }
         return props;

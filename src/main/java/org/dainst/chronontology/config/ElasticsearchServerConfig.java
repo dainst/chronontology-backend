@@ -1,5 +1,7 @@
 package org.dainst.chronontology.config;
 
+import org.dainst.chronontology.Constants;
+
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -20,6 +22,8 @@ public class ElasticsearchServerConfig extends Config {
 
     @Override
     public boolean validate(Properties props) {
+        if (props==null) throw new IllegalArgumentException(Constants.MSG_PROPS_NOT_NULL);
+
         return (
             _validate(props,"port", ConfigConstants.EMBEDDED_ES_PORT) &&
             _validate(props,"dataPath", ConfigConstants.ES_SERVER_DATA_PATH) &&

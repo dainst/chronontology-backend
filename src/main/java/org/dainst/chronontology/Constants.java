@@ -25,4 +25,6 @@ public class Constants {
 
     public static final String DATASTORE_STATUS_OK = "ok";
     public static final String DATASTORE_STATUS_DOWN = "down";
+
+    public static final String MSG_PROPS_NOT_NULL = "The argument props must not be null.";
 }

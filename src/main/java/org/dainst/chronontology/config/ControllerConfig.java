@@ -1,5 +1,7 @@
 package org.dainst.chronontology.config;
 
+import org.dainst.chronontology.Constants;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Properties;
@@ -20,7 +22,9 @@ public class ControllerConfig extends Config {
 
     @Override
     public boolean validate(Properties props) {
+        if (props==null) throw new IllegalArgumentException(Constants.MSG_PROPS_NOT_NULL);
         this.props= props;
+
         return (
             _validate(props,"useConnect","true")
         );
