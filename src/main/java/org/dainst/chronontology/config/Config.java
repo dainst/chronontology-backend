@@ -150,22 +150,22 @@ public abstract class Config {
 
         try {
             method.invoke(this,value);
+            return true;
+
         } catch (IllegalAccessException e) {
             constraintViolations.add(e.getStackTrace().toString());
-            return false;
-        } catch (InvocationTargetException e) {
-            if (e.getCause().getClass().equals(ConfigValidationException.class)) {
 
+        } catch (InvocationTargetException e) {
+
+            if (e.getCause().getClass().equals(ConfigValidationException.class)) {
                 if (e.getCause().getMessage()!=null)
                     constraintViolations.add(e.getCause().getMessage());
-                return false;
             }
             else {
                 constraintViolations.add(e.getStackTrace().toString());
-                return false;
             }
         }
-        return true;
+        return false;
     }
 
 
