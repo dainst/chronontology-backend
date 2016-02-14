@@ -70,9 +70,10 @@ public abstract class Config {
      *
      * @param props
      * @param name
-     * @return false if the setter does not exist or cannot be accessed.
-     *   false if a {@link ConfigValidationException}
-     *   got thrown from the setter. false if
+     * @return system exit status 1 if in case of a missing or inaccessible setter the process exits hard
+     *   and a stack trace gets printed, since these types of exceptions can only
+     *   be resolved during development. <code>true</code> if the setter executes without throwing an
+     *   error. <code>false</code> otherwise.
      */
     boolean _validate(final Properties props, final String name) {
         return _validate(props,name,null);
@@ -117,16 +118,14 @@ public abstract class Config {
      */
     private boolean invokeSetter(String name, String value) {
 
-        Method method= null;
         try {
-            method = this.getClass().
-                    getDeclaredMethod("set"+capitalize(name), String.class);
-        } catch (NoSuchMethodException e) {
-            constraintViolations.add(e.getStackTrace().toString());
-            return false;
-        }
-        return invokeMethod(method,value);
+            return invokeMethod(this.getClass().
+                    getDeclaredMethod("set"+capitalize(name), String.class),value);
 
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+            System.exit(1); return false;
+        }
     }
 
     /**
@@ -149,23 +148,27 @@ public abstract class Config {
     private boolean invokeMethod(Method method,String value) {
 
         try {
+
             method.invoke(this,value);
             return true;
 
-        } catch (IllegalAccessException e) {
-            constraintViolations.add(e.getStackTrace().toString());
+        } catch (Exception e) {
 
-        } catch (InvocationTargetException e) {
+            if (causeIsConfigValidationException(e)) {
 
-            if (e.getCause().getClass().equals(ConfigValidationException.class)) {
                 if (e.getCause().getMessage()!=null)
                     constraintViolations.add(e.getCause().getMessage());
+                return false;
             }
-            else {
-                constraintViolations.add(e.getStackTrace().toString());
-            }
+
+            e.printStackTrace();
+            System.exit(1); return false;
         }
-        return false;
+    }
+
+    private boolean causeIsConfigValidationException(Exception e) {
+        return e.getClass().equals(InvocationTargetException.class) &&
+                e.getCause().getClass().equals(ConfigValidationException.class);
     }
 
 
