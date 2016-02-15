@@ -43,7 +43,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void documentNotFound() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE+"1", "GET", (String) null).code(),
+            rest(TYPE_ROUTE+"1", "GET").code(),
             HTTP_NOT_FOUND
         );
     }
@@ -52,7 +52,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     public void documentFound() throws IOException {
         String id= idOf(client.post(TYPE_ROUTE,json()));
         assertEquals(
-            rest(id, "GET", (String) null).code(),
+            rest(id, "GET").code(),
             HTTP_OK
         );
     }

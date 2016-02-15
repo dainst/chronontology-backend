@@ -43,7 +43,7 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param password
      * @return the response object.
      */
-    protected Response rest(String path, String method, String json, String username, String password) {
+    private Response rest(String path, String method, String json, String username, String password) {
 
         Request.Builder b= RestUtils.getRequestBuilder(method,json).url(TestConstants.SERVER_URL + path);
         authorize(username,password,b);
