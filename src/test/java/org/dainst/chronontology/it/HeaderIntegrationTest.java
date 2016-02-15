@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static org.dainst.chronontology.Constants.*;
-import static org.dainst.chronontology.JsonTestUtils.*;
+import static org.dainst.chronontology.util.JsonUtils.*;
 import static org.testng.Assert.*;
 
 /**
@@ -42,7 +42,7 @@ public class HeaderIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void getHeaders() throws IOException {
-        Response res = rest(TYPE_ROUTE+"1", "GET", null);
+        Response res = rest(TYPE_ROUTE+"1", "GET");
         assertEquals(
                 res.header(HEADER_CT),
                 HEADER_JSON
@@ -55,7 +55,7 @@ public class HeaderIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void searchHeaders() throws IOException {
-        Response res = rest(TYPE_ROUTE, "GET", null);
+        Response res = rest(TYPE_ROUTE, "GET");
         assertEquals(
                 res.header(HEADER_CT),
                 HEADER_JSON
@@ -67,7 +67,7 @@ public class HeaderIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void serverStatusHeaders() throws IOException {
-        Response res = rest("/", "GET", null);
+        Response res = rest("/", "GET");
         assertEquals(
                 res.header(HEADER_CT),
                 HEADER_JSON

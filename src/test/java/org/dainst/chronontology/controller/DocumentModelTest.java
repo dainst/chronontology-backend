@@ -1,18 +1,17 @@
 package org.dainst.chronontology.controller;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.dainst.chronontology.controller.DocumentModel;
 import org.json.JSONException;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 
 import static org.dainst.chronontology.Constants.*;
-import static org.testng.Assert.assertEquals;
-import static org.dainst.chronontology.JsonTestUtils.*;
-import static org.dainst.chronontology.TestConstants.*;
+import static org.dainst.chronontology.JsonTestUtils.jsonAssertEquals;
+import static org.dainst.chronontology.TestConstants.TEST_TYPE;
+import static org.dainst.chronontology.util.JsonUtils.*;
 
 /**
  * @author Daniel M. de Oliveira

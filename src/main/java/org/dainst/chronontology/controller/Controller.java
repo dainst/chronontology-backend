@@ -1,11 +1,11 @@
 package org.dainst.chronontology.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
-import org.dainst.chronontology.util.Results;
 import org.dainst.chronontology.store.Connector;
+import org.dainst.chronontology.util.JsonUtils;
+import org.dainst.chronontology.util.Results;
 import spark.Request;
 import spark.Response;
 
@@ -81,7 +81,7 @@ public abstract class Controller {
     protected JsonNode makeDataStoreStatus(String type, Connector store) throws IOException {
         String status = DATASTORE_STATUS_DOWN;
         if (store.isConnected()) status = DATASTORE_STATUS_OK;
-        return json("{ \"type\" : \""+type+"\", \"status\" : \""+status+"\" }");
+        return JsonUtils.json("{ \"type\" : \""+type+"\", \"status\" : \""+status+"\" }");
     }
 
     public Object handlePost(
@@ -89,11 +89,17 @@ public abstract class Controller {
             final Request req,
             final Response res) throws IOException {
 
+        JsonNode n= JsonUtils.json(req.body());
+        if (n==null) {
+            res.status(HTTP_BAD_REQUEST);
+            return JsonUtils.json("{}");
+        }
+
         String id= determineFreeId(typeName);
 
         JsonNode doc =
                 new DocumentModel(
-                        typeName,id,json(req.body()), req.attribute("user")).j();
+                        typeName,id,n, req.attribute("user")).j();
 
         if (!_handlePost(typeName,id,doc))
             res.status(HTTP_INTERNAL_SERVER_ERROR);
@@ -110,11 +116,17 @@ public abstract class Controller {
             final Request req,
             final Response res) throws IOException {
 
+        JsonNode n= JsonUtils.json(req.body());
+        if (n==null) {
+            res.status(HTTP_BAD_REQUEST);
+            return JsonUtils.json("{}");
+        }
+
         String id = req.params(ID);
         JsonNode oldDoc = _get(typeName,id);
 
         DocumentModel dm = new DocumentModel(
-                typeName,id,json(req.body()), req.attribute("user"));
+                typeName,id,JsonUtils.json(req.body()), req.attribute("user"));
         JsonNode doc = null;
 
         int status;
@@ -160,10 +172,6 @@ public abstract class Controller {
         return _handleSearch(typeName,req.queryString());
     }
 
-
-    private static JsonNode json(String s) throws IOException {
-        return new ObjectMapper().readTree(s);
-    }
 
 
 }

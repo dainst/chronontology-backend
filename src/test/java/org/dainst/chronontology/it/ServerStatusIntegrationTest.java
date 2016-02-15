@@ -2,7 +2,6 @@ package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.Constants;
-import org.dainst.chronontology.it.IntegrationTestBase;
 import org.dainst.chronontology.store.ESServerTestUtil;
 import org.dainst.chronontology.util.Results;
 import org.testng.annotations.Test;
@@ -10,8 +9,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static org.dainst.chronontology.JsonTestUtils.jsonAssertEquals;
-import static org.dainst.chronontology.JsonTestUtils.*;
-
+import static org.dainst.chronontology.util.JsonUtils.json;
 /**
  * @author Daniel M. de Oliviera
  */

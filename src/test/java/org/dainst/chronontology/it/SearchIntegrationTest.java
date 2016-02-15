@@ -13,8 +13,7 @@ import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-
-import static org.dainst.chronontology.JsonTestUtils.json;
+import static org.dainst.chronontology.util.JsonUtils.*;
 import static org.dainst.chronontology.JsonTestUtils.jsonAssertEquals;
 import static org.testng.Assert.fail;
 

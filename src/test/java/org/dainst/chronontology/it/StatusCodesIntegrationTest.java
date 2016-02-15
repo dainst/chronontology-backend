@@ -7,7 +7,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static org.dainst.chronontology.Constants.*;
-import static org.dainst.chronontology.JsonTestUtils.*;
+import static org.dainst.chronontology.util.JsonUtils.json;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -43,7 +43,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void documentNotFound() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE+"1", "GET", null).code(),
+            rest(TYPE_ROUTE+"1", "GET", (String) null).code(),
             HTTP_NOT_FOUND
         );
     }
@@ -52,7 +52,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     public void documentFound() throws IOException {
         String id= idOf(client.post(TYPE_ROUTE,json()));
         assertEquals(
-            rest(id, "GET", null).code(),
+            rest(id, "GET", (String) null).code(),
             HTTP_OK
         );
     }
@@ -62,6 +62,24 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
         assertEquals(
             rest(TYPE_ROUTE, "POST", json()).code(),
             HTTP_CREATED
+        );
+    }
+
+    @Test
+    public void postWithMalformedJSON() throws IOException {
+        assertEquals(
+                rest(TYPE_ROUTE, "POST", "{").code(),
+                HTTP_BAD_REQUEST
+        );
+    }
+
+    @Test
+    public void putWithMalformedJSON() throws IOException {
+
+        String id= idOf(client.post(TYPE_ROUTE,json()));
+        assertEquals(
+                rest(id, "PUT", "{").code(),
+                HTTP_BAD_REQUEST
         );
     }
 

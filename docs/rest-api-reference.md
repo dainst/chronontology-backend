@@ -54,8 +54,7 @@ in the rest of the document.
 
 ```
 201 if created successfully.
-500 if there is an error. Like for example if the request body 
-  could not get JSON-parsed properly
+400 if there is an error during parsing the JSON of the the request body. 
 500 if object could not be updated or created due to an internal server error,
   like missing access to a datastore.
 ```
@@ -105,8 +104,7 @@ and a date will be added to the date modified array.
 ```
 200 if updated succesfully.
 201 if a new document has been created successfully.
-500 if there is an error. Like for example if the request body 
-  could not get JSON-parsed properly
+400 if there is an error during parsing the JSON of the the request body. 
 500 if object could not be updated or created due to an internal server error,
   like missing access to a datastore.
 ```
