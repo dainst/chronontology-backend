@@ -106,6 +106,6 @@ public class ConfigTest {
         ExceptionConfigWithBasicConstructorForException config=
                 new ExceptionConfigWithBasicConstructorForException();
         Properties props= new Properties();
-        assertTrue(config.validate(props));
+        assertFalse(config.validate(props));
     }
 }
