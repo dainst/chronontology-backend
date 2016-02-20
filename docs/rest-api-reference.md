@@ -36,6 +36,12 @@ and will look something like this:
 }
 ```
 
+In case of status 400 errors the response body is an empty JSON.
+
+```
+{}
+```
+
 ### Response header
 
 The location response header will contain the @id of 
@@ -98,6 +104,12 @@ be valid JSON, for example:
 In case of update of an existing document 
 the version number will get incremented
 and a date will be added to the date modified array. 
+
+In case of status 400 errors the response body is an empty JSON.
+
+```
+{}
+```
 
 ### Status codes: 
 
