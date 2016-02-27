@@ -3,7 +3,8 @@
 Before going into detail with the behaviour of the endpoints regarding
 dataset based access management, it is important to notice that a user 
 successfully authenticated under the name **admin** has the right to 
-do anything, regardless if beeing assigned rights to any dataset group.
+do anything, regardless of wether or not beeing explicitely assigned 
+rights to any dataset group.
 
 ## POST /:typeName/
 
