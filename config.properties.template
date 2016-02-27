@@ -43,4 +43,4 @@ useConnect=false
 # Currently there exists only the permission grade editor.
 # Make sure the user also are granted general access by beeing listed under credentials.
 #
-# dataset.dataset1.editors=user1
+# dataset.dataset1.editor=user1

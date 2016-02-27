@@ -79,7 +79,7 @@ public class IntegrationTestBase {
         props.put("datastores.1.type", ConfigConstants.DATASTORE_TYPE_FS);
         props.put("typeNames",TestConstants.TEST_TYPE);
         props.put("credentials", makeCredentials());
-        props.put("dataset.dataset1.editors", TestConstants.USER_NAME_1);
+        props.put("dataset.dataset1.editor", TestConstants.USER_NAME_1);
 
         AppConfig config= new AppConfig();
         config.validate(props);

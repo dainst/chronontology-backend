@@ -40,18 +40,21 @@ public class RightsValidatorConfig extends Config {
 
             for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); ) {
                 String name = (String)e.nextElement();
-                if (name.startsWith(this.prefix+datasetName+".editor")) {
+                if (!name.startsWith(this.prefix+datasetName+".")) continue;
+
+                if (name.equals(this.prefix+datasetName+".editor")) {
                     List<String> editors= Arrays.asList(props.getProperty(name).split(","));
                     Map<String,String> userRules= new HashMap<String,String>();
                     for (String editor: editors) {
                         userRules.put(editor,"editor");
                     }
                     datasetRules.put(datasetName(name),userRules);
+                } else {
+                    constraintViolations.add("Permission level unkown in \""+name+"\".");
                 }
             }
         }
-
-        return true;
+        return (constraintViolations.size()==0);
     }
 
     public Map<String,Map<String,String>> getEditorRules() {
