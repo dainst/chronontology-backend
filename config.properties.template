@@ -40,7 +40,9 @@ useConnect=false
 # Don't use whitespaces.
 # 
 # One can create as many dataset groups as one wants.
-# Currently there exists only the permission grade editor.
+# Currently there exist the permission grades **editor** and **reader** where the editor
+# includes the reader permisssion so an editor can automatically do everything a reader can do.
 # Make sure the user also are granted general access by beeing listed under credentials.
 #
 # dataset.dataset1.editor=user1
+# dataset.dataset1.reader=user2

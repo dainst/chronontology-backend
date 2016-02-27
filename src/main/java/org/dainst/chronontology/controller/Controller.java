@@ -13,6 +13,7 @@ import spark.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -216,17 +217,29 @@ public abstract class Controller {
             final Response res) throws IOException {
 
         JsonNode searchResults= _handleSearch(typeName,req.queryString());
-        ArrayNode a= (ArrayNode) searchResults.get("results");
-        List<Integer> indicesToRemove = new ArrayList<Integer>(); int i=0;
+
+        ArrayNode resultsNode= (ArrayNode) searchResults.get("results");
+        removeNodes(resultsNode, indicesToRemove(req, resultsNode));
+
+        return searchResults;
+    }
+
+    private void removeNodes(ArrayNode a, List<Integer> indicesToRemove) {
+        Collections.reverse(indicesToRemove); // TODO write test
+        for (Integer index:indicesToRemove) {
+            a.remove(index); // TODO check removal
+        }
+    }
+
+    private List<Integer> indicesToRemove(Request req, ArrayNode a) {
+        List<Integer> indicesToRemove = new ArrayList<Integer>();
+        int i=0;
         for (final JsonNode n : a) {
             if (!userPermittedToReadDataset(req,n)) {
                 indicesToRemove.add(i);
             }
             i++;
         }
-        for (Integer index:indicesToRemove) {
-            a.remove(index);
-        }
-        return searchResults;
+        return indicesToRemove;
     }
 }
