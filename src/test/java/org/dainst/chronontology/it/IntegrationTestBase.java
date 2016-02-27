@@ -52,7 +52,7 @@ public class IntegrationTestBase {
     @BeforeMethod
     public void beforeMethod() {
         client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
-        ESClientTestUtil.createEsTypeAndMapping();
+        ESClientTestUtil.createEsTypeAndMapping(); // TODO seems to not be necessary anymore
     }
 
     @AfterMethod

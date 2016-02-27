@@ -2,6 +2,9 @@ package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.util.JsonRestClient;
 import org.dainst.chronontology.store.ESServerTestUtil;
@@ -37,11 +40,23 @@ public class ESClientTestUtil {
     }
 
     public static void createEsTypeAndMapping() {
-        esClient.post("/"+ TEST_INDEX +"/"+ TestConstants.TEST_TYPE,
+        esClient.put("/"+ TEST_INDEX +"/_mapping/"+ TestConstants.TEST_TYPE,
                 loadTestTypeMapping(TestConstants.TEST_FOLDER+"mapping.json"));
     }
 
     public static void deleteESTypeAndMapping() {
         esClient.delete("/"+ TEST_INDEX +"/"+TestConstants.TEST_TYPE);
+        esClient.delete("/"+ TEST_INDEX +"/"+TestConstants.TEST_TYPE);
+    }
+
+    public static void refreshES() {
+        RequestBody body = RequestBody.create(TestConstants.JSON, "{}");
+        Request.Builder b = new Request.Builder()
+                .url(ESServerTestUtil.getUrl()+ "/" + ESClientTestUtil.getIndexName() + "/_refresh").post(body);
+        try {
+            new OkHttpClient().newCall(b.build()).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

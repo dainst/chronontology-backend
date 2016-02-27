@@ -1,10 +1,19 @@
 package org.dainst.chronontology.it;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
 import org.dainst.chronontology.Constants;
+import org.dainst.chronontology.JsonTestUtils;
 import org.dainst.chronontology.TestConstants;
+import org.dainst.chronontology.store.ESServerTestUtil;
 import org.dainst.chronontology.util.JsonUtils;
+import org.dainst.chronontology.util.Results;
 import org.testng.annotations.Test;
+
+import java.io.IOException;
 
 import static org.dainst.chronontology.util.JsonUtils.json;
 import static org.testng.Assert.assertEquals;
@@ -158,6 +167,58 @@ public class DatasetsIntegrationTest extends ResponseIntegrationTestBase {
                         TestConstants.USER_NAME_1, // editor for dataset1
                         TestConstants.PASS_WORD).code(),
                 Constants.HTTP_OK
+        );
+    }
+
+
+    @Test
+    public void searchAndFilterOne() throws JsonProcessingException {
+
+        JsonNode a= JsonUtils.json("{ \"a\" : \"b\" }");
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
+        client.post(TYPE_ROUTE, dataset("1"));
+        client.post(TYPE_ROUTE, a);
+        ESClientTestUtil.refreshES();
+
+        client.authenticate(
+                TestConstants.USER_NAME_2, // has no rights on dataset1
+                TestConstants.PASS_WORD);
+        JsonTestUtils.jsonAssertEquals(
+                client.get(TYPE_ROUTE),
+                new Results("results").add(a).j()
+        );
+    }
+
+    @Test
+    public void searchAllowedWithReaderPermission() throws JsonProcessingException {
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
+        client.post(TYPE_ROUTE, dataset("1"));
+        ESClientTestUtil.refreshES();
+
+        client.authenticate(
+                TestConstants.USER_NAME_3, // reader for dataset1
+                TestConstants.PASS_WORD);
+        JsonTestUtils.jsonAssertEquals(
+                client.get(TYPE_ROUTE),
+                new Results("results").add(dataset("1")).j()
+        );
+    }
+
+    @Test
+    public void searchAllowedWithEditorPermission() throws JsonProcessingException {
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
+        client.post(TYPE_ROUTE, dataset("1"));
+        ESClientTestUtil.refreshES();
+
+        client.authenticate(
+                TestConstants.USER_NAME_1, // editor for dataset1
+                TestConstants.PASS_WORD);
+        JsonTestUtils.jsonAssertEquals(
+                client.get(TYPE_ROUTE),
+                new Results("results").add(dataset("1")).j()
         );
     }
 }

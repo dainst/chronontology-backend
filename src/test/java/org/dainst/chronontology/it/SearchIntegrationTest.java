@@ -15,6 +15,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import static org.dainst.chronontology.util.JsonUtils.*;
+import static org.dainst.chronontology.it.ESClientTestUtil.*;
 import static org.dainst.chronontology.JsonTestUtils.jsonAssertEquals;
 import static org.testng.Assert.fail;
 
@@ -28,17 +29,6 @@ public class SearchIntegrationTest extends JsonIntegrationTestBase {
     private JsonNode searchResultJson(String id, String sampleFieldValue) throws IOException {
         return results().add(
                 json("{\"a\":\"" + sampleFieldValue+"\",\"@id\":\""+id+"\"}")).j();
-    }
-
-    private void refreshES() {
-        RequestBody body = RequestBody.create(TestConstants.JSON, "{}");
-        Request.Builder b = new Request.Builder()
-                .url(ESServerTestUtil.getUrl()+ "/" + ESClientTestUtil.getIndexName() + "/_refresh").post(body);
-        try {
-            new OkHttpClient().newCall(b.build()).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private String identifier(String suffix) {

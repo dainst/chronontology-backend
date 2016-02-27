@@ -1,6 +1,8 @@
 package org.dainst.chronontology.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.store.Connector;
@@ -10,6 +12,8 @@ import spark.Request;
 import spark.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static org.dainst.chronontology.Constants.*;
@@ -211,9 +215,18 @@ public abstract class Controller {
             final Request req,
             final Response res) throws IOException {
 
-        return _handleSearch(typeName,req.queryString());
+        JsonNode searchResults= _handleSearch(typeName,req.queryString());
+        ArrayNode a= (ArrayNode) searchResults.get("results");
+        List<Integer> indicesToRemove = new ArrayList<Integer>(); int i=0;
+        for (final JsonNode n : a) {
+            if (!userPermittedToReadDataset(req,n)) {
+                indicesToRemove.add(i);
+            }
+            i++;
+        }
+        for (Integer index:indicesToRemove) {
+            a.remove(index);
+        }
+        return searchResults;
     }
-
-
-
 }

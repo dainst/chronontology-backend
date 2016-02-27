@@ -88,9 +88,24 @@ the dataset ds1.
 
 ## GET /:typeName/
 
-The search currently delivers all search results without further introspection
-of documents and filtering out results which do not match the actual 
-users permission level.
+Searching respects the dataset groups insofar as documents, which are assigned to datasets and
+for which the actual user has not either **editor** or **reader** permissions, are filtered out.
+
+For example a search for all documents, where all documents are the following two
+
+```
+{
+    "a" : "c" 
+    "dataset" : "ds1"
+}
+
+{
+    "a" : "c" 
+}
+```
+
+and the user has no permissions for ds1, gives a result set only containing the 
+second hit.
 
 
 
