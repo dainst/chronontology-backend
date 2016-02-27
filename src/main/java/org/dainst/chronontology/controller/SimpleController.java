@@ -19,7 +19,8 @@ public class SimpleController extends Controller {
 
     protected final SearchableDatastore connectDatastore;
 
-    public SimpleController(SearchableDatastore connectDatastore) {
+    public SimpleController(RightsValidator validator,SearchableDatastore connectDatastore) {
+        super(validator);
         this.connectDatastore= connectDatastore;
     }
 

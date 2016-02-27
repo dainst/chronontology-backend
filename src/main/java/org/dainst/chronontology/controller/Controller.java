@@ -26,7 +26,11 @@ public abstract class Controller {
 
     public static final String ID = ":id";
 
-    private RightsValidator rightsValidator= new RightsValidator();
+    private RightsValidator rightsValidator= null;
+
+    public Controller(RightsValidator validator) {
+        this.rightsValidator= validator;
+    }
 
 
     // Template methods

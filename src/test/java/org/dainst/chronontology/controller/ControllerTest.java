@@ -36,7 +36,7 @@ public class ControllerTest {
     public void postOK() throws IOException {
 
         when(mockDS.put(any(),any(),any())).thenReturn(true);
-        Controller controller= new SimpleController(mockDS);
+        Controller controller= new SimpleController(new RightsValidator(),mockDS);
 
         Response resMock= mock(Response.class);
         controller.handlePost(ROUTE,reqMock,resMock);
@@ -48,7 +48,7 @@ public class ControllerTest {
     public void putOK() throws IOException {
 
         when(mockDS.put(any(),any(),any())).thenReturn(true);
-        Controller controller= new SimpleController(mockDS);
+        Controller controller= new SimpleController(new RightsValidator(),mockDS);
 
         Response resMock= mock(Response.class);
         controller.handlePut(ROUTE,reqMock,resMock);
@@ -60,7 +60,7 @@ public class ControllerTest {
     public void postNotOk() throws IOException {
 
         when(mockDS.put(any(),any(),any())).thenReturn(false);
-        Controller controller= new SimpleController(mockDS);
+        Controller controller= new SimpleController(new RightsValidator(),mockDS);
 
         Response resMock= mock(Response.class);
         controller.handlePost(ROUTE,reqMock,resMock);
@@ -74,7 +74,7 @@ public class ControllerTest {
     public void putNotOk() throws IOException {
 
         when(mockDS.put(any(),any(),any())).thenReturn(false);
-        Controller controller= new SimpleController(mockDS);
+        Controller controller= new SimpleController(new RightsValidator(),mockDS);
 
         Response resMock= mock(Response.class);
         controller.handlePut(ROUTE,reqMock,resMock);

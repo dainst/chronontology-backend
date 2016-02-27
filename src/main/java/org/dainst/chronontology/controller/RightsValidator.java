@@ -17,9 +17,10 @@ public class RightsValidator {
 
     public boolean hasEditorPermission(String userName, String dataset) {
 
-        if (userName.equals("admin")||(userName.equals("ove")&&dataset.equals("dataset1"))) {
-            return true;
-        }
-        return false;
+        return (userName.equals("admin")||
+
+                ((editorRules.get(dataset)!=null) &&
+                (editorRules.get(dataset).get(userName)!=null) &&
+                (editorRules.get(dataset).get(userName).equals("editor"))));
     }
 }

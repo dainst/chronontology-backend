@@ -33,7 +33,7 @@ public class ConnectControllerTest {
     public void ds1ReturnFalseOnPost() throws IOException {
         when(mockDS1.put(any(),any(),any())).thenReturn(false);
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
-        Controller controller= new ConnectController(mockDS1,mockDS2);
+        Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
         controller.handlePost(ROUTE,reqMock,resMock);
@@ -44,7 +44,7 @@ public class ConnectControllerTest {
     public void ds2ReturnFalseOnPost() throws IOException {
         when(mockDS1.put(any(),any(),any())).thenReturn(true);
         when(mockDS2.put(any(),any(),any())).thenReturn(false);
-        Controller controller= new ConnectController(mockDS1,mockDS2);
+        Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
         controller.handlePost(ROUTE,reqMock,resMock);
@@ -55,7 +55,7 @@ public class ConnectControllerTest {
     public void okOnPost() throws IOException {
         when(mockDS1.put(any(),any(),any())).thenReturn(true);
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
-        Controller controller= new ConnectController(mockDS1,mockDS2);
+        Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
         controller.handlePost(ROUTE,reqMock,resMock);
@@ -66,7 +66,7 @@ public class ConnectControllerTest {
     public void ds1ReturnFalseOnPut() throws IOException {
         when(mockDS1.put(any(),any(),any())).thenReturn(false);
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
-        Controller controller= new ConnectController(mockDS1,mockDS2);
+        Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
         controller.handlePut(ROUTE,reqMock,resMock);
@@ -78,7 +78,7 @@ public class ConnectControllerTest {
         when(mockDS1.put(any(),any(),any())).thenReturn(true);
         when(mockDS2.put(any(),any(),any())).thenReturn(false);
 
-        Controller controller= new ConnectController(mockDS1,mockDS2);
+        Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
         controller.handlePut(ROUTE,reqMock,resMock);
@@ -89,7 +89,7 @@ public class ConnectControllerTest {
     public void okOnPut() throws IOException {
         when(mockDS1.put(any(),any(),any())).thenReturn(true);
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
-        Controller controller= new ConnectController(mockDS1,mockDS2);
+        Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
         controller.handlePut(ROUTE,reqMock,resMock);

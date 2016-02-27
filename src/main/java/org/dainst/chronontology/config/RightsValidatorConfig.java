@@ -51,7 +51,7 @@ public class RightsValidatorConfig extends Config {
             }
         }
 
-        return false;
+        return true;
     }
 
     public Map<String,Map<String,String>> getEditorRules() {
