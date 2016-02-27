@@ -10,7 +10,7 @@ public class RightsValidatorConfigurator implements Configurator<RightsValidator
     @Override
     public RightsValidator configure(RightsValidatorConfig config) {
         RightsValidator validator= new RightsValidator();
-        validator.setEditorRules(config.getEditorRules());
+        validator.setRules(config.getRules());
         return validator;
     }
 }

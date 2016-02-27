@@ -107,4 +107,57 @@ public class DatasetsIntegrationTest extends ResponseIntegrationTestBase {
                 Constants.HTTP_OK
         );
     }
+
+    @Test
+    public void readNotAllowedWithoutPermission() {
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
+        String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
+
+        assertEquals(
+                getResponse(id, "GET", dataset("1"),TestConstants.USER_NAME_2,TestConstants.PASS_WORD).code(),
+                Constants.HTTP_FORBIDDEN
+        );
+    }
+
+    @Test
+    public void readAllowedForAdmin() {
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
+        String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
+
+        assertEquals(
+                getResponse(id, "GET", dataset("1"),TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD).code(),
+                Constants.HTTP_OK
+        );
+    }
+
+
+    @Test
+    public void readAllowedWithReaderPermission() {
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
+        String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
+
+        assertEquals(
+                getResponse(id, "GET", dataset("1"),
+                        TestConstants.USER_NAME_3, // reader for dataset1
+                        TestConstants.PASS_WORD).code(),
+                Constants.HTTP_OK
+        );
+    }
+
+    @Test
+    public void readAllowedWithEditorPermission() {
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
+        String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
+
+        assertEquals(
+                getResponse(id, "GET", dataset("1"),
+                        TestConstants.USER_NAME_1, // editor for dataset1
+                        TestConstants.PASS_WORD).code(),
+                Constants.HTTP_OK
+        );
+    }
 }

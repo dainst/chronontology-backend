@@ -80,6 +80,7 @@ public class IntegrationTestBase {
         props.put("typeNames",TestConstants.TEST_TYPE);
         props.put("credentials", makeCredentials());
         props.put("dataset.dataset1.editor", TestConstants.USER_NAME_1);
+        props.put("dataset.dataset1.reader", TestConstants.USER_NAME_3);
 
         AppConfig config= new AppConfig();
         config.validate(props);
@@ -89,7 +90,8 @@ public class IntegrationTestBase {
     private static String makeCredentials() {
         return TestConstants.USER_NAME_ADMIN + ":" + TestConstants.PASS_WORD
                 + "," + TestConstants.USER_NAME_1 + ":" + TestConstants.PASS_WORD
-                + "," + TestConstants.USER_NAME_2 + ":" + TestConstants.PASS_WORD;
+                + "," + TestConstants.USER_NAME_2 + ":" + TestConstants.PASS_WORD
+                + "," + TestConstants.USER_NAME_3 + ":" + TestConstants.PASS_WORD;
     }
 
     protected static void startServer() throws InterruptedException {

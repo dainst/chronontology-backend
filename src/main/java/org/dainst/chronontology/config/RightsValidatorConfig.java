@@ -1,5 +1,6 @@
 package org.dainst.chronontology.config;
 
+import org.apache.lucene.util.fst.UpToTwoPositiveIntOutputs;
 import org.dainst.chronontology.controller.RightsValidator;
 
 import java.util.*;
@@ -8,6 +9,8 @@ import java.util.*;
  * @author Daniel M. de Oliveira
  */
 public class RightsValidatorConfig extends Config {
+
+    private UpToTwoPositiveIntOutputs readerRules;
 
     public RightsValidatorConfig() {
         this.prefix= "dataset.";
@@ -38,26 +41,49 @@ public class RightsValidatorConfig extends Config {
 
         for (String datasetName:datasets(props)) {
 
-            for (Enumeration<?> e = props.propertyNames(); e.hasMoreElements(); ) {
-                String name = (String)e.nextElement();
+            Map<String,String> userRules= new HashMap<String,String>();
+
+
+            List list = Collections.list(props.propertyNames());
+            Collections.sort(list);
+
+            for (Object propertyName: list ) {
+                String name = (String) propertyName;
                 if (!name.startsWith(this.prefix+datasetName+".")) continue;
 
+
+
+
                 if (name.equals(this.prefix+datasetName+".editor")) {
+
                     List<String> editors= Arrays.asList(props.getProperty(name).split(","));
-                    Map<String,String> userRules= new HashMap<String,String>();
                     for (String editor: editors) {
                         userRules.put(editor,"editor");
                     }
-                    datasetRules.put(datasetName(name),userRules);
+
+                }
+                else if (name.equals(this.prefix+datasetName+".reader")) {
+                    List<String> readers= Arrays.asList(props.getProperty(name).split(","));
+                    for (String reader: readers) {
+                        if (userRules.get(reader) == null || (
+                                !userRules.get(reader).equals("editor"))) {
+                            userRules.put(reader,"reader");
+                        }
+                    }
+
                 } else {
                     constraintViolations.add("Permission level unkown in \""+name+"\".");
                 }
+            }
+
+            if (!userRules.isEmpty()) {
+                datasetRules.put(datasetName,userRules);
             }
         }
         return (constraintViolations.size()==0);
     }
 
-    public Map<String,Map<String,String>> getEditorRules() {
+    public Map<String,Map<String,String>> getRules() {
         return datasetRules;
     }
 }

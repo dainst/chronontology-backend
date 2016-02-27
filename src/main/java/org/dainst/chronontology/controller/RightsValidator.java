@@ -1,7 +1,6 @@
 package org.dainst.chronontology.controller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -9,18 +8,29 @@ import java.util.Map;
  */
 public class RightsValidator {
 
-    Map<String,Map<String,String>> editorRules= new HashMap<String,Map<String,String>>();
+    Map<String,Map<String,String>> rules = new HashMap<String,Map<String,String>>();
 
-    public void setEditorRules(Map<String,Map<String,String>> editorRules) {
-        this.editorRules= editorRules;
+    public void setRules(Map<String,Map<String,String>> editorRules) {
+        this.rules = editorRules;
     }
 
     public boolean hasEditorPermission(String userName, String dataset) {
 
-        return (userName.equals("admin")||
+        return (userName.equals("admin")
 
-                ((editorRules.get(dataset)!=null) &&
-                (editorRules.get(dataset).get(userName)!=null) &&
-                (editorRules.get(dataset).get(userName).equals("editor"))));
+                || ((rules.get(dataset)!=null) &&
+                (rules.get(dataset).get(userName)!=null) &&
+                (rules.get(dataset).get(userName).equals("editor"))));
+    }
+
+    public boolean hasReaderPermission(String userName, String dataset) {
+
+        return (userName.equals("admin")
+                || ((rules.get(dataset)!=null) &&
+                        (rules.get(dataset).get(userName)!=null) &&
+                        (rules.get(dataset).get(userName).equals("reader")))
+                || ((rules.get(dataset)!=null) &&
+                        (rules.get(dataset).get(userName)!=null) &&
+                        (rules.get(dataset).get(userName).equals("editor"))));
     }
 }

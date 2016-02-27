@@ -123,6 +123,15 @@ public abstract class Controller {
         return true;
     }
 
+    private boolean userPermittedToReadDataset(Request req, JsonNode n) {
+        if (n.get("dataset")!=null &&
+                !rightsValidator.hasReaderPermission(req.attribute("user"),
+                        n.get("dataset").toString().replaceAll("\"",""))) {
+            return false;
+        }
+        return true;
+    }
+
     private JsonNode validateIncomingJson(Request req, Response res) {
         JsonNode n= JsonUtils.json(req.body());
         if (n==null) {
@@ -159,7 +168,9 @@ public abstract class Controller {
                 res.status(HTTP_FORBIDDEN);
                 return JsonUtils.json();
             } else {
-                doc= dm.merge(oldDoc).j();
+                doc= dm.merge(oldDoc).j(); // TODO Review neccessary to clarify what
+                // happens if an enriched version gets fetched in connect mode and got merged with the incoming
+                // json. Does the enriched version gets send to the main datastore then?
                 status= HTTP_OK;
             }
 
@@ -182,13 +193,14 @@ public abstract class Controller {
             final Request req,
             final Response res) throws IOException {
 
-        String id = req.params(ID);
-
-        JsonNode result= _handleGet(typeName,id,req);
-
+        JsonNode result= _handleGet(typeName,req.params(ID),req);
         if (result==null){
             res.status(HTTP_NOT_FOUND);
             return "";
+        }
+        if (!userPermittedToReadDataset(req,result)) {
+            res.status(HTTP_FORBIDDEN);
+            return JsonUtils.json();
         }
         return result;
     }

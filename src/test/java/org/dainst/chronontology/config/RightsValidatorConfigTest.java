@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import java.util.Properties;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 
 /**
  * @author Daniel M. de Oliveira
@@ -27,7 +28,7 @@ public class RightsValidatorConfigTest {
         props.put("dataset.dataset1.editor", TestConstants.USER_NAME_1);
 
         config.validate(props);
-        assertEquals(config.getEditorRules().get("dataset1").get(TestConstants.USER_NAME_1),
+        assertEquals(config.getRules().get("dataset1").get(TestConstants.USER_NAME_1),
                 "editor");
     }
 
@@ -36,15 +37,59 @@ public class RightsValidatorConfigTest {
         props.put("dataset.dataset1.editor", TestConstants.USER_NAME_1+","+TestConstants.USER_NAME_2);
 
         config.validate(props);
-        assertEquals(config.getEditorRules().get("dataset1").get(TestConstants.USER_NAME_1), "editor");
-        assertEquals(config.getEditorRules().get("dataset1").get(TestConstants.USER_NAME_2), "editor");
+        assertEquals(config.getRules().get("dataset1").get(TestConstants.USER_NAME_1), "editor");
+        assertEquals(config.getRules().get("dataset1").get(TestConstants.USER_NAME_2), "editor");
     }
 
     @Test
-    public void ignore() {
+    public void oneReader() {
         props.put("dataset.dataset1.reader", TestConstants.USER_NAME_1);
 
         config.validate(props);
-        assertEquals(config.getEditorRules().get("dataset1"), null);
+        assertEquals(config.getRules().get("dataset1").get(TestConstants.USER_NAME_1), "reader");
+    }
+
+    @Test
+    public void twoReaders() {
+        props.put("dataset.dataset1.reader", TestConstants.USER_NAME_1+","+TestConstants.USER_NAME_2);
+
+        config.validate(props);
+        assertEquals(config.getRules().get("dataset1").get(TestConstants.USER_NAME_1), "reader");
+        assertEquals(config.getRules().get("dataset1").get(TestConstants.USER_NAME_2), "reader");
+    }
+
+    @Test
+    public void editorOverwritesReader() {
+        props.put("dataset.dataset1.reader", TestConstants.USER_NAME_1);
+        props.put("dataset.dataset1.editor", TestConstants.USER_NAME_1);
+
+        config.validate(props);
+        assertEquals(config.getRules().get("dataset1").get(TestConstants.USER_NAME_1), "editor");
+    }
+
+    @Test
+    public void editorOverwritesReaderDifferentOrder() {
+        props.put("dataset.dataset1.editor", TestConstants.USER_NAME_1);
+        props.put("dataset.dataset1.reader", TestConstants.USER_NAME_1);
+
+        config.validate(props);
+        assertEquals(config.getRules().get("dataset1").get(TestConstants.USER_NAME_1), "editor");
+    }
+
+    @Test
+    public void oneReaderOneWriter() {
+        props.put("dataset.dataset1.editor", TestConstants.USER_NAME_1);
+        props.put("dataset.dataset1.reader", TestConstants.USER_NAME_2);
+
+        config.validate(props);
+        assertEquals(config.getRules().get("dataset1").get(TestConstants.USER_NAME_1), "editor");
+        assertEquals(config.getRules().get("dataset1").get(TestConstants.USER_NAME_2), "reader");
+    }
+
+    @Test
+    public void levelUnknown() {
+        props.put("dataset.dataset1.unkown", TestConstants.USER_NAME_1);
+
+        assertFalse(config.validate(props));
     }
 }

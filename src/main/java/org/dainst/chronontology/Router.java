@@ -60,9 +60,6 @@ public class Router {
 
         before("/*", (req, res) -> {
 
-            if (req.requestMethod().equals("GET"))
-                return;
-
             boolean authenticated = false;
             if(req.headers(HEADER_AUTH) != null
                     && req.headers(HEADER_AUTH).startsWith("Basic"))
@@ -74,10 +71,10 @@ public class Router {
                     }
             }
 
-            if(!authenticated) {
-                res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
-                res.status(HTTP_UNAUTHORIZED);
-                halt(HTTP_UNAUTHORIZED);
+            if(!authenticated && !req.requestMethod().equals("GET")) {
+                    res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
+                    res.status(HTTP_UNAUTHORIZED);
+                    halt(HTTP_UNAUTHORIZED);
             }
         });
     }

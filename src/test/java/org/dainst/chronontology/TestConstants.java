@@ -16,6 +16,7 @@ public class TestConstants {
     public static final String USER_NAME_ADMIN = "admin";
     public static final String USER_NAME_1 = "ove";
     public static final String USER_NAME_2 = "karl";
+    public static final String USER_NAME_3 = "reader";
     public static final String PASS_WORD = "s3cr3t";
     public static final String SERVER_PORT = "4567";
     public static final String SERVER_URL = "http://0.0.0.0:"+SERVER_PORT;

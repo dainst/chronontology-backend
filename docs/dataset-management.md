@@ -69,4 +69,28 @@ is assigned to an existing dataset group, like
  
  the user must have **editor** rights on both the old and the new dataset group.
 
+## GET /:typeName/:identifier
+
+If enriched with the dataset property, only users with who are granted 
+the proper permission rights can access a document
+
+A document
+
+```
+{
+    "a" : "c" 
+    "dataset" : "ds1"
+}
+```
+
+can only be accessed by a user who is either an **editor** or a **reader** for
+the dataset ds1.
+
+## GET /:typeName/
+
+The search currently delivers all search results without further introspection
+of documents and filtering out results which do not match the actual 
+users permission level.
+
+
 
