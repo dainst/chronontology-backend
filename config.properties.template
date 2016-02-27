@@ -30,6 +30,17 @@ useConnect=false
 #
 # typeNames=period
 
-# Pairs of Usenames and Passwords. Separate pairs by ,. Don't use whitespaces.
+# List of username/passwords pairs. Don't use whitespaces.
 #
-# credentials=admin:s3cr3t
+# credentials=admin:s3cr3t,user1:abc
+
+# Dataset configuration. Starting with dataset., the second part determines
+# the dataset name and the third part the role. The value lists the names of users
+# that are assigned the specified permission grade.
+# Don't use whitespaces.
+# 
+# One can create as many dataset groups as one wants.
+# Currently there exists only the permission grade editor.
+# Make sure the user also are granted general access by beeing listed under credentials.
+#
+# dataset.dataset1.editors=user1
