@@ -18,7 +18,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void putUnauthorized() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE, "PUT", json(), TestConstants.USER_NAME,"wrong").code(),
+            getResponse(TYPE_ROUTE, "PUT", json(), TestConstants.USER_NAME_ADMIN,"wrong").code(),
             HTTP_UNAUTHORIZED
         );
     }
@@ -26,7 +26,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void postUnauthorized() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE, "POST", json(), TestConstants.USER_NAME,"wrong").code(),
+            getResponse(TYPE_ROUTE, "POST", json(), TestConstants.USER_NAME_ADMIN,"wrong").code(),
             HTTP_UNAUTHORIZED
         );
     }
@@ -34,7 +34,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void deleteUnauthorized() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE, "DELETE", json(), TestConstants.USER_NAME,"wrong").code(),
+            getResponse(TYPE_ROUTE, "DELETE", json(), TestConstants.USER_NAME_ADMIN,"wrong").code(),
             HTTP_UNAUTHORIZED
         );
     }
@@ -43,7 +43,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void documentNotFound() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE+"1", "GET").code(),
+            getResponse(TYPE_ROUTE+"1", "GET").code(),
             HTTP_NOT_FOUND
         );
     }
@@ -52,7 +52,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     public void documentFound() throws IOException {
         String id= idOf(client.post(TYPE_ROUTE,json()));
         assertEquals(
-            rest(id, "GET").code(),
+            getResponse(id, "GET").code(),
             HTTP_OK
         );
     }
@@ -60,7 +60,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void oneTimePost() throws IOException {
         assertEquals(
-            rest(TYPE_ROUTE, "POST", json()).code(),
+            getResponse(TYPE_ROUTE, "POST", json()).code(),
             HTTP_CREATED
         );
     }
@@ -68,7 +68,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     @Test
     public void postWithMalformedJSON() throws IOException {
         assertEquals(
-                rest(TYPE_ROUTE, "POST", "{").code(),
+                getResponse(TYPE_ROUTE, "POST", "{").code(),
                 HTTP_BAD_REQUEST
         );
     }
@@ -78,7 +78,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
 
         String id= idOf(client.post(TYPE_ROUTE,json()));
         assertEquals(
-                rest(id, "PUT", "{").code(),
+                getResponse(id, "PUT", "{").code(),
                 HTTP_BAD_REQUEST
         );
     }
@@ -88,7 +88,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
 
         String id= idOf(client.post(TYPE_ROUTE,json()));
         assertEquals(
-                rest(id, "PUT", json()).code(),
+                getResponse(id, "PUT", json()).code(),
                 HTTP_OK
         );
     }
@@ -97,7 +97,7 @@ public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
     public void createWithPut() throws IOException {
 
         assertEquals(
-            rest(TYPE_ROUTE+"1", "PUT", json()).code(),
+            getResponse(TYPE_ROUTE+"1", "PUT", json()).code(),
             HTTP_CREATED
         );
     }

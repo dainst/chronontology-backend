@@ -17,7 +17,7 @@ public class HeaderIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void putHeaders() throws IOException {
-        Response res = rest(TYPE_ROUTE+"1", "PUT", json());
+        Response res = getResponse(TYPE_ROUTE+"1", "PUT", json());
         assertEquals(
                 res.header(HEADER_CT),
                 HEADER_JSON
@@ -30,7 +30,7 @@ public class HeaderIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void postHeaders() throws IOException {
-        Response res = rest(TYPE_ROUTE, "POST", json());
+        Response res = getResponse(TYPE_ROUTE, "POST", json());
         assertEquals(
                 res.header(HEADER_CT),
                 HEADER_JSON
@@ -42,7 +42,7 @@ public class HeaderIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void getHeaders() throws IOException {
-        Response res = rest(TYPE_ROUTE+"1", "GET");
+        Response res = getResponse(TYPE_ROUTE+"1", "GET");
         assertEquals(
                 res.header(HEADER_CT),
                 HEADER_JSON
@@ -55,7 +55,7 @@ public class HeaderIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void searchHeaders() throws IOException {
-        Response res = rest(TYPE_ROUTE, "GET");
+        Response res = getResponse(TYPE_ROUTE, "GET");
         assertEquals(
                 res.header(HEADER_CT),
                 HEADER_JSON
@@ -67,7 +67,7 @@ public class HeaderIntegrationTest extends ResponseIntegrationTestBase {
 
     @Test
     public void serverStatusHeaders() throws IOException {
-        Response res = rest("/", "GET");
+        Response res = getResponse("/", "GET");
         assertEquals(
                 res.header(HEADER_CT),
                 HEADER_JSON

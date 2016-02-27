@@ -26,6 +26,8 @@ public abstract class Controller {
 
     public static final String ID = ":id";
 
+    private RightsValidator rightsValidator= new RightsValidator();
+
 
     // Template methods
     abstract protected JsonNode _get(String bucket, String key);
@@ -89,11 +91,8 @@ public abstract class Controller {
             final Request req,
             final Response res) throws IOException {
 
-        JsonNode n= JsonUtils.json(req.body());
-        if (n==null) {
-            res.status(HTTP_BAD_REQUEST);
-            return JsonUtils.json("{}");
-        }
+        JsonNode n= validateIncomingJson(req,res);
+        if (n==null) return JsonUtils.json();
 
         String id= determineFreeId(typeName);
 
@@ -111,34 +110,61 @@ public abstract class Controller {
     }
 
 
+    private boolean userPermittedToModifyDataset(Request req, JsonNode n) {
+        if (n.get("dataset")!=null &&
+                !rightsValidator.hasPermission(req.attribute("user"),
+                        n.get("dataset").toString().replaceAll("\"",""))) {
+            return false;
+        }
+        return true;
+    }
+
+    private JsonNode validateIncomingJson(Request req, Response res) {
+        JsonNode n= JsonUtils.json(req.body());
+        if (n==null) {
+            res.status(HTTP_BAD_REQUEST);
+            return null;
+        }
+        if (!userPermittedToModifyDataset(req,n)) {
+            res.status(HTTP_FORBIDDEN);
+            return null;
+        }
+        return n;
+    }
+
+
     public Object handlePut(
             final String typeName,
             final Request req,
             final Response res) throws IOException {
 
-        JsonNode n= JsonUtils.json(req.body());
-        if (n==null) {
-            res.status(HTTP_BAD_REQUEST);
-            return JsonUtils.json("{}");
-        }
 
-        String id = req.params(ID);
-        JsonNode oldDoc = _get(typeName,id);
+        JsonNode n= validateIncomingJson(req,res);
+        if (n==null) return JsonUtils.json();
+
 
         DocumentModel dm = new DocumentModel(
-                typeName,id,JsonUtils.json(req.body()), req.attribute("user"));
-        JsonNode doc = null;
+                typeName,req.params(ID),JsonUtils.json(req.body()), req.attribute("user"));
 
+        JsonNode doc = null;
         int status;
+        JsonNode oldDoc = _get(typeName,req.params(ID));
         if (oldDoc!=null) {
-            doc= dm.merge(oldDoc).j();
-            status= HTTP_OK;
+
+            if (!userPermittedToModifyDataset(req,oldDoc)) {
+                res.status(HTTP_FORBIDDEN);
+                return JsonUtils.json();
+            } else {
+                doc= dm.merge(oldDoc).j();
+                status= HTTP_OK;
+            }
+
         } else {
             doc= dm.j();
             status= HTTP_CREATED;
         }
 
-        if (!_handlePut(typeName,id,doc))
+        if (!_handlePut(typeName,req.params(ID),doc))
             res.status(HTTP_INTERNAL_SERVER_ERROR);
         else
             res.status(status);

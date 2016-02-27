@@ -29,7 +29,6 @@ public class IntegrationTestBase {
 
     // A client speaking to the rest api of the app under design
     protected static final JsonRestClient client = new JsonRestClient(TestConstants.SERVER_URL);
-    protected static final OkHttpClient ok= new OkHttpClient();
 
     // To allow direct data manipulation for testing purposes
     protected static ESRestSearchableDatastore connectDatastore = null;
@@ -50,11 +49,9 @@ public class IntegrationTestBase {
     }
 
 
-
-
     @BeforeMethod
     public void beforeMethod() {
-        client.authenticate(TestConstants.USER_NAME, TestConstants.PASS_WORD);
+        client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
         ESClientTestUtil.createEsTypeAndMapping();
     }
 
@@ -81,11 +78,17 @@ public class IntegrationTestBase {
         props.put("datastores.1.path",TestConstants.TEST_FOLDER);
         props.put("datastores.1.type", ConfigConstants.DATASTORE_TYPE_FS);
         props.put("typeNames",TestConstants.TEST_TYPE);
-        props.put("credentials", TestConstants.USER_NAME+":"+ TestConstants.PASS_WORD);
+        props.put("credentials", makeCredentials());
 
         AppConfig config= new AppConfig();
         config.validate(props);
         return config;
+    }
+
+    private static String makeCredentials() {
+        return TestConstants.USER_NAME_ADMIN + ":" + TestConstants.PASS_WORD
+                + "," + TestConstants.USER_NAME_1 + ":" + TestConstants.PASS_WORD
+                + "," + TestConstants.USER_NAME_2 + ":" + TestConstants.PASS_WORD;
     }
 
     protected static void startServer() throws InterruptedException {

@@ -1,6 +1,7 @@
 package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import org.dainst.chronontology.TestConstants;
@@ -29,8 +30,8 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param password
      * @return the response object.
      */
-    protected Response rest(String path, String method, JsonNode json, String username, String password) {
-        return rest(path,method,json.toString(),username,password);
+    protected Response getResponse(String path, String method, JsonNode json, String username, String password) {
+        return getResponse(path,method,json.toString(),username,password);
     }
 
     /**
@@ -43,14 +44,15 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param password
      * @return the response object.
      */
-    private Response rest(String path, String method, String json, String username, String password) {
+    private Response getResponse(String path, String method, String json, String username, String password) {
 
         Request.Builder b= RestUtils.getRequestBuilder(method,json).url(TestConstants.SERVER_URL + path);
         authorize(username,password,b);
 
         Response response= null;
         try {
-            response = ok.newCall(b.build()).execute();
+            response = new OkHttpClient().newCall(b.build()).execute();
+            response.body().close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,8 +66,8 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param method
      * @return the response object.
      */
-    protected Response rest(String path, String method) {
-        return rest(path,method,(String) null, TestConstants.USER_NAME, TestConstants.PASS_WORD);
+    protected Response getResponse(String path, String method) {
+        return getResponse(path,method,(String) null, TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
     }
 
     /**
@@ -76,8 +78,8 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param json
      * @return the response object.
      */
-    protected Response rest(String path, String method, JsonNode json) {
-        return rest(path,method,json, TestConstants.USER_NAME, TestConstants.PASS_WORD);
+    protected Response getResponse(String path, String method, JsonNode json) {
+        return getResponse(path,method,json, TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
     }
 
     /**
@@ -88,7 +90,7 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param json
      * @return the response object.
      */
-    protected Response rest(String path, String method, String json) {
-        return rest(path,method,json, TestConstants.USER_NAME, TestConstants.PASS_WORD);
+    protected Response getResponse(String path, String method, String json) {
+        return getResponse(path,method,json, TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
     }
 }

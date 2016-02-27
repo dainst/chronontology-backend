@@ -5,7 +5,7 @@ import com.squareup.okhttp.*;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Base64;
+import java.util.*;
 
 /**
  * @author Daniel M. de Oliveira
@@ -52,6 +52,7 @@ public class JsonRestClient {
 
         String s=  (json!=null) ? json.toString() : null  ;
         Request.Builder b = RestUtils.getRequestBuilder(method, s).url(url + path);
+
         authorize(b);
 
         Response response = null;

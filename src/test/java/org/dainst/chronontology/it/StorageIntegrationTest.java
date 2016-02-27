@@ -28,7 +28,7 @@ public class StorageIntegrationTest extends JsonIntegrationTestBase {
 
     @Test
      public void postUnauthorized() {
-        client.authenticate(TestConstants.USER_NAME,"wrong");
+        client.authenticate(TestConstants.USER_NAME_ADMIN,"wrong");
         client.post(TYPE_ROUTE, sampleJson("b"));
         assertEquals(
                 client.get(TYPE_ROUTE+"1"),
@@ -37,7 +37,7 @@ public class StorageIntegrationTest extends JsonIntegrationTestBase {
 
     @Test
     public void putUnauthorized() {
-        client.authenticate(TestConstants.USER_NAME,"wrong");
+        client.authenticate(TestConstants.USER_NAME_ADMIN,"wrong");
         client.put(TYPE_ROUTE+"1", sampleJson("b"));
         assertEquals(
                 client.get(TYPE_ROUTE+"1"),

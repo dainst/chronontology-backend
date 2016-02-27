@@ -1,6 +1,7 @@
 package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import org.dainst.chronontology.TestConstants;
@@ -34,7 +35,7 @@ public class SearchIntegrationTest extends JsonIntegrationTestBase {
         Request.Builder b = new Request.Builder()
                 .url(ESServerTestUtil.getUrl()+ "/" + ESClientTestUtil.getIndexName() + "/_refresh").post(body);
         try {
-            ok.newCall(b.build()).execute();
+            new OkHttpClient().newCall(b.build()).execute();
         } catch (IOException e) {
             e.printStackTrace();
         }
