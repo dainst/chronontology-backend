@@ -112,7 +112,7 @@ public abstract class Controller {
 
     private boolean userPermittedToModifyDataset(Request req, JsonNode n) {
         if (n.get("dataset")!=null &&
-                !rightsValidator.hasPermission(req.attribute("user"),
+                !rightsValidator.hasEditorPermission(req.attribute("user"),
                         n.get("dataset").toString().replaceAll("\"",""))) {
             return false;
         }

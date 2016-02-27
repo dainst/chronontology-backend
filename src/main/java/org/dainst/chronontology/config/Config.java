@@ -179,7 +179,7 @@ public abstract class Config {
     /**
      * To collect all error messages from the actual Config
      * object as well as all other messages from the Config hierarchy,
-     * it is recommended that implementors follow this pattern
+     * it is recommended that implementors override this method and follow the pattern
      *
      * <pre>
      *
@@ -195,5 +195,7 @@ public abstract class Config {
      * @return all the validation violation error messages from a hierarchy
      *   of subtypes of Config.
      */
-    abstract public ArrayList<String> getConstraintViolations();
+    public ArrayList<String> getConstraintViolations() {
+        return constraintViolations;
+    }
 }
