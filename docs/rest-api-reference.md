@@ -1,5 +1,10 @@
 # Rest Api Reference
 
+This document describes the basic behaviour of the rest api 
+endpoints provided by the connected-backend. **Note** that there
+is also dedicated document that focuses [dataset based access 
+management](dataset-management.md) with the connected backend.
+
 
 ## POST /:typeName/
 
