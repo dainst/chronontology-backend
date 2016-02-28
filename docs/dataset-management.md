@@ -1,3 +1,5 @@
+[Rest API Reference](rest-api-reference.md)
+
 # Dataset based access management
 
 The connected backend has the ability to provide access control for groups
