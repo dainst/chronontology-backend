@@ -97,7 +97,7 @@ public abstract class Config {
         if (props.get(prefix+name)==null) {
 
             if (defaultval==null){
-                constraintViolations.add("Property \""+prefix+name+"\" does not exist.");
+                constraintViolations.add(ConfigConstants.MSG_CONSTRAINT_VIOLATION+"Property \""+prefix+name+"\" does not exist.");
                 return false;
             }
             value= defaultval;
