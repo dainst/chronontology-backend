@@ -27,5 +27,10 @@ public class Constants {
     public static final String DATASTORE_STATUS_OK = "ok";
     public static final String DATASTORE_STATUS_DOWN = "down";
 
+    public static final String USER_NAME_ADMIN = "admin";
+    public static final String USER_NAME_ANONYMOUS = "anonymous";
+
     public static final String MSG_PROPS_NOT_NULL = "The argument props must not be null.";
+    public static final String MSG_USER_NAME_NOT_NULL = "userName must not be null.";
+    public static final String MSG_OPERATION_NOT_NULL = "operation must not be null";
 }

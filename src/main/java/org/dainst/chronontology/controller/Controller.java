@@ -4,6 +4,7 @@ import static spark.Spark.*;
 import static org.dainst.chronontology.Constants.*;
 
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.handler.CrudHandler;
 import org.dainst.chronontology.handler.RightsValidator;
 import org.dainst.chronontology.handler.SearchHandler;
@@ -74,10 +75,14 @@ public class Controller {
                     }
             }
 
-            if(!authenticated && !req.requestMethod().equals("GET")) {
+            if(!authenticated) {
+
+                req.attribute("user", Constants.USER_NAME_ANONYMOUS);
+                if (!req.requestMethod().equals("GET")) {
                     res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
                     res.status(HTTP_UNAUTHORIZED);
                     halt(HTTP_UNAUTHORIZED);
+                }
             }
         });
     }

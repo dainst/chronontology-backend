@@ -221,4 +221,19 @@ public class DatasetsIntegrationTest extends ResponseIntegrationTestBase {
                 new Results("results").add(dataset("1")).j()
         );
     }
+
+
+    @Test
+    public void readNotAllowedWithoutLogin() throws JsonProcessingException {
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
+        String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
+
+        assertEquals(
+                getResponse(id, "GET", dataset("1"),
+                        null, // no authentication
+                        null).code(),
+                Constants.HTTP_FORBIDDEN
+        );
+    }
 }

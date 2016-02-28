@@ -1,5 +1,7 @@
 package org.dainst.chronontology.handler;
 
+import org.dainst.chronontology.Constants;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,7 +16,6 @@ public class RightsValidator {
 
     private static final String EDITOR = "editor";
     private static final String READER = "reader";
-    public  static final String ADMIN  = "admin";
 
     public enum Operation {
         EDIT,
@@ -39,19 +40,24 @@ public class RightsValidator {
      * been granted at least read level permissions. If he has been granted edit
      * level permissions, then he is also allowed to read.
      *
-     * @param userName
+     * @param userName not null
      * @param dataset
-     * @param operation
-     * @return
+     * @param operation not null
+     * @return <code>true</code> if user has permission to perform operation on dataset.
+     *   <code>false</code> otherwise.
+     * @throws IllegalArgumentException if not null constraint violated.
      */
     public boolean hasPermission(String userName, String dataset, Operation operation) {
 
+        if (userName==null)  throw new IllegalArgumentException(Constants.MSG_USER_NAME_NOT_NULL);
+        if (operation==null) throw new IllegalArgumentException(Constants.MSG_OPERATION_NOT_NULL);
+
         if (operation.equals(Operation.EDIT))
-            return (userName.equals(ADMIN)
+            return (userName.equals(Constants.USER_NAME_ADMIN)
                     || has(userName,dataset, EDITOR));
 
         return (operation.equals(Operation.READ) &&
-                ((userName.equals(ADMIN)
+                ((userName.equals(Constants.USER_NAME_ADMIN)
                 || has(userName,dataset, READER)
                 || has(userName,dataset, EDITOR))));
     }

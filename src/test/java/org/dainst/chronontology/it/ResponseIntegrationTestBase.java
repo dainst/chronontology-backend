@@ -40,14 +40,14 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param path
      * @param method
      * @param json
-     * @param username
+     * @param username if null, the request will be done without authentication.
      * @param password
      * @return the response object.
      */
     private Response getResponse(String path, String method, String json, String username, String password) {
 
         Request.Builder b= RestUtils.getRequestBuilder(method,json).url(TestConstants.SERVER_URL + path);
-        authorize(username,password,b);
+        if (username!=null) authorize(username,password,b);
 
         Response response= null;
         try {
