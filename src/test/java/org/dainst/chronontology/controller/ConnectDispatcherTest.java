@@ -15,13 +15,13 @@ import static org.mockito.Mockito.*;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ConnectControllerTest {
+public class ConnectDispatcherTest {
 
     private static final String ROUTE = "route";
     private SearchableDatastore mockDS1= mock(SearchableDatastore.class);
     private SearchableDatastore mockDS2= mock(SearchableDatastore.class);
-    private Controller controller= new ConnectController(mockDS1,mockDS2);
-    private CrudHandler crudHandler= new CrudHandler(controller,new RightsValidator());
+    private Dispatcher dispatcher = new ConnectDispatcher(mockDS1,mockDS2);
+    private CrudHandler crudHandler= new CrudHandler(dispatcher,new RightsValidator());
     private Request reqMock= mock(Request.class);
 
     @BeforeMethod

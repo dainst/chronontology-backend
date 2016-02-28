@@ -15,11 +15,11 @@ import java.io.IOException;
  *
  * @author Daniel M. de Oliveira
  */
-public class SimpleController extends Controller {
+public class SimpleDispatcher extends Dispatcher {
 
     protected final SearchableDatastore connectDatastore;
 
-    public SimpleController(SearchableDatastore connectDatastore) {
+    public SimpleDispatcher(SearchableDatastore connectDatastore) {
         this.connectDatastore= connectDatastore;
     }
 

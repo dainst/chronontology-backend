@@ -120,7 +120,7 @@ public class AppConfigTest {
         props.put("datastores.1.type","filesystem");
 
         assertTrue(appConfig.validate(props));
-        assertEquals(appConfig.getControllerConfig().isUseConnect(),true);
+        assertEquals(appConfig.getDispatcherConfig().isUseConnect(),true);
     }
 
     @Test
@@ -148,6 +148,6 @@ public class AppConfigTest {
         assertTrue(appConfig.getConstraintViolations().contains(
                 ConfigConstants.MSG_CONSTRAINT_VIOLATION+AppConfig.MSG_SERVER_PORT_NAN+"\"a7\"."));
         assertTrue(appConfig.getConstraintViolations().contains(
-                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ControllerConfig.MSG_MUST_TYPE_ES));
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ DispatcherConfig.MSG_MUST_TYPE_ES));
     }
 }

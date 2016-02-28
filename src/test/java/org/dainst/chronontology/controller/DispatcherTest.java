@@ -1,8 +1,6 @@
 package org.dainst.chronontology.controller;
 
 import org.dainst.chronontology.Constants;
-import org.dainst.chronontology.store.Datastore;
-import org.dainst.chronontology.store.FileSystemDatastore;
 import org.dainst.chronontology.store.SearchableDatastore;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -15,18 +13,18 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 /**
- * NOTE that here we test both functionality of {@link Controller}
- * as well as of {@link SimpleController}.
+ * NOTE that here we test both functionality of {@link Dispatcher}
+ * as well as of {@link SimpleDispatcher}.
  *
  * @author Daniel M. de Oliveira
  */
-public class ControllerTest {
+public class DispatcherTest {
 
     private static final String ROUTE = "route";
     private SearchableDatastore mockDS= mock(SearchableDatastore.class);
     private Request reqMock= mock(Request.class);
-    private Controller controller= new SimpleController(mockDS);
-    private CrudHandler crudHandler= new CrudHandler(controller,new RightsValidator());
+    private Dispatcher dispatcher = new SimpleDispatcher(mockDS);
+    private CrudHandler crudHandler= new CrudHandler(dispatcher,new RightsValidator());
 
 
     @BeforeMethod

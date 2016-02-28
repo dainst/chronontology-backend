@@ -8,12 +8,12 @@ import spark.Request;
  */
 public class Handler {
 
-    public Handler(Controller controller,RightsValidator rightsValidator) {
-        this.controller = controller;
+    public Handler(Dispatcher dispatcher, RightsValidator rightsValidator) {
+        this.dispatcher = dispatcher;
         this.rightsValidator= rightsValidator;
     }
 
-    protected final Controller controller;
+    protected final Dispatcher dispatcher;
     protected final RightsValidator rightsValidator;
 
 

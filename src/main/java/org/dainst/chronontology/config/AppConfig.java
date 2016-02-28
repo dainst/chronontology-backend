@@ -17,7 +17,7 @@ public class AppConfig extends Config {
     private String typeNames = null;
     private ElasticsearchServerConfig elasticsearchServerConfig = null;
     private RightsValidatorConfig rightsValidatorConfig= new RightsValidatorConfig();
-    private ControllerConfig controllerConfig = new ControllerConfig();
+    private DispatcherConfig dispatcherConfig = new DispatcherConfig();
     private Properties props = null;
 
     /**
@@ -31,7 +31,7 @@ public class AppConfig extends Config {
         this.props= props;
 
         return (
-            controllerConfig.validate(props) &
+            dispatcherConfig.validate(props) &
             rightsValidatorConfig.validate(props) &
             _validate(props,"serverPort",ConfigConstants.SERVER_PORT) &
             _validate(props,"useEmbeddedES", "false") &
@@ -44,7 +44,7 @@ public class AppConfig extends Config {
     public ArrayList<String> getConstraintViolations() {
         ArrayList<String> allViolations= new ArrayList<String>();
         allViolations.addAll(constraintViolations);
-        allViolations.addAll(controllerConfig.getConstraintViolations());
+        allViolations.addAll(dispatcherConfig.getConstraintViolations());
         allViolations.addAll(rightsValidatorConfig.getConstraintViolations());
         if (elasticsearchServerConfig!=null)
             allViolations.addAll(elasticsearchServerConfig.getConstraintViolations());
@@ -93,8 +93,8 @@ public class AppConfig extends Config {
         return elasticsearchServerConfig;
     }
 
-    public ControllerConfig getControllerConfig() {
-        return controllerConfig;
+    public DispatcherConfig getDispatcherConfig() {
+        return dispatcherConfig;
     }
 
     public RightsValidatorConfig getRightsValidatorConfig() {

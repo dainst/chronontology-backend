@@ -17,7 +17,7 @@ public class Router {
     private final static Logger logger = Logger.getLogger(Router.class);
     public static final String ID = ":id";
 
-    private final Controller controller;
+    private final Dispatcher dispatcher;
     private final SearchHandler searchHandler;
     private final ServerStatusHandler serverStatusHandler;
     private final CrudHandler crudHandler;
@@ -90,16 +90,16 @@ public class Router {
     }
 
     public Router(
-            final Controller controller,
+            final Dispatcher dispatcher,
             final String[] typeNames,
             final String[] credentials,
             final RightsValidator rightsValidator
             ){
 
-        this.controller= controller; // TODO review if still necessary
-        this.searchHandler= new SearchHandler(controller,rightsValidator);
-        this.serverStatusHandler= new ServerStatusHandler(controller,rightsValidator);
-        this.crudHandler= new CrudHandler(controller,rightsValidator);
+        this.dispatcher = dispatcher; // TODO review if still necessary
+        this.searchHandler= new SearchHandler(dispatcher,rightsValidator);
+        this.serverStatusHandler= new ServerStatusHandler(dispatcher,rightsValidator);
+        this.crudHandler= new CrudHandler(dispatcher,rightsValidator);
 
         for (String typeName:typeNames)
             setUpTypeRoutes(typeName);
@@ -107,7 +107,7 @@ public class Router {
         setUpAuthorization(credentials);
     }
 
-    public Controller getController() {
-        return controller;
+    public Dispatcher getDispatcher() {
+        return dispatcher;
     } // TODO review if getters for handlers would make more sense here
 }

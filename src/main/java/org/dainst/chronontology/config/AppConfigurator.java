@@ -26,7 +26,7 @@ public class AppConfigurator implements Configurator<App,AppConfig> {
         port(serverPort);
 
         Router router= new Router(
-                new ControllerConfigurator().configure(config.getControllerConfig()),
+                new DispatcherConfigurator().configure(config.getDispatcherConfig()),
                 getTypes(config.getTypeNames()),
                 config.getCredentials(),
                 new RightsValidatorConfigurator().configure(config.getRightsValidatorConfig()));

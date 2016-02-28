@@ -15,8 +15,8 @@ import static org.dainst.chronontology.Constants.*;
  */
 public class ServerStatusHandler extends Handler{
 
-    public ServerStatusHandler(Controller controller,RightsValidator rightsValidator) {
-        super(controller,rightsValidator);
+    public ServerStatusHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
+        super(dispatcher,rightsValidator);
     }
 
     /**
@@ -38,7 +38,7 @@ public class ServerStatusHandler extends Handler{
 
     private JsonNode makeServerStatusJson() throws IOException {
         Results datastores= new Results("datastores");
-        controller.addDatatoreStatus(this,datastores);
+        dispatcher.addDatatoreStatus(this,datastores);
         return datastores.j();
     }
 

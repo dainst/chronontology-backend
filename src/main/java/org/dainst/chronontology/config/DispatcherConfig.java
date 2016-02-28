@@ -9,7 +9,7 @@ import java.util.Properties;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ControllerConfig extends Config {
+public class DispatcherConfig extends Config {
 
     static final String MSG_MUST_TYPE_ES= "datastores.0 must be of type \""+
         ConfigConstants.DATASTORE_TYPE_ES+"\".";

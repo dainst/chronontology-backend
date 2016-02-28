@@ -1,12 +1,11 @@
 package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.squareup.okhttp.OkHttpClient;
 import org.dainst.chronontology.App;
 import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.config.*;
 import org.dainst.chronontology.util.JsonRestClient;
-import org.dainst.chronontology.controller.ConnectController;
+import org.dainst.chronontology.controller.ConnectDispatcher;
 import org.dainst.chronontology.store.ESRestSearchableDatastore;
 import org.dainst.chronontology.store.ESServerTestUtil;
 import org.dainst.chronontology.store.FileSystemDatastore;
@@ -97,7 +96,7 @@ public class IntegrationTestBase {
     protected static void startServer() throws InterruptedException {
 
         App app=  new AppConfigurator().configure(makeAppConfig());
-        ConnectController controller= (ConnectController) app.getRouter().getController();
+        ConnectDispatcher controller= (ConnectDispatcher) app.getRouter().getDispatcher();
 
         mainDatastore= (FileSystemDatastore) controller.getDatatores()[1];
         connectDatastore= (ESRestSearchableDatastore) controller.getDatatores()[0];

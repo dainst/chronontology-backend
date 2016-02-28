@@ -14,12 +14,12 @@ import java.io.IOException;
  *
  * @author Daniel M. de Oliveira
  */
-public class ConnectController extends Controller {
+public class ConnectDispatcher extends Dispatcher {
 
     protected final Datastore mainDatastore;
     protected final SearchableDatastore connectDatastore;
 
-    public ConnectController(Datastore mainDatastore, SearchableDatastore connectDatastore) {
+    public ConnectDispatcher(Datastore mainDatastore, SearchableDatastore connectDatastore) {
         this.mainDatastore= mainDatastore;
         this.connectDatastore= connectDatastore;
     }
