@@ -1,10 +1,13 @@
-package org.dainst.chronontology;
+package org.dainst.chronontology.controller;
 
 import static spark.Spark.*;
 import static org.dainst.chronontology.Constants.*;
 
 import org.apache.log4j.Logger;
-import org.dainst.chronontology.controller.*;
+import org.dainst.chronontology.handler.CrudHandler;
+import org.dainst.chronontology.handler.RightsValidator;
+import org.dainst.chronontology.handler.SearchHandler;
+import org.dainst.chronontology.handler.ServerStatusHandler;
 import spark.Request;
 import spark.Response;
 
@@ -12,9 +15,9 @@ import spark.Response;
 /**
  * @author Daniel M. de Oliveira
  */
-public class Router {
+public class Controller {
 
-    private final static Logger logger = Logger.getLogger(Router.class);
+    private final static Logger logger = Logger.getLogger(Controller.class);
     public static final String ID = ":id";
 
     private final Dispatcher dispatcher;
@@ -89,7 +92,7 @@ public class Router {
                         toDecode.substring("Basic".length()).trim()));
     }
 
-    public Router(
+    public Controller(
             final Dispatcher dispatcher,
             final String[] typeNames,
             final String[] credentials,

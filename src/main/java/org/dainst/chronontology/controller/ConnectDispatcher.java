@@ -1,6 +1,7 @@
 package org.dainst.chronontology.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dainst.chronontology.handler.ServerStatusHandler;
 import org.dainst.chronontology.util.Results;
 import org.dainst.chronontology.store.Datastore;
 import org.dainst.chronontology.store.SearchableDatastore;
@@ -25,28 +26,28 @@ public class ConnectDispatcher extends Dispatcher {
     }
 
     @Override
-    protected JsonNode get(String bucket, String key) {
+    public JsonNode get(String bucket, String key) {
         return mainDatastore.get(bucket,key);
     }
 
     @Override
-    protected void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException {
+    public void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException {
         r.add(handler.makeDataStoreStatus("main",mainDatastore));
         r.add(handler.makeDataStoreStatus("connect",connectDatastore));
     }
 
     @Override
-    protected boolean handlePost(String bucket, String key, JsonNode value) {
+    public boolean handlePost(String bucket, String key, JsonNode value) {
         return (mainDatastore.put(bucket,key, value) & connectDatastore.put(bucket,key, value));
     }
 
     @Override
-    protected boolean handlePut(String bucket, String key, JsonNode value) {
+    public boolean handlePut(String bucket, String key, JsonNode value) {
         return (mainDatastore.put(bucket,key, value) && connectDatastore.put(bucket,key, value));
     }
 
     @Override
-    protected JsonNode handleGet(String bucket, String key, Request req) {
+    public JsonNode handleGet(String bucket, String key, Request req) {
         JsonNode result= shouldBeDirect(req.queryParams("direct"))
                 ? mainDatastore.get(bucket,key)
                 : connectDatastore.get(bucket,key);
@@ -54,7 +55,7 @@ public class ConnectDispatcher extends Dispatcher {
     }
 
     @Override
-    protected JsonNode handleSearch(String bucket, String query) {
+    public JsonNode handleSearch(String bucket, String query) {
         return connectDatastore.search( bucket, query );
     }
 

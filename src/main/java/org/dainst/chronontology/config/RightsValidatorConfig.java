@@ -1,7 +1,6 @@
 package org.dainst.chronontology.config;
 
 import org.apache.lucene.util.fst.UpToTwoPositiveIntOutputs;
-import org.dainst.chronontology.controller.RightsValidator;
 
 import java.util.*;
 

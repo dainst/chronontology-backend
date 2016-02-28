@@ -1,6 +1,8 @@
 package org.dainst.chronontology.controller;
 
 import org.dainst.chronontology.Constants;
+import org.dainst.chronontology.handler.CrudHandler;
+import org.dainst.chronontology.handler.RightsValidator;
 import org.dainst.chronontology.store.SearchableDatastore;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

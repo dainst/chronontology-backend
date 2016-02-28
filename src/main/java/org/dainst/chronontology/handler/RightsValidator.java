@@ -1,4 +1,4 @@
-package org.dainst.chronontology.controller;
+package org.dainst.chronontology.handler;
 
 import java.util.HashMap;
 import java.util.Map;

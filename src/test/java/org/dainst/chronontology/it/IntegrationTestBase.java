@@ -96,7 +96,7 @@ public class IntegrationTestBase {
     protected static void startServer() throws InterruptedException {
 
         App app=  new AppConfigurator().configure(makeAppConfig());
-        ConnectDispatcher controller= (ConnectDispatcher) app.getRouter().getDispatcher();
+        ConnectDispatcher controller= (ConnectDispatcher) app.getController().getDispatcher();
 
         mainDatastore= (FileSystemDatastore) controller.getDatatores()[1];
         connectDatastore= (ESRestSearchableDatastore) controller.getDatatores()[0];

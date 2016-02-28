@@ -1,6 +1,7 @@
-package org.dainst.chronontology.controller;
+package org.dainst.chronontology.handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dainst.chronontology.controller.Dispatcher;
 import org.dainst.chronontology.store.Connector;
 import org.dainst.chronontology.util.JsonUtils;
 import org.dainst.chronontology.util.Results;
@@ -13,7 +14,7 @@ import static org.dainst.chronontology.Constants.*;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ServerStatusHandler extends Handler{
+public class ServerStatusHandler extends Handler {
 
     public ServerStatusHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         super(dispatcher,rightsValidator);
@@ -43,7 +44,7 @@ public class ServerStatusHandler extends Handler{
     }
 
 
-    protected JsonNode makeDataStoreStatus(String type, Connector store) throws IOException {
+    public JsonNode makeDataStoreStatus(String type, Connector store) throws IOException {
         String status = DATASTORE_STATUS_DOWN;
         if (store.isConnected()) status = DATASTORE_STATUS_OK;
         return JsonUtils.json("{ \"type\" : \""+type+"\", \"status\" : \""+status+"\" }");

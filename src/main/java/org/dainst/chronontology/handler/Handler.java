@@ -1,6 +1,7 @@
-package org.dainst.chronontology.controller;
+package org.dainst.chronontology.handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dainst.chronontology.controller.Dispatcher;
 import spark.Request;
 
 /**

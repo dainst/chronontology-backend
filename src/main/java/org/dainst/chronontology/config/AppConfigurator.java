@@ -3,8 +3,8 @@ package org.dainst.chronontology.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.App;
-import org.dainst.chronontology.Router;
-import org.dainst.chronontology.controller.DocumentModel;
+import org.dainst.chronontology.controller.Controller;
+import org.dainst.chronontology.handler.DocumentModel;
 import org.dainst.chronontology.extra.EmbeddedES;
 
 import static spark.Spark.port;
@@ -25,13 +25,13 @@ public class AppConfigurator implements Configurator<App,AppConfig> {
         final int serverPort= Integer.parseInt(config.getServerPort());
         port(serverPort);
 
-        Router router= new Router(
+        Controller controller = new Controller(
                 new DispatcherConfigurator().configure(config.getDispatcherConfig()),
                 getTypes(config.getTypeNames()),
                 config.getCredentials(),
                 new RightsValidatorConfigurator().configure(config.getRightsValidatorConfig()));
 
-        return new App(router);
+        return new App(controller);
     }
 
     private String[] getTypes(final String typesString) {

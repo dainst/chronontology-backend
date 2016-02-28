@@ -4,6 +4,7 @@ package org.dainst.chronontology.controller;
  */
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dainst.chronontology.handler.ServerStatusHandler;
 import org.dainst.chronontology.util.Results;
 import org.dainst.chronontology.store.SearchableDatastore;
 import spark.Request;
@@ -24,32 +25,32 @@ public class SimpleDispatcher extends Dispatcher {
     }
 
     @Override
-    protected JsonNode get(String bucket, String key) {
+    public JsonNode get(String bucket, String key) {
         return connectDatastore.get(bucket,key);
     }
 
     @Override
-    protected void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException {
+    public void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException {
         r.add(handler.makeDataStoreStatus("main",connectDatastore));
     }
 
     @Override
-    protected boolean handlePost(String bucket, String key, JsonNode value) {
+    public boolean handlePost(String bucket, String key, JsonNode value) {
         return connectDatastore.put(bucket,key, value);
     }
 
     @Override
-    protected boolean handlePut(String bucket, String key, JsonNode value) {
+    public boolean handlePut(String bucket, String key, JsonNode value) {
         return connectDatastore.put(bucket,key, value);
     }
 
     @Override
-    protected JsonNode handleGet(String bucket, String key, Request req) {
+    public JsonNode handleGet(String bucket, String key, Request req) {
         return connectDatastore.get(bucket,key);
     }
 
     @Override
-    protected JsonNode handleSearch(String bucket, String query) {
+    public JsonNode handleSearch(String bucket, String query) {
         return connectDatastore.search( bucket, query );
     }
 }

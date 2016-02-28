@@ -1,6 +1,6 @@
 package org.dainst.chronontology.config;
 
-import org.dainst.chronontology.controller.RightsValidator;
+import org.dainst.chronontology.handler.RightsValidator;
 
 /**
  * @author Daniel M. de Oliveira

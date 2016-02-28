@@ -1,7 +1,8 @@
-package org.dainst.chronontology.controller;
+package org.dainst.chronontology.handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.dainst.chronontology.controller.Dispatcher;
 import spark.Request;
 import spark.Response;
 
@@ -13,7 +14,7 @@ import java.util.List;
 /**
  * @author Daniel M. de Oliveira
  */
-public class SearchHandler extends Handler{
+public class SearchHandler extends Handler {
 
     public SearchHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         super(dispatcher,rightsValidator);

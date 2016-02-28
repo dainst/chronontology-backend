@@ -2,6 +2,7 @@ package org.dainst.chronontology;
 
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.config.*;
+import org.dainst.chronontology.controller.Controller;
 
 import java.util.Properties;
 
@@ -14,7 +15,7 @@ public class App {
 
     final static Logger logger = Logger.getLogger(App.class);
     private static final String DEFAULT_PROPERTIES_FILE_PATH = "config.properties";
-    private Router router = null;
+    private Controller controller = null;
 
     public static void main(String [] args) {
 
@@ -43,11 +44,11 @@ public class App {
         return appConfig;
     }
 
-    public App(Router router) {
-        this.router= router;
+    public App(Controller controller) {
+        this.controller = controller;
     }
 
-    public Router getRouter() {
-        return router;
+    public Controller getController() {
+        return controller;
     }
 }
