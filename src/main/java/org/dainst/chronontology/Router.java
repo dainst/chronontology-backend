@@ -4,10 +4,7 @@ import static spark.Spark.*;
 import static org.dainst.chronontology.Constants.*;
 
 import org.apache.log4j.Logger;
-import org.dainst.chronontology.controller.Controller;
-import org.dainst.chronontology.controller.CrudHandler;
-import org.dainst.chronontology.controller.SearchHandler;
-import org.dainst.chronontology.controller.ServerStatusHandler;
+import org.dainst.chronontology.controller.*;
 import spark.Request;
 import spark.Response;
 
@@ -93,14 +90,16 @@ public class Router {
     }
 
     public Router(
-        final Controller controller,
-        final String[] typeNames,
-        final String[] credentials
-    ){
-        this.controller= controller;
-        this.searchHandler= new SearchHandler(controller);
-        this.serverStatusHandler= new ServerStatusHandler(controller);
-        this.crudHandler= new CrudHandler(controller);
+            final Controller controller,
+            final String[] typeNames,
+            final String[] credentials,
+            final RightsValidator rightsValidator
+            ){
+
+        this.controller= controller; // TODO review if still necessary
+        this.searchHandler= new SearchHandler(controller,rightsValidator);
+        this.serverStatusHandler= new ServerStatusHandler(controller,rightsValidator);
+        this.crudHandler= new CrudHandler(controller,rightsValidator);
 
         for (String typeName:typeNames)
             setUpTypeRoutes(typeName);
@@ -110,5 +109,5 @@ public class Router {
 
     public Controller getController() {
         return controller;
-    }
+    } // TODO review if getters for handlers would make more sense here
 }

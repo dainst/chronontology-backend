@@ -19,8 +19,7 @@ public class ConnectController extends Controller {
     protected final Datastore mainDatastore;
     protected final SearchableDatastore connectDatastore;
 
-    public ConnectController(RightsValidator validator,Datastore mainDatastore, SearchableDatastore connectDatastore) {
-        super(validator);
+    public ConnectController(Datastore mainDatastore, SearchableDatastore connectDatastore) {
         this.mainDatastore= mainDatastore;
         this.connectDatastore= connectDatastore;
     }

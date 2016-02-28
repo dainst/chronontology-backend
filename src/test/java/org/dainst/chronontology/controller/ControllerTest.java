@@ -25,8 +25,8 @@ public class ControllerTest {
     private static final String ROUTE = "route";
     private SearchableDatastore mockDS= mock(SearchableDatastore.class);
     private Request reqMock= mock(Request.class);
-    private Controller controller= new SimpleController(new RightsValidator(),mockDS);
-    private CrudHandler crudHandler= new CrudHandler(controller);
+    private Controller controller= new SimpleController(mockDS);
+    private CrudHandler crudHandler= new CrudHandler(controller,new RightsValidator());
 
 
     @BeforeMethod
@@ -51,7 +51,6 @@ public class ControllerTest {
     public void putOK() throws IOException {
 
         when(mockDS.put(any(),any(),any())).thenReturn(true);
-        Controller controller= new SimpleController(new RightsValidator(),mockDS);
 
         Response resMock= mock(Response.class);
         crudHandler.handlePut(ROUTE,reqMock,resMock);
@@ -63,7 +62,6 @@ public class ControllerTest {
     public void postNotOk() throws IOException {
 
         when(mockDS.put(any(),any(),any())).thenReturn(false);
-        Controller controller= new SimpleController(new RightsValidator(),mockDS);
 
         Response resMock= mock(Response.class);
         crudHandler.handlePost(ROUTE,reqMock,resMock);
@@ -77,7 +75,6 @@ public class ControllerTest {
     public void putNotOk() throws IOException {
 
         when(mockDS.put(any(),any(),any())).thenReturn(false);
-        Controller controller= new SimpleController(new RightsValidator(),mockDS);
 
         Response resMock= mock(Response.class);
         crudHandler.handlePut(ROUTE,reqMock,resMock);

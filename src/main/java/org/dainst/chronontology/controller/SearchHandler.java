@@ -15,8 +15,8 @@ import java.util.List;
  */
 public class SearchHandler extends Handler{
 
-    public SearchHandler(Controller controller) {
-        super(controller);
+    public SearchHandler(Controller controller,RightsValidator rightsValidator) {
+        super(controller,rightsValidator);
     }
 
     public Object handle(

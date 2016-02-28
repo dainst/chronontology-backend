@@ -16,7 +16,7 @@ public class ControllerConfig extends Config {
     static final String MSG_ES_CLASH= "When both datastores use the same elasticsearch url, the index names must be different.";
 
     private DatastoreConfig[] datastoreConfigs = new DatastoreConfig[2];
-    private RightsValidatorConfig rightsValidatorConfig= new RightsValidatorConfig();
+
     private boolean useConnect = true;
 
     private Properties props= null;
@@ -27,7 +27,6 @@ public class ControllerConfig extends Config {
         this.props= props;
 
         return (
-            rightsValidatorConfig.validate(props) &
             _validate(props,"useConnect","true")
         );
     }
@@ -36,7 +35,6 @@ public class ControllerConfig extends Config {
     public ArrayList<String> getConstraintViolations() {
         ArrayList<String> allViolations= new ArrayList<String>();
         allViolations.addAll(constraintViolations);
-        allViolations.addAll(rightsValidatorConfig.getConstraintViolations());
         for (DatastoreConfig config: Arrays.asList(datastoreConfigs)) {
             if (config!=null)
                 allViolations.addAll(config.getConstraintViolations());
@@ -78,7 +76,5 @@ public class ControllerConfig extends Config {
         return datastoreConfigs;
     }
 
-    public RightsValidatorConfig getRightsValidatorConfig() {
-        return rightsValidatorConfig;
-    }
+
 }

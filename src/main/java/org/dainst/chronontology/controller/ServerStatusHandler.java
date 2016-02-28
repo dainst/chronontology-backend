@@ -15,8 +15,8 @@ import static org.dainst.chronontology.Constants.*;
  */
 public class ServerStatusHandler extends Handler{
 
-    public ServerStatusHandler(Controller controller) {
-        super(controller);
+    public ServerStatusHandler(Controller controller,RightsValidator rightsValidator) {
+        super(controller,rightsValidator);
     }
 
     /**

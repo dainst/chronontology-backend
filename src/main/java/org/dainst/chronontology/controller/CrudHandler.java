@@ -18,8 +18,8 @@ public class CrudHandler extends Handler {
 
     public static final String ID = ":id";
 
-    public CrudHandler(Controller controller) {
-        super(controller);
+    public CrudHandler(Controller controller,RightsValidator rightsValidator) {
+        super(controller,rightsValidator);
     }
 
 

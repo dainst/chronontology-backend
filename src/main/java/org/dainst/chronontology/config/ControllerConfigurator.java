@@ -19,16 +19,14 @@ public class ControllerConfigurator implements Configurator<Controller,Controlle
 
         ESRestSearchableDatastore searchable= (ESRestSearchableDatastore)
                 new DatastoreConfigurator().configure(config.getDatastoreConfigs()[0]);
-        RightsValidator validator= new RightsValidatorConfigurator().configure(
-                config.getRightsValidatorConfig());
 
         Controller controller= null;
         if (config.isUseConnect())
-            controller= new ConnectController(validator,
+            controller= new ConnectController(
                     new DatastoreConfigurator().configure(config.getDatastoreConfigs()[1]),
                     searchable);
         else
-            controller= new SimpleController(validator,searchable);
+            controller= new SimpleController(searchable);
 
         return controller;
     }

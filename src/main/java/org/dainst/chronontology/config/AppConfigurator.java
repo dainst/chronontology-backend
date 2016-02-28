@@ -28,7 +28,8 @@ public class AppConfigurator implements Configurator<App,AppConfig> {
         Router router= new Router(
                 new ControllerConfigurator().configure(config.getControllerConfig()),
                 getTypes(config.getTypeNames()),
-                config.getCredentials());
+                config.getCredentials(),
+                new RightsValidatorConfigurator().configure(config.getRightsValidatorConfig()));
 
         return new App(router);
     }

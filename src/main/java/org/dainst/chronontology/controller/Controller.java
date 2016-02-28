@@ -30,16 +30,6 @@ public abstract class Controller {
 
     final static Logger logger = Logger.getLogger(Controller.class);
 
-    public RightsValidator getRightsValidator() { // TODO should be a property of the router
-        return rightsValidator;
-    }
-
-    private RightsValidator rightsValidator= null;
-
-    public Controller(RightsValidator validator) {
-        this.rightsValidator= validator;
-    }
-
     // Template methods
     abstract protected JsonNode get(String bucket, String key);
     abstract protected boolean handlePost(final String bucket, final String key, final JsonNode value);
