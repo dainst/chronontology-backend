@@ -25,32 +25,32 @@ public class SimpleController extends Controller {
     }
 
     @Override
-    protected JsonNode _get(String bucket, String key) {
+    protected JsonNode get(String bucket, String key) {
         return connectDatastore.get(bucket,key);
     }
 
     @Override
-    protected void _addDatatoreStatus(Results r) throws IOException {
-        r.add(makeDataStoreStatus("main",connectDatastore));
+    protected void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException {
+        r.add(handler.makeDataStoreStatus("main",connectDatastore));
     }
 
     @Override
-    protected boolean _handlePost(String bucket, String key, JsonNode value) {
+    protected boolean handlePost(String bucket, String key, JsonNode value) {
         return connectDatastore.put(bucket,key, value);
     }
 
     @Override
-    protected boolean _handlePut(String bucket, String key, JsonNode value) {
+    protected boolean handlePut(String bucket, String key, JsonNode value) {
         return connectDatastore.put(bucket,key, value);
     }
 
     @Override
-    protected JsonNode _handleGet(String bucket, String key, Request req) {
+    protected JsonNode handleGet(String bucket, String key, Request req) {
         return connectDatastore.get(bucket,key);
     }
 
     @Override
-    protected JsonNode _handleSearch(String bucket, String query) {
+    protected JsonNode handleSearch(String bucket, String query) {
         return connectDatastore.search( bucket, query );
     }
 }

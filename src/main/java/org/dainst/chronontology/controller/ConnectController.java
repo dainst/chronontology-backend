@@ -26,28 +26,28 @@ public class ConnectController extends Controller {
     }
 
     @Override
-    protected JsonNode _get(String bucket, String key) {
+    protected JsonNode get(String bucket, String key) {
         return mainDatastore.get(bucket,key);
     }
 
     @Override
-    protected void _addDatatoreStatus(Results r) throws IOException {
-        r.add(makeDataStoreStatus("main",mainDatastore));
-        r.add(makeDataStoreStatus("connect",connectDatastore));
+    protected void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException {
+        r.add(handler.makeDataStoreStatus("main",mainDatastore));
+        r.add(handler.makeDataStoreStatus("connect",connectDatastore));
     }
 
     @Override
-    protected boolean _handlePost(String bucket, String key, JsonNode value) {
+    protected boolean handlePost(String bucket, String key, JsonNode value) {
         return (mainDatastore.put(bucket,key, value) & connectDatastore.put(bucket,key, value));
     }
 
     @Override
-    protected boolean _handlePut(String bucket, String key, JsonNode value) {
+    protected boolean handlePut(String bucket, String key, JsonNode value) {
         return (mainDatastore.put(bucket,key, value) && connectDatastore.put(bucket,key, value));
     }
 
     @Override
-    protected JsonNode _handleGet(String bucket, String key, Request req) {
+    protected JsonNode handleGet(String bucket, String key, Request req) {
         JsonNode result= shouldBeDirect(req.queryParams("direct"))
                 ? mainDatastore.get(bucket,key)
                 : connectDatastore.get(bucket,key);
@@ -55,7 +55,7 @@ public class ConnectController extends Controller {
     }
 
     @Override
-    protected JsonNode _handleSearch(String bucket, String query) {
+    protected JsonNode handleSearch(String bucket, String query) {
         return connectDatastore.search( bucket, query );
     }
 

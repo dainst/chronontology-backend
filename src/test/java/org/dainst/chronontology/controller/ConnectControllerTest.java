@@ -20,6 +20,8 @@ public class ConnectControllerTest {
     private static final String ROUTE = "route";
     private SearchableDatastore mockDS1= mock(SearchableDatastore.class);
     private SearchableDatastore mockDS2= mock(SearchableDatastore.class);
+    private Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
+    private CrudHandler crudHandler= new CrudHandler(controller);
     private Request reqMock= mock(Request.class);
 
     @BeforeMethod
@@ -33,10 +35,10 @@ public class ConnectControllerTest {
     public void ds1ReturnFalseOnPost() throws IOException {
         when(mockDS1.put(any(),any(),any())).thenReturn(false);
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
-        Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
+
 
         Response resMock= mock(Response.class);
-        controller.handlePost(ROUTE,reqMock,resMock);
+        crudHandler.handlePost(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -47,7 +49,7 @@ public class ConnectControllerTest {
         Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
-        controller.handlePost(ROUTE,reqMock,resMock);
+        crudHandler.handlePost(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -58,7 +60,7 @@ public class ConnectControllerTest {
         Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
-        controller.handlePost(ROUTE,reqMock,resMock);
+        crudHandler.handlePost(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
 
@@ -69,7 +71,7 @@ public class ConnectControllerTest {
         Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
-        controller.handlePut(ROUTE,reqMock,resMock);
+        crudHandler.handlePut(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -81,7 +83,7 @@ public class ConnectControllerTest {
         Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
-        controller.handlePut(ROUTE,reqMock,resMock);
+        crudHandler.handlePut(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -92,7 +94,7 @@ public class ConnectControllerTest {
         Controller controller= new ConnectController(new RightsValidator(),mockDS1,mockDS2);
 
         Response resMock= mock(Response.class);
-        controller.handlePut(ROUTE,reqMock,resMock);
+        crudHandler.handlePut(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
 }

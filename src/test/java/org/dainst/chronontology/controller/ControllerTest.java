@@ -25,6 +25,9 @@ public class ControllerTest {
     private static final String ROUTE = "route";
     private SearchableDatastore mockDS= mock(SearchableDatastore.class);
     private Request reqMock= mock(Request.class);
+    private Controller controller= new SimpleController(new RightsValidator(),mockDS);
+    private CrudHandler crudHandler= new CrudHandler(controller);
+
 
     @BeforeMethod
     public void before() {
@@ -36,10 +39,10 @@ public class ControllerTest {
     public void postOK() throws IOException {
 
         when(mockDS.put(any(),any(),any())).thenReturn(true);
-        Controller controller= new SimpleController(new RightsValidator(),mockDS);
+
 
         Response resMock= mock(Response.class);
-        controller.handlePost(ROUTE,reqMock,resMock);
+        crudHandler.handlePost(ROUTE,reqMock,resMock);
         verify(resMock,atMost(0)).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
@@ -51,7 +54,7 @@ public class ControllerTest {
         Controller controller= new SimpleController(new RightsValidator(),mockDS);
 
         Response resMock= mock(Response.class);
-        controller.handlePut(ROUTE,reqMock,resMock);
+        crudHandler.handlePut(ROUTE,reqMock,resMock);
         verify(resMock,atMost(0)).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
@@ -63,7 +66,7 @@ public class ControllerTest {
         Controller controller= new SimpleController(new RightsValidator(),mockDS);
 
         Response resMock= mock(Response.class);
-        controller.handlePost(ROUTE,reqMock,resMock);
+        crudHandler.handlePost(ROUTE,reqMock,resMock);
 
         verify(resMock,atMost(0)).status(Constants.HTTP_CREATED);
         verify(resMock,atMost(0)).status(Constants.HTTP_OK);
@@ -77,7 +80,7 @@ public class ControllerTest {
         Controller controller= new SimpleController(new RightsValidator(),mockDS);
 
         Response resMock= mock(Response.class);
-        controller.handlePut(ROUTE,reqMock,resMock);
+        crudHandler.handlePut(ROUTE,reqMock,resMock);
 
         verify(resMock,atMost(0)).status(Constants.HTTP_CREATED);
         verify(resMock,atMost(0)).status(Constants.HTTP_OK);

@@ -5,11 +5,11 @@ import static org.dainst.chronontology.Constants.*;
 
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.controller.Controller;
+import org.dainst.chronontology.controller.CrudHandler;
+import org.dainst.chronontology.controller.SearchHandler;
+import org.dainst.chronontology.controller.ServerStatusHandler;
 import spark.Request;
 import spark.Response;
-
-import java.util.Base64;
-
 
 
 /**
@@ -21,29 +21,32 @@ public class Router {
     public static final String ID = ":id";
 
     private final Controller controller;
+    private final SearchHandler searchHandler;
+    private final ServerStatusHandler serverStatusHandler;
+    private final CrudHandler crudHandler;
 
     private void setUpTypeRoutes(
             final String typeName
     ) {
         get( "/", (req,res) -> {
             setHeader(res);
-            return controller.handleServerStatus(res);
+            return serverStatusHandler.handle(res);
         });
         get( "/" + typeName + "/", (req,res) -> {
             setHeader(res);
-            return controller.handleSearch(typeName,req,res);
+            return searchHandler.handle(typeName,req,res);
         });
         get( "/" + typeName + "/" + ID, (req,res) -> {
             setHeader(req,res);
-            return controller.handleGet(typeName,req,res);
+            return crudHandler.handleGet(typeName,req,res);
         });
         post("/" + typeName + "/", (req, res) ->  {
             setHeader(res);
-            return controller.handlePost(typeName,req,res);
+            return crudHandler.handlePost(typeName,req,res);
         });
         put( "/" + typeName + "/" + ID, (req, res) -> {
             setHeader(req,res);
-            return controller.handlePut(typeName,req,res);
+            return crudHandler.handlePut(typeName,req,res);
         });
     }
 
@@ -95,6 +98,9 @@ public class Router {
         final String[] credentials
     ){
         this.controller= controller;
+        this.searchHandler= new SearchHandler(controller);
+        this.serverStatusHandler= new ServerStatusHandler(controller);
+        this.crudHandler= new CrudHandler(controller);
 
         for (String typeName:typeNames)
             setUpTypeRoutes(typeName);
