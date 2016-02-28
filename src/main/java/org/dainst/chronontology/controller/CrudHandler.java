@@ -14,15 +14,13 @@ import static org.dainst.chronontology.Constants.*;
 /**
  * @author Daniel M. de Oliveira
  */
-public class CrudHandler {
+public class CrudHandler extends Handler {
 
     public static final String ID = ":id";
 
     public CrudHandler(Controller controller) {
-        this.controller = controller;
+        super(controller);
     }
-
-    private final Controller controller;
 
 
     private String generateId() {
@@ -69,23 +67,6 @@ public class CrudHandler {
     }
 
 
-    private boolean userPermittedToModifyDataset(Request req, JsonNode n) {
-        if (n.get("dataset")!=null &&
-                !controller.getRightsValidator().hasEditorPermission(req.attribute("user"),
-                        n.get("dataset").toString().replaceAll("\"",""))) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean userPermittedToReadDataset(Request req, JsonNode n) {
-        if (n.get("dataset")!=null &&
-                !controller.getRightsValidator().hasReaderPermission(req.attribute("user"),
-                        n.get("dataset").toString().replaceAll("\"",""))) {
-            return false;
-        }
-        return true;
-    }
 
     private JsonNode validateIncomingJson(Request req, Response res) {
         JsonNode n= JsonUtils.json(req.body());
@@ -93,7 +74,7 @@ public class CrudHandler {
             res.status(HTTP_BAD_REQUEST);
             return null;
         }
-        if (!userPermittedToModifyDataset(req,n)) {
+        if (!super.userAccessLevelSufficient(req,n,RightsValidator.Rights.EDITOR)) {
             res.status(HTTP_FORBIDDEN);
             return null;
         }
@@ -119,7 +100,7 @@ public class CrudHandler {
         JsonNode oldDoc = controller.get(typeName,req.params(ID));
         if (oldDoc!=null) {
 
-            if (!userPermittedToModifyDataset(req,oldDoc)) {
+            if (!super.userAccessLevelSufficient(req,oldDoc,RightsValidator.Rights.EDITOR)) {
                 res.status(HTTP_FORBIDDEN);
                 return JsonUtils.json();
             } else {
@@ -153,7 +134,7 @@ public class CrudHandler {
             res.status(HTTP_NOT_FOUND);
             return "";
         }
-        if (!userPermittedToReadDataset(req,result)) {
+        if (!super.userAccessLevelSufficient(req,result,RightsValidator.Rights.READER)) {
             res.status(HTTP_FORBIDDEN);
             return JsonUtils.json();
         }

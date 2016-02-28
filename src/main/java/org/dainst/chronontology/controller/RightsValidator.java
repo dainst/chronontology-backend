@@ -8,29 +8,35 @@ import java.util.Map;
  */
 public class RightsValidator {
 
+    public enum Rights {
+        EDITOR,
+        READER
+    }
+
     Map<String,Map<String,String>> rules = new HashMap<String,Map<String,String>>();
 
-    public void setRules(Map<String,Map<String,String>> editorRules) {
-        this.rules = editorRules;
+    public void setRules(Map<String,Map<String,String>> rules) {
+        this.rules = rules;
     }
 
-    public boolean hasEditorPermission(String userName, String dataset) {
+    public boolean hasPermission(String userName, String dataset, Rights rights) {
 
-        return (userName.equals("admin")
+        if (rights.equals(Rights.EDITOR))
+            return (userName.equals("admin")
 
-                || ((rules.get(dataset)!=null) &&
-                (rules.get(dataset).get(userName)!=null) &&
-                (rules.get(dataset).get(userName).equals("editor"))));
-    }
+                    || ((rules.get(dataset)!=null) &&
+                    (rules.get(dataset).get(userName)!=null) &&
+                    (rules.get(dataset).get(userName).equals("editor"))));
 
-    public boolean hasReaderPermission(String userName, String dataset) {
+        if (rights.equals(Rights.READER))
+            return (userName.equals("admin")
+                    || ((rules.get(dataset)!=null) &&
+                    (rules.get(dataset).get(userName)!=null) &&
+                    (rules.get(dataset).get(userName).equals("reader")))
+                    || ((rules.get(dataset)!=null) &&
+                    (rules.get(dataset).get(userName)!=null) &&
+                    (rules.get(dataset).get(userName).equals("editor"))));
 
-        return (userName.equals("admin")
-                || ((rules.get(dataset)!=null) &&
-                        (rules.get(dataset).get(userName)!=null) &&
-                        (rules.get(dataset).get(userName).equals("reader")))
-                || ((rules.get(dataset)!=null) &&
-                        (rules.get(dataset).get(userName)!=null) &&
-                        (rules.get(dataset).get(userName).equals("editor"))));
+        return false;
     }
 }

@@ -13,12 +13,10 @@ import static org.dainst.chronontology.Constants.*;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ServerStatusHandler {
-
-    private final Controller controller;
+public class ServerStatusHandler extends Handler{
 
     public ServerStatusHandler(Controller controller) {
-        this.controller= controller;
+        super(controller);
     }
 
     /**

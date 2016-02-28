@@ -13,12 +13,10 @@ import java.util.List;
 /**
  * @author Daniel M. de Oliveira
  */
-public class SearchHandler {
-
-    private final Controller controller;
+public class SearchHandler extends Handler{
 
     public SearchHandler(Controller controller) {
-        this.controller= controller;
+        super(controller);
     }
 
     public Object handle(
@@ -45,7 +43,7 @@ public class SearchHandler {
         List<Integer> indicesToRemove = new ArrayList<Integer>();
         int i=0;
         for (final JsonNode n : a) {
-            if (!userPermittedToReadDataset(req,n)) {
+            if (!super.userAccessLevelSufficient(req,n, RightsValidator.Rights.READER)) {
                 indicesToRemove.add(i);
             }
             i++;
@@ -53,12 +51,5 @@ public class SearchHandler {
         return indicesToRemove;
     }
 
-    private boolean userPermittedToReadDataset(Request req, JsonNode n) {
-        if (n.get("dataset")!=null &&
-                !controller.getRightsValidator().hasReaderPermission(req.attribute("user"),
-                        n.get("dataset").toString().replaceAll("\"",""))) {
-            return false;
-        }
-        return true;
-    }
+
 }
