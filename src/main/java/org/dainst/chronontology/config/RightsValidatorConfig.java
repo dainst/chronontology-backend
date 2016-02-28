@@ -1,6 +1,7 @@
 package org.dainst.chronontology.config;
 
 import org.apache.lucene.util.fst.UpToTwoPositiveIntOutputs;
+import org.dainst.chronontology.Constants;
 
 import java.util.*;
 
@@ -9,7 +10,9 @@ import java.util.*;
  */
 public class RightsValidatorConfig extends Config {
 
-    private UpToTwoPositiveIntOutputs readerRules;
+
+    public static final String MSG_ANONYMOUS_EDITORS_NOT_ALLOWED=
+            "Anonymous editor access to datasets not supported.";
 
     public RightsValidatorConfig() {
         this.prefix= "dataset.";
@@ -57,7 +60,10 @@ public class RightsValidatorConfig extends Config {
 
                     List<String> editors= Arrays.asList(props.getProperty(name).split(","));
                     for (String editor: editors) {
-                        userRules.put(editor,"editor");
+                        if (editor.equals(Constants.USER_NAME_ANONYMOUS))
+                            constraintViolations.add(ConfigConstants.MSG_CONSTRAINT_VIOLATION+MSG_ANONYMOUS_EDITORS_NOT_ALLOWED);
+                        else
+                          userRules.put(editor,"editor");
                     }
 
                 }
@@ -71,7 +77,7 @@ public class RightsValidatorConfig extends Config {
                     }
 
                 } else {
-                    constraintViolations.add("Permission level unkown in \""+name+"\".");
+                    constraintViolations.add(ConfigConstants.MSG_CONSTRAINT_VIOLATION+"Permission level unkown in \""+name+"\".");
                 }
             }
 

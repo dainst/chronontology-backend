@@ -5,6 +5,7 @@ import static org.dainst.chronontology.Constants.*;
 
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.Constants;
+import org.dainst.chronontology.config.AppConfig;
 import org.dainst.chronontology.handler.CrudHandler;
 import org.dainst.chronontology.handler.RightsValidator;
 import org.dainst.chronontology.handler.SearchHandler;
@@ -70,7 +71,14 @@ public class Controller {
             {
                 for (String cred:credentials)
                     if(decode(req.headers(HEADER_AUTH)).equals(cred)) {
-                        req.attribute("user",cred.split(":")[0]);
+
+                        String userName= cred.split(":")[0];
+                        if (userName.equals(Constants.USER_NAME_ANONYMOUS)) {
+                            logger.error(AppConfig.MSG_RESERVED_USER_ANONYMOUS+" Will exit now.");
+                            System.exit(1);
+                        }
+
+                        req.attribute("user",userName);
                         authenticated = true;
                     }
             }

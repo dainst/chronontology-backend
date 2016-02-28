@@ -1,5 +1,6 @@
 package org.dainst.chronontology.config;
 
+import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.TestConstants;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -91,5 +92,14 @@ public class RightsValidatorConfigTest {
         props.put("dataset.dataset1.unkown", TestConstants.USER_NAME_1);
 
         assertFalse(config.validate(props));
+    }
+
+    @Test
+    public void anonymousEditorNotAllowed() {
+        props.put("dataset.dataset1.editor", Constants.USER_NAME_ANONYMOUS);
+
+        assertFalse(config.validate(props));
+        assertEquals(config.getConstraintViolations().get(0),
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+RightsValidatorConfig.MSG_ANONYMOUS_EDITORS_NOT_ALLOWED);
     }
 }

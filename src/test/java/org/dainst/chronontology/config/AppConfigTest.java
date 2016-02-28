@@ -150,4 +150,16 @@ public class AppConfigTest {
         assertTrue(appConfig.getConstraintViolations().contains(
                 ConfigConstants.MSG_CONSTRAINT_VIOLATION+ DispatcherConfig.MSG_MUST_TYPE_ES));
     }
+
+    @Test
+    public void prohibitReserverdUsernameAnonymous() {
+        props.put("typeNames","period");
+        props.put("credentials","anonymous:def");
+        props.put("useEmbeddedES","true");
+        props.put("useConnect","false");
+
+        assertFalse(appConfig.validate(props));
+        assertTrue(appConfig.getConstraintViolations().contains(
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+AppConfig.MSG_RESERVED_USER_ANONYMOUS));
+    }
 }

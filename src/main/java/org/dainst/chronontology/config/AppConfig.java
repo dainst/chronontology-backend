@@ -3,6 +3,7 @@ package org.dainst.chronontology.config;
 import org.dainst.chronontology.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -11,6 +12,8 @@ import java.util.Properties;
 public class AppConfig extends Config {
 
     final static String MSG_SERVER_PORT_NAN= "Server port must be a number, but is: ";
+    public final static String MSG_RESERVED_USER_ANONYMOUS=
+            "The user name \""+Constants.USER_NAME_ANONYMOUS+"\" is reserved for internal use and therefore cannot be used.";
 
     private String serverPort= null;
     private String[] credentials = null;
@@ -80,6 +83,12 @@ public class AppConfig extends Config {
 
     void setCredentials(String credentials) {
         this.credentials= credentials.split(",");
+
+        for (String credential: Arrays.asList(credentials)) {
+            String userName= credential.split(":")[0];
+            if (userName.equals(Constants.USER_NAME_ANONYMOUS))
+                throw new ConfigValidationException(MSG_RESERVED_USER_ANONYMOUS);
+        }
     }
 
     void setUseEmbeddedES(String useIt) {

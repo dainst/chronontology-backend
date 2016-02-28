@@ -58,6 +58,7 @@ public class RightsValidator {
 
         return (operation.equals(Operation.READ) &&
                 ((userName.equals(Constants.USER_NAME_ADMIN)
+                || has(Constants.USER_NAME_ANONYMOUS,dataset,READER)
                 || has(userName,dataset, READER)
                 || has(userName,dataset, EDITOR))));
     }
