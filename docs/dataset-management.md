@@ -18,6 +18,11 @@ for that dataset. This also applies to search, which is a variation of read. Whe
 for documents, only documents are shown which are either not assigned to any dataset or which
 are assigned to datasets the user has **read** permissions.
 
+Datasets can also get marked for **anonymous access** in which case anyone, even without beeing
+ authenticated, can read or search for documents in the dataset while there is still user based
+ access control for ***edit*** operations. ***edit*** operations can never be performed for 
+ ***anonymous*** users.
+
 The user with the user name **admin** has special permissions. Once successfully 
 authenticated under the name ***admin*** has the right to do anything, 
 regardless of wether or not beeing explicitely assigned rights to any dataset group.
