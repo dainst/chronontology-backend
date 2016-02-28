@@ -15,11 +15,9 @@ import static org.dainst.chronontology.Constants.*;
 /**
  * @author Daniel M. de Oliveira
  */
-public class CrudHandler extends Handler {
+public class CreateUpdateHandler extends Handler {
 
-    public static final String ID = ":id";
-
-    public CrudHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
+    public CreateUpdateHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         super(dispatcher,rightsValidator);
     }
 
@@ -122,23 +120,5 @@ public class CrudHandler extends Handler {
             res.status(status);
 
         return doc;
-    }
-
-
-    public Object handleGet(
-            final String typeName,
-            final Request req,
-            final Response res) throws IOException {
-
-        JsonNode result= dispatcher.dispatchGet(typeName,req.params(ID),req);
-        if (result==null){
-            res.status(HTTP_NOT_FOUND);
-            return "";
-        }
-        if (!super.userAccessLevelSufficient(req,result, RightsValidator.Operation.READ)) {
-            res.status(HTTP_FORBIDDEN);
-            return JsonUtils.json();
-        }
-        return result;
     }
 }

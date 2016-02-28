@@ -1,7 +1,7 @@
 package org.dainst.chronontology.controller;
 
 import org.dainst.chronontology.Constants;
-import org.dainst.chronontology.handler.CrudHandler;
+import org.dainst.chronontology.handler.CreateUpdateHandler;
 import org.dainst.chronontology.handler.RightsValidator;
 import org.dainst.chronontology.store.SearchableDatastore;
 import org.testng.annotations.BeforeMethod;
@@ -23,7 +23,7 @@ public class ConnectDispatcherTest {
     private SearchableDatastore mockDS1= mock(SearchableDatastore.class);
     private SearchableDatastore mockDS2= mock(SearchableDatastore.class);
     private Dispatcher dispatcher = new ConnectDispatcher(mockDS1,mockDS2);
-    private CrudHandler crudHandler= new CrudHandler(dispatcher,new RightsValidator());
+    private CreateUpdateHandler createUpdateHandler = new CreateUpdateHandler(dispatcher,new RightsValidator());
     private Request reqMock= mock(Request.class);
 
     @BeforeMethod
@@ -40,7 +40,7 @@ public class ConnectDispatcherTest {
 
 
         Response resMock= mock(Response.class);
-        crudHandler.handlePost(ROUTE,reqMock,resMock);
+        createUpdateHandler.handlePost(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -50,7 +50,7 @@ public class ConnectDispatcherTest {
         when(mockDS2.put(any(),any(),any())).thenReturn(false);
 
         Response resMock= mock(Response.class);
-        crudHandler.handlePost(ROUTE,reqMock,resMock);
+        createUpdateHandler.handlePost(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -60,7 +60,7 @@ public class ConnectDispatcherTest {
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
 
         Response resMock= mock(Response.class);
-        crudHandler.handlePost(ROUTE,reqMock,resMock);
+        createUpdateHandler.handlePost(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
 
@@ -70,7 +70,7 @@ public class ConnectDispatcherTest {
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
 
         Response resMock= mock(Response.class);
-        crudHandler.handlePut(ROUTE,reqMock,resMock);
+        createUpdateHandler.handlePut(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -80,7 +80,7 @@ public class ConnectDispatcherTest {
         when(mockDS2.put(any(),any(),any())).thenReturn(false);
 
         Response resMock= mock(Response.class);
-        crudHandler.handlePut(ROUTE,reqMock,resMock);
+        createUpdateHandler.handlePut(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -90,7 +90,7 @@ public class ConnectDispatcherTest {
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
 
         Response resMock= mock(Response.class);
-        crudHandler.handlePut(ROUTE,reqMock,resMock);
+        createUpdateHandler.handlePut(ROUTE,reqMock,resMock);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
 }

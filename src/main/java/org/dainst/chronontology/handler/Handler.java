@@ -9,6 +9,8 @@ import spark.Request;
  */
 public class Handler {
 
+    protected static final String ID = ":id";
+
     public Handler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         this.dispatcher = dispatcher;
         this.rightsValidator= rightsValidator;

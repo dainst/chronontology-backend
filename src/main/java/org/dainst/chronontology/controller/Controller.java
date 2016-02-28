@@ -6,10 +6,7 @@ import static org.dainst.chronontology.Constants.*;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.config.AppConfig;
-import org.dainst.chronontology.handler.CrudHandler;
-import org.dainst.chronontology.handler.RightsValidator;
-import org.dainst.chronontology.handler.SearchHandler;
-import org.dainst.chronontology.handler.ServerStatusHandler;
+import org.dainst.chronontology.handler.*;
 import spark.Request;
 import spark.Response;
 
@@ -25,7 +22,8 @@ public class Controller {
     private final Dispatcher dispatcher;
     private final SearchHandler searchHandler;
     private final ServerStatusHandler serverStatusHandler;
-    private final CrudHandler crudHandler;
+    private final CreateUpdateHandler createUpdateHandler;
+    private final GetHandler getHandler;
 
     private void setUpTypeRoutes(
             final String typeName
@@ -40,15 +38,15 @@ public class Controller {
         });
         get( "/" + typeName + "/" + ID, (req,res) -> {
             setHeader(req,res);
-            return crudHandler.handleGet(typeName,req,res);
+            return getHandler.handle(typeName,req,res);
         });
         post("/" + typeName + "/", (req, res) ->  {
             setHeader(res);
-            return crudHandler.handlePost(typeName,req,res);
+            return createUpdateHandler.handlePost(typeName,req,res);
         });
         put( "/" + typeName + "/" + ID, (req, res) -> {
             setHeader(req,res);
-            return crudHandler.handlePut(typeName,req,res);
+            return createUpdateHandler.handlePut(typeName,req,res);
         });
     }
 
@@ -114,10 +112,11 @@ public class Controller {
             final RightsValidator rightsValidator
             ){
 
-        this.dispatcher = dispatcher; // TODO review if still necessary
+        this.dispatcher = dispatcher;
         this.searchHandler= new SearchHandler(dispatcher,rightsValidator);
         this.serverStatusHandler= new ServerStatusHandler(dispatcher,rightsValidator);
-        this.crudHandler= new CrudHandler(dispatcher,rightsValidator);
+        this.createUpdateHandler = new CreateUpdateHandler(dispatcher,rightsValidator);
+        this.getHandler = new GetHandler(dispatcher,rightsValidator);
 
         for (String typeName:typeNames)
             setUpTypeRoutes(typeName);
@@ -137,5 +136,5 @@ public class Controller {
 
     public Dispatcher getDispatcher() {
         return dispatcher;
-    } // TODO review if getters for handlers would make more sense here
+    }
 }
