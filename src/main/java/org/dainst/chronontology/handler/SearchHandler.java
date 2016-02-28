@@ -25,7 +25,7 @@ public class SearchHandler extends Handler {
             final Request req,
             final Response res) throws IOException {
 
-        JsonNode searchResults= dispatcher.handleSearch(typeName,req.queryString());
+        JsonNode searchResults= dispatcher.dispatchSearch(typeName,req.queryString());
 
         ArrayNode resultsNode= (ArrayNode) searchResults.get("results");
         removeNodes(resultsNode, indicesToRemove(req, resultsNode));

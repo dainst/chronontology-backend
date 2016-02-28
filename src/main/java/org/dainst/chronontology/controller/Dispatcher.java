@@ -19,11 +19,11 @@ public abstract class Dispatcher {
     final static Logger logger = Logger.getLogger(Dispatcher.class);
 
     // Template methods
-    abstract public JsonNode get(String bucket, String key);
-    abstract public boolean handlePost(final String bucket, final String key, final JsonNode value);
-    abstract public boolean handlePut(final String bucket, final String key, final JsonNode value);
-    abstract public JsonNode handleGet(final String bucket, final String key, Request req);
-    abstract public JsonNode handleSearch(String bucket, String query);
+    abstract public JsonNode dispatchGet(String bucket, String key);
+    abstract public boolean dispatchPost(final String bucket, final String key, final JsonNode value);
+    abstract public boolean dispacthPut(final String bucket, final String key, final JsonNode value);
+    abstract public JsonNode dispatchGet(final String bucket, final String key, Request req);
+    abstract public JsonNode dispatchSearch(String bucket, String query);
     abstract public void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException;
     // Template methods
 }

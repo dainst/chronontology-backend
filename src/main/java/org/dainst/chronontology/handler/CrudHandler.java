@@ -36,7 +36,7 @@ public class CrudHandler extends Handler {
         JsonNode existingDoc= null;
         do {
             id= generateId();
-            existingDoc = dispatcher.get(typeName,id);
+            existingDoc = dispatcher.dispatchGet(typeName,id);
         } while (existingDoc!=null);
         return id;
     }
@@ -58,7 +58,7 @@ public class CrudHandler extends Handler {
                 new DocumentModel(
                         typeName,id,n, req.attribute("user")).j();
 
-        if (!dispatcher.handlePost(typeName,id,doc))
+        if (!dispatcher.dispatchPost(typeName,id,doc))
             res.status(HTTP_INTERNAL_SERVER_ERROR);
         else
             res.status(HTTP_CREATED);
@@ -98,7 +98,7 @@ public class CrudHandler extends Handler {
 
         JsonNode doc = null;
         int status;
-        JsonNode oldDoc = dispatcher.get(typeName,req.params(ID));
+        JsonNode oldDoc = dispatcher.dispatchGet(typeName,req.params(ID));
         if (oldDoc!=null) {
 
             if (!super.userAccessLevelSufficient(req,oldDoc,RightsValidator.Rights.EDITOR)) {
@@ -116,7 +116,7 @@ public class CrudHandler extends Handler {
             status= HTTP_CREATED;
         }
 
-        if (!dispatcher.handlePut(typeName,req.params(ID),doc))
+        if (!dispatcher.dispacthPut(typeName,req.params(ID),doc))
             res.status(HTTP_INTERNAL_SERVER_ERROR);
         else
             res.status(status);
@@ -130,7 +130,7 @@ public class CrudHandler extends Handler {
             final Request req,
             final Response res) throws IOException {
 
-        JsonNode result= dispatcher.handleGet(typeName,req.params(ID),req);
+        JsonNode result= dispatcher.dispatchGet(typeName,req.params(ID),req);
         if (result==null){
             res.status(HTTP_NOT_FOUND);
             return "";
