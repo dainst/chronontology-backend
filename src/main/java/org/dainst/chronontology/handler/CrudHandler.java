@@ -75,7 +75,7 @@ public class CrudHandler extends Handler {
             res.status(HTTP_BAD_REQUEST);
             return null;
         }
-        if (!super.userAccessLevelSufficient(req,n,RightsValidator.Rights.EDITOR)) {
+        if (!super.userAccessLevelSufficient(req,n, RightsValidator.Operation.EDIT)) {
             res.status(HTTP_FORBIDDEN);
             return null;
         }
@@ -101,7 +101,7 @@ public class CrudHandler extends Handler {
         JsonNode oldDoc = dispatcher.dispatchGet(typeName,req.params(ID));
         if (oldDoc!=null) {
 
-            if (!super.userAccessLevelSufficient(req,oldDoc,RightsValidator.Rights.EDITOR)) {
+            if (!super.userAccessLevelSufficient(req,oldDoc, RightsValidator.Operation.EDIT)) {
                 res.status(HTTP_FORBIDDEN);
                 return JsonUtils.json();
             } else {
@@ -135,7 +135,7 @@ public class CrudHandler extends Handler {
             res.status(HTTP_NOT_FOUND);
             return "";
         }
-        if (!super.userAccessLevelSufficient(req,result,RightsValidator.Rights.READER)) {
+        if (!super.userAccessLevelSufficient(req,result, RightsValidator.Operation.READ)) {
             res.status(HTTP_FORBIDDEN);
             return JsonUtils.json();
         }

@@ -44,7 +44,7 @@ public class SearchHandler extends Handler {
         List<Integer> indicesToRemove = new ArrayList<Integer>();
         int i=0;
         for (final JsonNode n : a) {
-            if (!super.userAccessLevelSufficient(req,n, RightsValidator.Rights.READER)) {
+            if (!super.userAccessLevelSufficient(req,n, RightsValidator.Operation.READ)) {
                 indicesToRemove.add(i);
             }
             i++;
