@@ -1,10 +1,24 @@
 # Dataset based access management
 
-Before going into detail with the behaviour of the endpoints regarding
-dataset based access management, it is important to notice that a user 
-successfully authenticated under the name **admin** has the right to 
-do anything, regardless of wether or not beeing explicitely assigned 
-rights to any dataset group.
+The connected backend has the ability to provide access control for groups
+of documents known as **datasets**. For these datasets, users can be granted permissions
+to perform certain operations, like **read** or **modify**.
+
+## Basic rules
+
+In general, if a document is not assigned to any dataset, it can be read by anyone
+and modified only by logged in users.
+
+If a documents belongs to a dataset or a new one should be created and assigned to a dataset,
+the user needs **editor** grade permissions for that dataset in order to do so. 
+For reading documents assigned to a datagroup, the user need **reader** level permissions 
+for that dataset. This also applies to search, which is a variation of read. When searching 
+for documents, only documents are shown which are either not assigned to any dataset or which
+are assigned to datasets the user has **read** permissions.
+
+The user with the user name **admin** has special permissions. Once successfully 
+authenticated under the name ***admin*** has the right to do anything, 
+regardless of wether or not beeing explicitely assigned rights to any dataset group.
 
 ## POST /:typeName/
 
