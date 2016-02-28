@@ -66,6 +66,7 @@ in the rest of the document.
 ```
 201 if created successfully.
 400 if there is an error during parsing the JSON of the the request body. 
+403 if there is no permission to create a document within the given dataset.
 500 if object could not be updated or created due to an internal server error,
   like missing access to a datastore.
 ```
@@ -122,6 +123,8 @@ In case of status 400 errors the response body is an empty JSON.
 200 if updated succesfully.
 201 if a new document has been created successfully.
 400 if there is an error during parsing the JSON of the the request body. 
+403 if there is no permission to create a document within or update a document to a dataset, or
+  there is no permission to change a document which is already assigned to a dataset.
 500 if object could not be updated or created due to an internal server error,
   like missing access to a datastore.
 ```
@@ -182,6 +185,7 @@ additional fields added by the iDAI.connect component.
 
 ```
 200 if the document has been found.
+403 if there is no permission to see a document which is assigned to a dataset.
 404 if the document was not found.
 ```
 
@@ -189,6 +193,8 @@ additional fields added by the iDAI.connect component.
 
 Get json stored for type with name :typeName and id :id. the json is retrieved from 
 the main storage this time, not from the connected storage.
+
+This works for connected mode and is ignored in single mode.
 
 ### Response body
 
@@ -214,6 +220,7 @@ the main storage this time, not from the connected storage.
 
 ```
 200 if the document has been found.
+403 if there is no permission to see a document which is assigned to a dataset.
 404 if the document was not found.
 ```
 
