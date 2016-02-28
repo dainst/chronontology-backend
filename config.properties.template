@@ -42,7 +42,9 @@ useConnect=false
 # One can create as many dataset groups as one wants.
 # Currently there exist the permission grades **editor** and **reader** where the editor
 # includes the reader permisssion so an editor can automatically do everything a reader can do.
-# Make sure the user also are granted general access by beeing listed under credentials.
+# 
+# For editor access, make sure the user is are granted general access by beeing listed under credentials.
+# For read access by anonymous users, one can add **anonymous** to the datasets reader user list.
 #
 # dataset.dataset1.editor=user1
-# dataset.dataset1.reader=user2
+# dataset.dataset1.reader=user2,anonymous
