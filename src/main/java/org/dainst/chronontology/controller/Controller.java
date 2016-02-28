@@ -65,35 +65,37 @@ public class Controller {
 
         before("/*", (req, res) -> {
 
-            boolean authenticated = false;
-            if(req.headers(HEADER_AUTH) != null
-                    && req.headers(HEADER_AUTH).startsWith("Basic"))
-            {
-                for (String cred:credentials)
-                    if(decode(req.headers(HEADER_AUTH)).equals(cred)) {
-
-                        String userName= cred.split(":")[0];
-                        if (userName.equals(Constants.USER_NAME_ANONYMOUS)) {
-                            logger.error(AppConfig.MSG_RESERVED_USER_ANONYMOUS+" Will exit now.");
-                            System.exit(1);
-                        }
-
-                        req.attribute("user",userName);
-                        authenticated = true;
-                    }
-            }
-
-            if(!authenticated) {
-
-                req.attribute("user", Constants.USER_NAME_ANONYMOUS);
-                if (!req.requestMethod().equals("GET")) {
-                    res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
-                    res.status(HTTP_UNAUTHORIZED);
-                    halt(HTTP_UNAUTHORIZED);
-                }
-            }
+            boolean authenticated=
+                    (requestHeaderAuth(req)) && isAuthenticatedRequest(req,credentials);
+            if(!authenticated) anonymousRequest(req,res);
         });
     }
+
+    private boolean requestHeaderAuth(Request req) {
+        return req.headers(HEADER_AUTH) != null
+                && req.headers(HEADER_AUTH).startsWith("Basic");
+    }
+
+    private boolean isAuthenticatedRequest(Request req,String[] credentials) {
+        boolean authenticated= false;
+        for (String cred:credentials) {
+            if (decode(req.headers(HEADER_AUTH)).equals(cred)) {
+                req.attribute("user", cred.split(":")[0]);
+                authenticated = true;
+            }
+        }
+        return authenticated;
+    }
+
+    private void anonymousRequest(Request req,Response res) {
+        req.attribute("user", Constants.USER_NAME_ANONYMOUS);
+        if (!req.requestMethod().equals("GET")) {
+            res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
+            res.status(HTTP_UNAUTHORIZED);
+            halt(HTTP_UNAUTHORIZED);
+        }
+    }
+
 
     /**
      * @param toDecode the value of request header "Authorization".
@@ -120,7 +122,17 @@ public class Controller {
         for (String typeName:typeNames)
             setUpTypeRoutes(typeName);
 
+        validateCredentials(credentials);
         setUpAuthorization(credentials);
+    }
+
+    private void validateCredentials(String[] credentials) {
+        for (String cred:credentials) {
+            if (cred.split(":")[0].equals(Constants.USER_NAME_ANONYMOUS)) {
+                logger.error(AppConfig.MSG_RESERVED_USER_ANONYMOUS + " Will exit now.");
+                System.exit(1);
+            }
+        }
     }
 
     public Dispatcher getDispatcher() {
