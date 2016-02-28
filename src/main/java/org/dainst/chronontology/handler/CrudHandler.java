@@ -116,7 +116,7 @@ public class CrudHandler extends Handler {
             status= HTTP_CREATED;
         }
 
-        if (!dispatcher.dispacthPut(typeName,req.params(ID),doc))
+        if (!dispatcher.dispatchPut(typeName,req.params(ID),doc))
             res.status(HTTP_INTERNAL_SERVER_ERROR);
         else
             res.status(status);

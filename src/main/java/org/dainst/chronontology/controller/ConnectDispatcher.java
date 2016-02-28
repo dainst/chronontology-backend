@@ -11,7 +11,10 @@ import java.io.IOException;
 
 
 /**
- *
+ * The ConnectDispatcher knows two datastores, one of which is
+ * the main datastore which holds authoritative versions of documents,
+ * and the other is the connect datastore, where documents get send to
+ * to get enriched by other applications of the connect infrastructure.
  *
  * @author Daniel M. de Oliveira
  */
@@ -42,7 +45,7 @@ public class ConnectDispatcher extends Dispatcher {
     }
 
     @Override
-    public boolean dispacthPut(String bucket, String key, JsonNode value) {
+    public boolean dispatchPut(String bucket, String key, JsonNode value) {
         return (mainDatastore.put(bucket,key, value) && connectDatastore.put(bucket,key, value));
     }
 
