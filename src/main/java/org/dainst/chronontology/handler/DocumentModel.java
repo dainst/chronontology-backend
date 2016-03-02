@@ -42,6 +42,26 @@ public class DocumentModel {
         initCreatedAndModifiedDates();
     }
 
+    /**
+     * Mixes in json from a node considered to be an older version
+     * of this document. The created value of the current document gets
+     * overwritten by the created value from the old one.
+     *
+     * The values of the modified array get merged with the modified date
+     * of the current document.
+     *
+     * @param oldNode
+     * @return
+     */
+    public DocumentModel merge(final JsonNode oldNode) {
+
+        setNodeId();
+        mergeModifiedDates(oldNode);
+        overwriteCreatedDate(oldNode);
+        setVersion(oldNode);
+        return this;
+    }
+
 
     /**
      * @return ISO 8601 formatted date.
@@ -69,24 +89,9 @@ public class DocumentModel {
         return node;
     }
 
-    /**
-     * Mixes in json from a node considered to be an older version
-     * of this document. The created value of the current document gets
-     * overwritten by the created value from the old one.
-     *
-     * The values of the modified array get merged with the modified date
-     * of the current document.
-     *
-     * @param oldNode
-     * @return
-     */
-    public DocumentModel merge(final JsonNode oldNode) {
-
-        setNodeId();
-        mergeModifiedDates(oldNode);
-        overwriteCreatedDate(oldNode);
-        setVersion(oldNode);
-        return this;
+    @Override
+    public String toString() {
+        return node.toString();
     }
 
     private void setNodeId() {

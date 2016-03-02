@@ -52,17 +52,17 @@ public class CreateUpdateHandler extends Handler {
 
         String id= determineFreeId(typeName);
 
-        JsonNode doc =
+        DocumentModel dm =
                 new DocumentModel(
-                        "/"+typeName+"/"+id,n, req.attribute("user")).j();
+                        "/"+typeName+"/"+id,n, req.attribute("user"));
 
-        if (!dispatcher.dispatchPost(typeName,id,doc))
+        if (!dispatcher.dispatchPost(typeName,id,dm.j()))
             res.status(HTTP_INTERNAL_SERVER_ERROR);
         else
             res.status(HTTP_CREATED);
 
         res.header("location", id);
-        return doc;
+        return dm;
     }
 
 
@@ -90,11 +90,9 @@ public class CreateUpdateHandler extends Handler {
         JsonNode n= validateIncomingJson(req,res);
         if (n==null) return JsonUtils.json();
 
-
         DocumentModel dm = new DocumentModel(
                 "/"+typeName+"/"+req.params(ID),JsonUtils.json(req.body()), req.attribute("user"));
 
-        JsonNode doc = null;
         int status;
         JsonNode oldDoc = dispatcher.dispatchGet(typeName,req.params(ID));
         if (oldDoc!=null) {
@@ -103,22 +101,21 @@ public class CreateUpdateHandler extends Handler {
                 res.status(HTTP_FORBIDDEN);
                 return JsonUtils.json();
             } else {
-                doc= dm.merge(oldDoc).j(); // TODO Review neccessary to clarify what
+                dm.merge(oldDoc); // TODO Review neccessary to clarify what
                 // happens if an enriched version gets fetched in connect mode and got merged with the incoming
                 // json. Does the enriched version gets send to the main datastore then?
                 status= HTTP_OK;
             }
 
         } else {
-            doc= dm.j();
             status= HTTP_CREATED;
         }
 
-        if (!dispatcher.dispatchPut(typeName,req.params(ID),doc))
+        if (!dispatcher.dispatchPut(typeName,req.params(ID),dm.j()))
             res.status(HTTP_INTERNAL_SERVER_ERROR);
         else
             res.status(status);
 
-        return doc;
+        return dm;
     }
 }
