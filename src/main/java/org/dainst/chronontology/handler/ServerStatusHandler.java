@@ -5,6 +5,7 @@ import org.dainst.chronontology.controller.Dispatcher;
 import org.dainst.chronontology.store.Connector;
 import org.dainst.chronontology.util.JsonUtils;
 import org.dainst.chronontology.util.Results;
+import spark.Request;
 import spark.Response;
 
 import java.io.IOException;
@@ -14,10 +15,12 @@ import static org.dainst.chronontology.Constants.*;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ServerStatusHandler extends Handler {
+public class ServerStatusHandler implements Handler {
 
-    public ServerStatusHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
-        super(dispatcher,rightsValidator);
+    protected final Dispatcher dispatcher;
+
+    public ServerStatusHandler(Dispatcher dispatcher) {
+        this.dispatcher= dispatcher;
     }
 
     /**
@@ -27,8 +30,8 @@ public class ServerStatusHandler extends Handler {
      * @return json object with server state details
      * @throws IOException
      */
-    public Object handle(
-            final Response res) throws IOException {
+    @Override
+    public Object handle(Request req, Response res) throws IOException {
 
         JsonNode serverStatus= makeServerStatusJson();
         res.status(HTTP_OK);

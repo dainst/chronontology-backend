@@ -22,7 +22,8 @@ public class Controller {
     private final Dispatcher dispatcher;
     private final SearchHandler searchHandler;
     private final ServerStatusHandler serverStatusHandler;
-    private final CreateUpdateHandler createUpdateHandler;
+    private final PostHandler postHandler;
+    private final PutHandler putHandler;
     private final GetHandler getHandler;
 
     private void setUpTypeRoutes(
@@ -30,23 +31,23 @@ public class Controller {
     ) {
         get( "/", (req,res) -> {
             setHeader(res);
-            return serverStatusHandler.handle(res);
+            return serverStatusHandler.handle(req,res);
         });
         get( "/" + typeName + "/", (req,res) -> {
             setHeader(res);
-            return searchHandler.handle(typeName,req,res);
+            return searchHandler.handle(req,res);
         });
         get( "/" + typeName + "/" + ID, (req,res) -> {
             setHeader(req,res);
-            return getHandler.handle(typeName,req,res);
+            return getHandler.handle(req,res);
         });
         post("/" + typeName + "/", (req, res) ->  {
             setHeader(res);
-            return createUpdateHandler.handlePost(typeName,req,res);
+            return postHandler.handle(req,res);
         });
         put( "/" + typeName + "/" + ID, (req, res) -> {
             setHeader(req,res);
-            return createUpdateHandler.handlePut(typeName,req,res);
+            return putHandler.handle(req,res);
         });
     }
 
@@ -114,8 +115,9 @@ public class Controller {
 
         this.dispatcher = dispatcher;
         this.searchHandler= new SearchHandler(dispatcher,rightsValidator);
-        this.serverStatusHandler= new ServerStatusHandler(dispatcher,rightsValidator);
-        this.createUpdateHandler = new CreateUpdateHandler(dispatcher,rightsValidator);
+        this.serverStatusHandler= new ServerStatusHandler(dispatcher);
+        this.postHandler = new PostHandler(dispatcher,rightsValidator);
+        this.putHandler = new PutHandler(dispatcher,rightsValidator);
         this.getHandler = new GetHandler(dispatcher,rightsValidator);
 
         for (String typeName:typeNames)

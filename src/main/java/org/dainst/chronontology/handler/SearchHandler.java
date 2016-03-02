@@ -14,18 +14,18 @@ import java.util.List;
 /**
  * @author Daniel M. de Oliveira
  */
-public class SearchHandler extends Handler {
+public class SearchHandler extends BaseDocumentHandler {
 
     public SearchHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         super(dispatcher,rightsValidator);
     }
 
+    @Override
     public Object handle(
-            final String typeName,
             final Request req,
             final Response res) throws IOException {
 
-        JsonNode searchResults= dispatcher.dispatchSearch(typeName,req.queryString());
+        JsonNode searchResults= dispatcher.dispatchSearch(req.pathInfo(),req.queryString());
 
         ArrayNode resultsNode= (ArrayNode) searchResults.get("results");
         removeNodes(resultsNode, indicesToRemove(req, resultsNode));
@@ -52,6 +52,4 @@ public class SearchHandler extends Handler {
         }
         return indicesToRemove;
     }
-
-
 }

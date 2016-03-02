@@ -1,7 +1,9 @@
 package org.dainst.chronontology.controller;
 
 import org.dainst.chronontology.Constants;
-import org.dainst.chronontology.handler.CreateUpdateHandler;
+import org.dainst.chronontology.handler.DocumentModel;
+import org.dainst.chronontology.handler.PostHandler;
+import org.dainst.chronontology.handler.PutHandler;
 import org.dainst.chronontology.handler.RightsValidator;
 import org.dainst.chronontology.store.SearchableDatastore;
 import org.testng.annotations.BeforeMethod;
@@ -22,17 +24,19 @@ import static org.mockito.Mockito.*;
  */
 public class DispatcherTest {
 
-    private static final String ROUTE = "route";
+    private static final String ROUTE = "/route/";
     private SearchableDatastore mockDS= mock(SearchableDatastore.class);
     private Request reqMock= mock(Request.class);
     private Dispatcher dispatcher = new SimpleDispatcher(mockDS);
-    private CreateUpdateHandler createUpdateHandler = new CreateUpdateHandler(dispatcher,new RightsValidator());
-
+    private PostHandler postHandler = new PostHandler(dispatcher,new RightsValidator());
+    private PutHandler putHandler = new PutHandler(dispatcher,new RightsValidator());
 
     @BeforeMethod
     public void before() {
         when(reqMock.attribute(any())).thenReturn("user");
         when(reqMock.body()).thenReturn("{}");
+        when(reqMock.pathInfo()).thenReturn(ROUTE);
+        when(reqMock.params(any())).thenReturn("1");
     }
 
     @Test
@@ -42,7 +46,7 @@ public class DispatcherTest {
 
 
         Response resMock= mock(Response.class);
-        createUpdateHandler.handlePost(ROUTE,reqMock,resMock);
+        postHandler.handle(reqMock,resMock);
         verify(resMock,atMost(0)).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
@@ -53,7 +57,7 @@ public class DispatcherTest {
         when(mockDS.put(any(),any(),any())).thenReturn(true);
 
         Response resMock= mock(Response.class);
-        createUpdateHandler.handlePut(ROUTE,reqMock,resMock);
+        putHandler.handle(reqMock,resMock);
         verify(resMock,atMost(0)).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
@@ -64,7 +68,7 @@ public class DispatcherTest {
         when(mockDS.put(any(),any(),any())).thenReturn(false);
 
         Response resMock= mock(Response.class);
-        createUpdateHandler.handlePost(ROUTE,reqMock,resMock);
+        postHandler.handle(reqMock,resMock);
 
         verify(resMock,atMost(0)).status(Constants.HTTP_CREATED);
         verify(resMock,atMost(0)).status(Constants.HTTP_OK);
@@ -77,7 +81,7 @@ public class DispatcherTest {
         when(mockDS.put(any(),any(),any())).thenReturn(false);
 
         Response resMock= mock(Response.class);
-        createUpdateHandler.handlePut(ROUTE,reqMock,resMock);
+        putHandler.handle(reqMock,resMock);
 
         verify(resMock,atMost(0)).status(Constants.HTTP_CREATED);
         verify(resMock,atMost(0)).status(Constants.HTTP_OK);
