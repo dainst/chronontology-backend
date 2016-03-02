@@ -20,10 +20,10 @@ public class Handler {
     protected final RightsValidator rightsValidator;
 
 
-    public boolean userAccessLevelSufficient(Request req, JsonNode n, RightsValidator.Operation operation) {
-        if (n.get("dataset")!=null &&
+    public boolean userAccessLevelSufficient(Request req, DocumentModel dm, RightsValidator.Operation operation) {
+        if (dm.getDataset()!=null &&
                 !rightsValidator.hasPermission(req.attribute("user"),
-                        n.get("dataset").toString().replaceAll("\"",""), operation)) {
+                        dm.getDataset(), operation)) {
             return false;
         }
         return true;

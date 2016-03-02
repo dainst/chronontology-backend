@@ -4,20 +4,24 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.dainst.chronontology.Constants;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
-import static org.dainst.chronontology.Constants.*;
 
 /**
  * @author Daniel M. de Oliveira
  */
 public class DocumentModel {
 
+    public static final String VERSION = "version";
+    public static final String MODIFIED = "modified";
+    public static final String CREATED = "created";
+    public static final String ID = "@id";
+    public static final String DATASET = "dataset";
+
+
     private final ObjectNode node;
-    private final String id;
-    private final String userName;
 
     /**
      * @param userName
@@ -30,16 +34,36 @@ public class DocumentModel {
             final String userName) {
 
         this.node = (ObjectNode) node;
-        this.id= id;
-        this.userName= userName;
 
-        initNode();
+        initNode(id,userName);
     }
 
-    private void initNode() {
-        setNodeId();
+    private DocumentModel(
+            final JsonNode node) {
+
+        this.node = (ObjectNode) node;
+    }
+
+
+    /**
+     * @param oldDoc
+     * @return null if oldDoc is null
+     */
+    public static DocumentModel from(final JsonNode oldDoc) {
+        if (oldDoc==null) return null;
+        if (oldDoc.get(ID)==null) {
+            throw new IllegalArgumentException(ID + Constants.MSG_NOT_NULL);
+        }
+
+        return new DocumentModel(
+            oldDoc
+        );
+    }
+
+    private void initNode(String id,String userName) {
+        setNodeId(id);
         initVersion();
-        initCreatedAndModifiedDates();
+        initCreatedAndModifiedDates(userName);
     }
 
     /**
@@ -50,12 +74,12 @@ public class DocumentModel {
      * The values of the modified array get merged with the modified date
      * of the current document.
      *
-     * @param oldNode
+     * @param oldDm
      * @return
      */
-    public DocumentModel merge(final JsonNode oldNode) {
+    public DocumentModel merge(final DocumentModel oldDm) {
+        JsonNode oldNode= oldDm.j();
 
-        setNodeId();
         mergeModifiedDates(oldNode);
         overwriteCreatedDate(oldNode);
         setVersion(oldNode);
@@ -76,7 +100,7 @@ public class DocumentModel {
         node.put(VERSION, 1);
     }
 
-    private void initCreatedAndModifiedDates() {
+    private void initCreatedAndModifiedDates(String userName) {
         ObjectNode created= (ObjectNode) new ObjectMapper().createObjectNode();
         created.put("user",userName);
         created.put("date",date());
@@ -94,8 +118,8 @@ public class DocumentModel {
         return node.toString();
     }
 
-    private void setNodeId() {
-        node.put("@id", id);
+    private void setNodeId(String id) {
+        node.put(ID, id);
     }
 
     private void setVersion(JsonNode oldNode) {
@@ -113,5 +137,21 @@ public class DocumentModel {
         ArrayNode modifiedDates= (ArrayNode) oldNode.get(MODIFIED);
         modifiedDates.add(node.get(CREATED));
         node.set(MODIFIED, modifiedDates);
+    }
+
+    private String toString(JsonNode n) {
+        return n.toString().replaceAll("\"","");
+    }
+
+    public String getId() {
+        return toString(node.get(ID));
+    }
+
+    /**
+     * @return null if the document belongs to no dataset.
+     */
+    public String getDataset() {
+        if (node.get(DATASET)==null) return null;
+        return toString(node.get(DATASET));
     }
 }

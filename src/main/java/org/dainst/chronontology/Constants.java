@@ -5,10 +5,6 @@ package org.dainst.chronontology;
  */
 public class Constants {
 
-    public static final String VERSION = "version";
-    public static final String MODIFIED = "modified";
-    public static final String CREATED = "created";
-
     // A library for getting the status codes is not used on purpose
     // to protect against dependency change.
     public static final int HTTP_CREATED = 201;
@@ -30,9 +26,10 @@ public class Constants {
     public static final String USER_NAME_ADMIN = "admin";
     public static final String USER_NAME_ANONYMOUS = "anonymous";
 
-    public static final String MSG_PROPS_NOT_NULL = "The argument props must not be null.";
-    public static final String MSG_USER_NAME_NOT_NULL = "userName must not be null.";
-    public static final String MSG_OPERATION_NOT_NULL = "operation must not be null";
+    public static final String MSG_NOT_NULL = " must not be null.";
+    public static final String MSG_PROPS_NOT_NULL = "The argument props"+MSG_NOT_NULL;
+    public static final String MSG_USER_NAME_NOT_NULL = "userName"+MSG_NOT_NULL;
+    public static final String MSG_OPERATION_NOT_NULL = "operation"+MSG_NOT_NULL;
 
     public static final String PERMISSION_LEVEL_EDITOR = "editor";
     public static final String PERMISSION_LEVEL_READER = "reader";

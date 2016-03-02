@@ -102,14 +102,15 @@ public class SearchIntegrationTest extends JsonIntegrationTestBase {
     @Test
     public void restrictedSizeSearch() throws IOException, InterruptedException {
 
-        client.post(TYPE_ROUTE, sampleJson("a"));
         client.post(TYPE_ROUTE, sampleJson("b"));
         client.post(TYPE_ROUTE, sampleJson("b"));
+        String id=idOf(client.post(TYPE_ROUTE, sampleJson("a")));
+
 
         refreshES();
         jsonAssertEquals(
-                client.get(TYPE_ROUTE + "?q=a:b&size=1"),
-                results().add(sampleJson("b")).j());
+                client.get(TYPE_ROUTE + "?q=a:a&size=1"),
+                results().add(sampleJson("a",id)).j());
     }
 
     @Test

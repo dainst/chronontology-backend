@@ -25,7 +25,7 @@ public class GetHandler extends Handler {
             final Request req,
             final Response res) throws IOException {
 
-        JsonNode result= dispatcher.dispatchGet(typeName,req.params(ID),req);
+        DocumentModel result= DocumentModel.from(dispatcher.dispatchGet(typeName,req.params(ID),req));
         if (result==null){
             res.status(HTTP_NOT_FOUND);
             return "";

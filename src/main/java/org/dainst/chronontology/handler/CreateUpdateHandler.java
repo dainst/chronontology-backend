@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.util.Random;
 
 import static org.dainst.chronontology.Constants.*;
+import static org.dainst.chronontology.util.JsonUtils.*;
 
 /**
  * @author Daniel M. de Oliveira
@@ -47,37 +48,38 @@ public class CreateUpdateHandler extends Handler {
             final Request req,
             final Response res) throws IOException {
 
-        JsonNode n= validateIncomingJson(req,res);
-        if (n==null) return JsonUtils.json();
+        DocumentModel dm= makeDocumentModel(typeName,req,res);
+        if (dm==null) return JsonUtils.json();
 
-        String id= determineFreeId(typeName);
-
-        DocumentModel dm =
-                new DocumentModel(
-                        "/"+typeName+"/"+id,n, req.attribute("user"));
-
-        if (!dispatcher.dispatchPost(typeName,id,dm.j()))
+        if (!dispatcher.dispatchPost(typeName,dm.getId().replace("/"+typeName+"/",""),dm.j()))
             res.status(HTTP_INTERNAL_SERVER_ERROR);
-        else
+        else {
             res.status(HTTP_CREATED);
+        }
 
-        res.header("location", id);
+        res.header("location", dm.getId());
         return dm;
     }
 
 
 
-    private JsonNode validateIncomingJson(Request req, Response res) {
-        JsonNode n= JsonUtils.json(req.body());
+    private DocumentModel makeDocumentModel(String typeName, Request req, Response res) {
+
+        JsonNode n= json(req.body());
         if (n==null) {
             res.status(HTTP_BAD_REQUEST);
             return null;
         }
-        if (!super.userAccessLevelSufficient(req,n, RightsValidator.Operation.EDIT)) {
+
+        String id= (req.params(ID)!=null) ? req.params(ID) : determineFreeId(typeName);
+        DocumentModel dm = new DocumentModel(
+                "/"+typeName+"/"+id,json(req.body()), req.attribute("user"));
+
+        if (!userAccessLevelSufficient(req,dm, RightsValidator.Operation.EDIT)) {
             res.status(HTTP_FORBIDDEN);
             return null;
         }
-        return n;
+        return dm;
     }
 
 
@@ -87,21 +89,20 @@ public class CreateUpdateHandler extends Handler {
             final Response res) throws IOException {
 
 
-        JsonNode n= validateIncomingJson(req,res);
-        if (n==null) return JsonUtils.json();
+        DocumentModel dm= makeDocumentModel(typeName,req,res);
+        if (dm==null) return json();
 
-        DocumentModel dm = new DocumentModel(
-                "/"+typeName+"/"+req.params(ID),JsonUtils.json(req.body()), req.attribute("user"));
 
         int status;
-        JsonNode oldDoc = dispatcher.dispatchGet(typeName,req.params(ID));
-        if (oldDoc!=null) {
+        DocumentModel oldDm = DocumentModel.from(dispatcher.dispatchGet(typeName,req.params(ID)));
 
-            if (!super.userAccessLevelSufficient(req,oldDoc, RightsValidator.Operation.EDIT)) {
+        if (oldDm!=null) {
+
+            if (!userAccessLevelSufficient(req,oldDm, RightsValidator.Operation.EDIT)) {
                 res.status(HTTP_FORBIDDEN);
-                return JsonUtils.json();
+                return json();
             } else {
-                dm.merge(oldDoc); // TODO Review neccessary to clarify what
+                dm.merge(oldDm); // TODO Review neccessary to clarify what
                 // happens if an enriched version gets fetched in connect mode and got merged with the incoming
                 // json. Does the enriched version gets send to the main datastore then?
                 status= HTTP_OK;

@@ -89,20 +89,15 @@ public class StorageIntegrationTest extends JsonIntegrationTestBase {
     @Test
     public void retrieveDocumentsFromDifferentSources() throws IOException {
 
-        connectDatastore.put(TestConstants.TEST_TYPE,"1",sampleJson("a"));
-        mainDatastore.put(TestConstants.TEST_TYPE,"1",sampleJson("b"));
+        connectDatastore.put(TestConstants.TEST_TYPE,"1",sampleJson("a","1"));
+        mainDatastore.put(TestConstants.TEST_TYPE,"1",sampleJson("b","1"));
 
         jsonAssertEquals(
                 client.get(TYPE_ROUTE+"1"),
                 sampleJson("a"));
-        assertEquals(
+        jsonAssertEquals(
                 client.get(TYPE_ROUTE+"1" + "?direct=true"),
                 sampleJson("b"));
-    }
-
-    private JsonNode addId(JsonNode node, String id) throws JsonProcessingException {
-        ((ObjectNode) node).put("@id", id);
-        return node;
     }
 
     @Test
@@ -112,6 +107,6 @@ public class StorageIntegrationTest extends JsonIntegrationTestBase {
 
         jsonAssertEquals(
                 n,
-                addId(sampleJson("b"), id));
+                sampleJson("b",id));
     }
 }
