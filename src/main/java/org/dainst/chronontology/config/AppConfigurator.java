@@ -35,14 +35,6 @@ public class AppConfigurator implements Configurator<App,AppConfig> {
     }
 
     private String[] getTypes(final String typesString) {
-        String[] types= typesString.split(",");
-        for (String typeName:types) {
-            DocumentModel dm= new DocumentModel(typeName, "1", new ObjectMapper().createObjectNode(),"admin");
-            if (dm==null) {
-                logger.error("No document model found for "+typeName);
-                System.exit(1);
-            }
-        }
-        return types;
+        return typesString.split(",");
     }
 }

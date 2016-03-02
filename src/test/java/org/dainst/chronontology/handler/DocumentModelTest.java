@@ -45,10 +45,10 @@ public class DocumentModelTest {
     @Test
     public void createdDateStaysSame() throws IOException, InterruptedException {
         JsonNode old=
-                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
+                new DocumentModel("1",json(), ADMIN).j();
         Thread.sleep(10);
         DocumentModel dm=
-                new DocumentModel(TEST_TYPE,"1",json(), ADMIN);
+                new DocumentModel("1",json(), ADMIN);
 
         jsonAssertEquals(
                 dm.merge(old).j().get(CREATED),
@@ -58,10 +58,10 @@ public class DocumentModelTest {
     @Test
     public void modifiedDatesMerge() throws IOException, InterruptedException, JSONException {
         JsonNode old=
-                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
+                new DocumentModel("1",json(), ADMIN).j();
         Thread.sleep(10);
         DocumentModel dm=
-                new DocumentModel(TEST_TYPE,"1",json(), ADMIN);
+                new DocumentModel("1",json(), ADMIN);
 
         JsonNode nodeWithDates = nodeWithModifiedDates(old, dm.j());
 
@@ -74,14 +74,14 @@ public class DocumentModelTest {
     public void setVersionOnCreate() throws IOException, InterruptedException, JSONException {
 
         jsonAssertEquals(
-                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j(),
+                new DocumentModel("1",json(), ADMIN).j(),
                 makeNodeWithVersion(1));
     }
 
     @Test
     public void setCreateUserOnCreate() throws IOException {
         jsonAssertEquals(
-                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j()
+                new DocumentModel("1",json(), ADMIN).j()
                         .get(CREATED),
                 json("{ \"user\" : \""+ADMIN+"\" }"));
     }
@@ -89,7 +89,7 @@ public class DocumentModelTest {
     @Test
     public void setModifiedUserOnCreate() throws IOException {
         jsonAssertEquals(
-                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j().
+                new DocumentModel("1",json(), ADMIN).j().
                         get(MODIFIED).get(0),
                 json("{\"user\":\""+ADMIN+"\"}"));
     }
@@ -97,9 +97,9 @@ public class DocumentModelTest {
     @Test
     public void differentUserOnModify() throws IOException {
         JsonNode old=
-                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
+                new DocumentModel("1",json(), ADMIN).j();
         DocumentModel dm=
-                new DocumentModel(TEST_TYPE,"1",json(), "ove");
+                new DocumentModel("1",json(), "ove");
 
         jsonAssertEquals(
                 dm.merge(old).j().
@@ -111,9 +111,9 @@ public class DocumentModelTest {
     @Test
     public void countVersions() throws IOException, InterruptedException, JSONException {
         JsonNode old=
-                new DocumentModel(TEST_TYPE,"1",json(), ADMIN).j();
+                new DocumentModel("1",json(), ADMIN).j();
         DocumentModel dm=
-                new DocumentModel(TEST_TYPE,"1",json(), ADMIN);
+                new DocumentModel("1",json(), ADMIN);
 
         jsonAssertEquals(dm.merge(old).j(), makeNodeWithVersion(2));
     }

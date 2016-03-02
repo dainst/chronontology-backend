@@ -16,24 +16,20 @@ import static org.dainst.chronontology.Constants.*;
 public class DocumentModel {
 
     private final ObjectNode node;
-    private final String typeName;
     private final String id;
     private final String userName;
 
     /**
-     * @param typeName
      * @param userName
      * @param node
      * @param id
      */
     public DocumentModel(
-            final String typeName,
             final String id,
             final JsonNode node,
             final String userName) {
 
         this.node = (ObjectNode) node;
-        this.typeName= typeName;
         this.id= id;
         this.userName= userName;
 
@@ -94,7 +90,7 @@ public class DocumentModel {
     }
 
     private void setNodeId() {
-        node.put("@id", "/" + typeName + "/" + id);
+        node.put("@id", id);
     }
 
     private void setVersion(JsonNode oldNode) {

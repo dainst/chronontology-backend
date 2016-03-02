@@ -54,7 +54,7 @@ public class CreateUpdateHandler extends Handler {
 
         JsonNode doc =
                 new DocumentModel(
-                        typeName,id,n, req.attribute("user")).j();
+                        "/"+typeName+"/"+id,n, req.attribute("user")).j();
 
         if (!dispatcher.dispatchPost(typeName,id,doc))
             res.status(HTTP_INTERNAL_SERVER_ERROR);
@@ -92,7 +92,7 @@ public class CreateUpdateHandler extends Handler {
 
 
         DocumentModel dm = new DocumentModel(
-                typeName,req.params(ID),JsonUtils.json(req.body()), req.attribute("user"));
+                "/"+typeName+"/"+req.params(ID),JsonUtils.json(req.body()), req.attribute("user"));
 
         JsonNode doc = null;
         int status;
