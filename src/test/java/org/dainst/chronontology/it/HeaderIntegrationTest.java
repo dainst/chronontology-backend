@@ -14,7 +14,7 @@ import static org.testng.Assert.*;
 /**
  * @author Daniel M. de Oliveira
  */
-public class HeaderIntegrationTest extends IntegrationTestBase {
+public class HeaderIntegrationTest extends IntegrationTest {
 
     @Test
     public void putHeaders() throws IOException {

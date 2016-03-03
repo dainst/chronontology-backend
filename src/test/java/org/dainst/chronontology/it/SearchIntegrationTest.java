@@ -20,7 +20,7 @@ import static org.testng.Assert.fail;
 /**
  * @author Daniel M. de Oliveira
  */
-public class SearchIntegrationTest extends IntegrationTestBase {
+public class SearchIntegrationTest extends IntegrationTest {
 
 
 

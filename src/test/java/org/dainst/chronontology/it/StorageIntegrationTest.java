@@ -17,7 +17,7 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Daniel M. de Oliveira
  */
-public class StorageIntegrationTest extends IntegrationTestBase {
+public class StorageIntegrationTest extends IntegrationTest {
 
     @Test
     public void getNonExistingDocument() {

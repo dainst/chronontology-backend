@@ -14,7 +14,7 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Daniel M. de Oliveira
  */
-public class StatusCodesIntegrationTest extends IntegrationTestBase {
+public class StatusCodesIntegrationTest extends IntegrationTest {
 
     @Test
     public void putUnauthorized() throws IOException {

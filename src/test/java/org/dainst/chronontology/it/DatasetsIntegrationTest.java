@@ -16,7 +16,7 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Daniel M. de Oliveira
  */
-public class DatasetsIntegrationTest extends IntegrationTestBase {
+public class DatasetsIntegrationTest extends IntegrationTest {
 
     private JsonNode dataset(String nr) {
         return json("{ \"dataset\" : \"dataset"+nr+"\" }");

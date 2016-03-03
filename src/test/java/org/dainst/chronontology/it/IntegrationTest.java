@@ -22,7 +22,7 @@ import java.util.Properties;
 /**
  * @author Daniel M. de Oliveira
  */
-public abstract class IntegrationTestBase {
+public abstract class IntegrationTest {
 
     protected static final String TYPE_ROUTE = "/" + TestConstants.TEST_TYPE + "/";
 

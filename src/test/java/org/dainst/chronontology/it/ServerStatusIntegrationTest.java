@@ -13,7 +13,7 @@ import static org.dainst.chronontology.util.JsonUtils.json;
 /**
  * @author Daniel M. de Oliviera
  */
-public class ServerStatusIntegrationTest extends IntegrationTestBase {
+public class ServerStatusIntegrationTest extends IntegrationTest {
 
     private JsonNode dataStoresJson(String status) {
         Results datastores = new Results("datastores");
