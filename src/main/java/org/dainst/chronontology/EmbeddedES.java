@@ -1,4 +1,4 @@
-package org.dainst.chronontology.extra;
+package org.dainst.chronontology;
 
 import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.config.ElasticsearchServerConfig;

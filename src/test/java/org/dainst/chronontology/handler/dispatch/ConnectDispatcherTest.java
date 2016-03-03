@@ -1,9 +1,9 @@
-package org.dainst.chronontology.controller;
+package org.dainst.chronontology.handler.dispatch;
 
 import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.handler.PostDocumentHandler;
 import org.dainst.chronontology.handler.PutDocumentHandler;
-import org.dainst.chronontology.handler.RightsValidator;
+import org.dainst.chronontology.handler.model.RightsValidator;
 import org.dainst.chronontology.store.SearchableDatastore;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;

@@ -1,5 +1,6 @@
-package org.dainst.chronontology.handler;
+package org.dainst.chronontology.handler.model;
 
+import org.dainst.chronontology.handler.model.RightsValidator;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

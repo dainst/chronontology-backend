@@ -2,8 +2,8 @@ package org.dainst.chronontology.config;
 
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.App;
-import org.dainst.chronontology.controller.Controller;
-import org.dainst.chronontology.extra.EmbeddedES;
+import org.dainst.chronontology.Controller;
+import org.dainst.chronontology.EmbeddedES;
 
 import static spark.Spark.port;
 

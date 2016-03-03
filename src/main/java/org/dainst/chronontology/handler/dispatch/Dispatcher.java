@@ -1,8 +1,8 @@
-package org.dainst.chronontology.controller;
+package org.dainst.chronontology.handler.dispatch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.handler.ServerStatusHandler;
-import org.dainst.chronontology.util.Results;
+import org.dainst.chronontology.handler.model.Results;
 import spark.Request;
 
 import java.io.IOException;

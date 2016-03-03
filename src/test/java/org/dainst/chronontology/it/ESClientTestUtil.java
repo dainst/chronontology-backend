@@ -6,7 +6,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import org.dainst.chronontology.TestConstants;
-import org.dainst.chronontology.util.JsonRestClient;
+import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.dainst.chronontology.store.ESServerTestUtil;
 
 import java.io.IOException;

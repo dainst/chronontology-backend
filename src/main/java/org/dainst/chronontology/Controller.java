@@ -1,12 +1,13 @@
-package org.dainst.chronontology.controller;
+package org.dainst.chronontology;
 
 import static spark.Spark.*;
 import static org.dainst.chronontology.Constants.*;
 
 import org.apache.log4j.Logger;
-import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.config.AppConfig;
 import org.dainst.chronontology.handler.*;
+import org.dainst.chronontology.handler.dispatch.Dispatcher;
+import org.dainst.chronontology.handler.model.RightsValidator;
 import spark.Request;
 import spark.Response;
 

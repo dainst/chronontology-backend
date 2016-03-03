@@ -5,7 +5,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 import org.dainst.chronontology.TestConstants;
-import org.dainst.chronontology.util.RestUtils;
+import org.dainst.chronontology.store.rest.RestUtils;
 
 import java.io.IOException;
 import java.util.Base64;

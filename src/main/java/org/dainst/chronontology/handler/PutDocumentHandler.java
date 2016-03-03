@@ -1,6 +1,8 @@
 package org.dainst.chronontology.handler;
 
-import org.dainst.chronontology.controller.Dispatcher;
+import org.dainst.chronontology.handler.dispatch.Dispatcher;
+import org.dainst.chronontology.handler.model.Document;
+import org.dainst.chronontology.handler.model.RightsValidator;
 import spark.Request;
 import spark.Response;
 

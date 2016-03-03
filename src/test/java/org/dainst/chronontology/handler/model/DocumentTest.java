@@ -1,8 +1,9 @@
-package org.dainst.chronontology.handler;
+package org.dainst.chronontology.handler.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.dainst.chronontology.handler.model.Document;
 import org.json.JSONException;
 import org.testng.annotations.Test;
 

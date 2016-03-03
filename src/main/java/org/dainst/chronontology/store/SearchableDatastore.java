@@ -1,7 +1,6 @@
 package org.dainst.chronontology.store;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import org.dainst.chronontology.util.Results;
+import org.dainst.chronontology.handler.model.Results;
 
 /**
  * @author Daniel M. de Oliveira

@@ -1,8 +1,8 @@
 package org.dainst.chronontology.config;
 
-import org.dainst.chronontology.controller.ConnectDispatcher;
-import org.dainst.chronontology.controller.Dispatcher;
-import org.dainst.chronontology.controller.SimpleDispatcher;
+import org.dainst.chronontology.handler.dispatch.ConnectDispatcher;
+import org.dainst.chronontology.handler.dispatch.Dispatcher;
+import org.dainst.chronontology.handler.dispatch.SimpleDispatcher;
 import org.dainst.chronontology.store.ESRestSearchableDatastore;
 
 /**

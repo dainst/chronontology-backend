@@ -2,7 +2,9 @@ package org.dainst.chronontology.handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.commons.codec.binary.Base64;
-import org.dainst.chronontology.controller.Dispatcher;
+import org.dainst.chronontology.handler.dispatch.Dispatcher;
+import org.dainst.chronontology.handler.model.Document;
+import org.dainst.chronontology.handler.model.RightsValidator;
 import spark.Request;
 import spark.Response;
 

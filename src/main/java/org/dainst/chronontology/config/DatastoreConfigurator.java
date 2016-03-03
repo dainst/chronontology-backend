@@ -1,11 +1,10 @@
 package org.dainst.chronontology.config;
 
 import org.apache.log4j.Logger;
-import org.dainst.chronontology.store.Connector;
 import org.dainst.chronontology.store.Datastore;
 import org.dainst.chronontology.store.ESRestSearchableDatastore;
 import org.dainst.chronontology.store.FileSystemDatastore;
-import org.dainst.chronontology.util.JsonRestClient;
+import org.dainst.chronontology.store.rest.JsonRestClient;
 
 import java.io.File;
 

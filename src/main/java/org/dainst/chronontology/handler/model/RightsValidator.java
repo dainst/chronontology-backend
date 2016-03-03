@@ -1,4 +1,4 @@
-package org.dainst.chronontology.handler;
+package org.dainst.chronontology.handler.model;
 
 import org.dainst.chronontology.Constants;
 

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.apache.log4j.Logger;
-import org.dainst.chronontology.util.Results;
-import org.dainst.chronontology.util.JsonRestClient;
+import org.dainst.chronontology.handler.model.Results;
+import org.dainst.chronontology.store.rest.JsonRestClient;
 
 import java.io.IOException;
 

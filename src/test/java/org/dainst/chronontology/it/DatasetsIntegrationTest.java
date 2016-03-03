@@ -6,7 +6,7 @@ import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.JsonTestUtils;
 import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.util.JsonUtils;
-import org.dainst.chronontology.util.Results;
+import org.dainst.chronontology.handler.model.Results;
 import org.testng.annotations.Test;
 
 import static org.dainst.chronontology.util.JsonUtils.json;

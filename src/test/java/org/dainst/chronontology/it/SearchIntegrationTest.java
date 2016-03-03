@@ -2,7 +2,7 @@ package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.JsonTestUtils;
-import org.dainst.chronontology.util.Results;
+import org.dainst.chronontology.handler.model.Results;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;

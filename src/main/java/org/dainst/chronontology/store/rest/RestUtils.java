@@ -1,4 +1,4 @@
-package org.dainst.chronontology.util;
+package org.dainst.chronontology.store.rest;
 
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;

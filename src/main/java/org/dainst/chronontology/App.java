@@ -2,7 +2,6 @@ package org.dainst.chronontology;
 
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.config.*;
-import org.dainst.chronontology.controller.Controller;
 
 import java.util.Properties;
 

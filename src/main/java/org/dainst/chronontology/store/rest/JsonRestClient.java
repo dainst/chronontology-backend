@@ -1,8 +1,9 @@
-package org.dainst.chronontology.util;
+package org.dainst.chronontology.store.rest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.*;
 import org.apache.log4j.Logger;
+import org.dainst.chronontology.util.JsonUtils;
 
 import java.io.IOException;
 import java.util.*;
