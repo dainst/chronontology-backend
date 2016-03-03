@@ -1,8 +1,8 @@
 package org.dainst.chronontology.controller;
 
 import org.dainst.chronontology.Constants;
-import org.dainst.chronontology.handler.PostHandler;
-import org.dainst.chronontology.handler.PutHandler;
+import org.dainst.chronontology.handler.PostDocumentHandler;
+import org.dainst.chronontology.handler.PutDocumentHandler;
 import org.dainst.chronontology.handler.RightsValidator;
 import org.dainst.chronontology.store.SearchableDatastore;
 import org.testng.annotations.BeforeMethod;
@@ -24,8 +24,8 @@ public class ConnectDispatcherTest {
     private SearchableDatastore mockDS1= mock(SearchableDatastore.class);
     private SearchableDatastore mockDS2= mock(SearchableDatastore.class);
     private Dispatcher dispatcher = new ConnectDispatcher(mockDS1,mockDS2);
-    private PutHandler putHandler = new PutHandler(dispatcher,new RightsValidator());
-    private PostHandler postHandler = new PostHandler(dispatcher,new RightsValidator());
+    private PutDocumentHandler putDocumentHandler = new PutDocumentHandler(dispatcher,new RightsValidator());
+    private PostDocumentHandler postDocumentHandler = new PostDocumentHandler(dispatcher,new RightsValidator());
     private Request reqMock= mock(Request.class);
 
     @BeforeMethod
@@ -44,7 +44,7 @@ public class ConnectDispatcherTest {
 
 
         Response resMock= mock(Response.class);
-        postHandler.handle(reqMock,resMock);
+        postDocumentHandler.handle(reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -54,7 +54,7 @@ public class ConnectDispatcherTest {
         when(mockDS2.put(any(),any(),any())).thenReturn(false);
 
         Response resMock= mock(Response.class);
-        postHandler.handle(reqMock,resMock);
+        postDocumentHandler.handle(reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -64,7 +64,7 @@ public class ConnectDispatcherTest {
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
 
         Response resMock= mock(Response.class);
-        postHandler.handle(reqMock,resMock);
+        postDocumentHandler.handle(reqMock,resMock);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
 
@@ -74,7 +74,7 @@ public class ConnectDispatcherTest {
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
 
         Response resMock= mock(Response.class);
-        putHandler.handle(reqMock,resMock);
+        putDocumentHandler.handle(reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -84,7 +84,7 @@ public class ConnectDispatcherTest {
         when(mockDS2.put(any(),any(),any())).thenReturn(false);
 
         Response resMock= mock(Response.class);
-        putHandler.handle(reqMock,resMock);
+        putDocumentHandler.handle(reqMock,resMock);
         verify(resMock).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
     }
 
@@ -94,7 +94,7 @@ public class ConnectDispatcherTest {
         when(mockDS2.put(any(),any(),any())).thenReturn(true);
 
         Response resMock= mock(Response.class);
-        putHandler.handle(reqMock,resMock);
+        putDocumentHandler.handle(reqMock,resMock);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
 }

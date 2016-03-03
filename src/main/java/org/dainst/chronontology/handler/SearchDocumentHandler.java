@@ -1,7 +1,6 @@
 package org.dainst.chronontology.handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.dainst.chronontology.controller.Dispatcher;
 import org.dainst.chronontology.util.Results;
 import spark.Request;
@@ -15,9 +14,9 @@ import java.util.List;
 /**
  * @author Daniel M. de Oliveira
  */
-public class SearchHandler extends BaseDocumentHandler {
+public class SearchDocumentHandler extends DocumentHandler {
 
-    public SearchHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
+    public SearchDocumentHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         super(dispatcher,rightsValidator);
     }
 
@@ -43,7 +42,7 @@ public class SearchHandler extends BaseDocumentHandler {
         int i=0;
         for (final JsonNode n : r.getAll()) {
 
-            if (!userAccessLevelSufficient(req,DocumentModel.from(n), RightsValidator.Operation.READ)) {
+            if (!userAccessLevelSufficient(req, Document.from(n), RightsValidator.Operation.READ)) {
                 indicesToRemove.add(i);
             }
             i++;

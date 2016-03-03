@@ -13,9 +13,9 @@ import static org.dainst.chronontology.Constants.HTTP_NOT_FOUND;
 /**
  * @author Daniel M. de Oliveira
  */
-public class GetHandler extends BaseDocumentHandler {
+public class GetDocumentHandler extends DocumentHandler {
 
-    public GetHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
+    public GetDocumentHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         super(dispatcher,rightsValidator);
     }
 
@@ -24,7 +24,7 @@ public class GetHandler extends BaseDocumentHandler {
             final Request req,
             final Response res) throws IOException {
 
-        DocumentModel result= DocumentModel.from(dispatcher.dispatchGet(type(req), simpleId(req),req));
+        Document result= Document.from(dispatcher.dispatchGet(type(req), simpleId(req),req));
         if (result==null){
             res.status(HTTP_NOT_FOUND);
             return "";

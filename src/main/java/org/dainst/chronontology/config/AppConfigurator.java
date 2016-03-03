@@ -1,10 +1,8 @@
 package org.dainst.chronontology.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.App;
 import org.dainst.chronontology.controller.Controller;
-import org.dainst.chronontology.handler.DocumentModel;
 import org.dainst.chronontology.extra.EmbeddedES;
 
 import static spark.Spark.port;

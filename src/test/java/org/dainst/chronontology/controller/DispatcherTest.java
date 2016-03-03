@@ -1,9 +1,8 @@
 package org.dainst.chronontology.controller;
 
 import org.dainst.chronontology.Constants;
-import org.dainst.chronontology.handler.DocumentModel;
-import org.dainst.chronontology.handler.PostHandler;
-import org.dainst.chronontology.handler.PutHandler;
+import org.dainst.chronontology.handler.PostDocumentHandler;
+import org.dainst.chronontology.handler.PutDocumentHandler;
 import org.dainst.chronontology.handler.RightsValidator;
 import org.dainst.chronontology.store.SearchableDatastore;
 import org.testng.annotations.BeforeMethod;
@@ -28,8 +27,8 @@ public class DispatcherTest {
     private SearchableDatastore mockDS= mock(SearchableDatastore.class);
     private Request reqMock= mock(Request.class);
     private Dispatcher dispatcher = new SimpleDispatcher(mockDS);
-    private PostHandler postHandler = new PostHandler(dispatcher,new RightsValidator());
-    private PutHandler putHandler = new PutHandler(dispatcher,new RightsValidator());
+    private PostDocumentHandler postDocumentHandler = new PostDocumentHandler(dispatcher,new RightsValidator());
+    private PutDocumentHandler putDocumentHandler = new PutDocumentHandler(dispatcher,new RightsValidator());
 
     @BeforeMethod
     public void before() {
@@ -46,7 +45,7 @@ public class DispatcherTest {
 
 
         Response resMock= mock(Response.class);
-        postHandler.handle(reqMock,resMock);
+        postDocumentHandler.handle(reqMock,resMock);
         verify(resMock,atMost(0)).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
@@ -57,7 +56,7 @@ public class DispatcherTest {
         when(mockDS.put(any(),any(),any())).thenReturn(true);
 
         Response resMock= mock(Response.class);
-        putHandler.handle(reqMock,resMock);
+        putDocumentHandler.handle(reqMock,resMock);
         verify(resMock,atMost(0)).status(Constants.HTTP_INTERNAL_SERVER_ERROR);
         verify(resMock).status(Constants.HTTP_CREATED);
     }
@@ -68,7 +67,7 @@ public class DispatcherTest {
         when(mockDS.put(any(),any(),any())).thenReturn(false);
 
         Response resMock= mock(Response.class);
-        postHandler.handle(reqMock,resMock);
+        postDocumentHandler.handle(reqMock,resMock);
 
         verify(resMock,atMost(0)).status(Constants.HTTP_CREATED);
         verify(resMock,atMost(0)).status(Constants.HTTP_OK);
@@ -81,7 +80,7 @@ public class DispatcherTest {
         when(mockDS.put(any(),any(),any())).thenReturn(false);
 
         Response resMock= mock(Response.class);
-        putHandler.handle(reqMock,resMock);
+        putDocumentHandler.handle(reqMock,resMock);
 
         verify(resMock,atMost(0)).status(Constants.HTTP_CREATED);
         verify(resMock,atMost(0)).status(Constants.HTTP_OK);

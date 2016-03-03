@@ -15,7 +15,7 @@ import static org.testng.Assert.assertEquals;
 /**
  * @author Daniel M. de Oliveira
  */
-public class DocumentModelTest {
+public class DocumentTest {
 
     public static final String ADMIN = "admin";
 
@@ -28,38 +28,38 @@ public class DocumentModelTest {
      */
     private JsonNode nodeWithModifiedDates(JsonNode old, JsonNode niew) {
         ObjectNode example= (ObjectNode) json();
-        ArrayNode a = example.putArray(DocumentModel.MODIFIED);
-        a.add(old.get(DocumentModel.MODIFIED).get(0));
-        a.add(niew.get(DocumentModel.MODIFIED).get(0));
+        ArrayNode a = example.putArray(Document.MODIFIED);
+        a.add(old.get(Document.MODIFIED).get(0));
+        a.add(niew.get(Document.MODIFIED).get(0));
         return example;
     }
 
     private JsonNode makeNodeWithVersion(int version) {
         JsonNode example= json();
-        ((ObjectNode)example).put(DocumentModel.VERSION,version);
+        ((ObjectNode)example).put(Document.VERSION,version);
         return example;
     }
 
     @Test
     public void createdDateStaysSame() throws IOException, InterruptedException {
-        DocumentModel old=
-                new DocumentModel("1",json(), ADMIN);
+        Document old=
+                new Document("1",json(), ADMIN);
         Thread.sleep(10);
-        DocumentModel dm=
-                new DocumentModel("1",json(), ADMIN);
+        Document dm=
+                new Document("1",json(), ADMIN);
 
         jsonAssertEquals(
-                dm.merge(old).j().get(DocumentModel.CREATED),
-                old.j().get(DocumentModel.CREATED));
+                dm.merge(old).j().get(Document.CREATED),
+                old.j().get(Document.CREATED));
     }
 
     @Test
     public void modifiedDatesMerge() throws IOException, InterruptedException, JSONException {
-        DocumentModel old=
-                new DocumentModel("1",json(), ADMIN);
+        Document old=
+                new Document("1",json(), ADMIN);
         Thread.sleep(10);
-        DocumentModel dm=
-                new DocumentModel("1",json(), ADMIN);
+        Document dm=
+                new Document("1",json(), ADMIN);
 
         JsonNode nodeWithDates = nodeWithModifiedDates(old.j(), dm.j());
 
@@ -72,46 +72,46 @@ public class DocumentModelTest {
     public void setVersionOnCreate() throws IOException, InterruptedException, JSONException {
 
         jsonAssertEquals(
-                new DocumentModel("1",json(), ADMIN).j(),
+                new Document("1",json(), ADMIN).j(),
                 makeNodeWithVersion(1));
     }
 
     @Test
     public void setCreateUserOnCreate() throws IOException {
         jsonAssertEquals(
-                new DocumentModel("1",json(), ADMIN).j()
-                        .get(DocumentModel.CREATED),
+                new Document("1",json(), ADMIN).j()
+                        .get(Document.CREATED),
                 json("{ \"user\" : \""+ADMIN+"\" }"));
     }
 
     @Test
     public void setModifiedUserOnCreate() throws IOException {
         jsonAssertEquals(
-                new DocumentModel("1",json(), ADMIN).j().
-                        get(DocumentModel.MODIFIED).get(0),
+                new Document("1",json(), ADMIN).j().
+                        get(Document.MODIFIED).get(0),
                 json("{\"user\":\""+ADMIN+"\"}"));
     }
 
     @Test
     public void differentUserOnModify() throws IOException {
-        DocumentModel old=
-                new DocumentModel("1",json(), ADMIN);
-        DocumentModel dm=
-                new DocumentModel("1",json(), "ove");
+        Document old=
+                new Document("1",json(), ADMIN);
+        Document dm=
+                new Document("1",json(), "ove");
 
         jsonAssertEquals(
                 dm.merge(old).j().
-                        get(DocumentModel.MODIFIED).get(1),
+                        get(Document.MODIFIED).get(1),
                 json("{\"user\":\"ove\"}"));
     }
 
 
     @Test
     public void countVersions() throws IOException, InterruptedException, JSONException {
-        DocumentModel old=
-                new DocumentModel("1",json(), ADMIN);
-        DocumentModel dm=
-                new DocumentModel("1",json(), ADMIN);
+        Document old=
+                new Document("1",json(), ADMIN);
+        Document dm=
+                new Document("1",json(), ADMIN);
 
         jsonAssertEquals(dm.merge(old).j(), makeNodeWithVersion(2));
     }
@@ -119,35 +119,35 @@ public class DocumentModelTest {
     @Test
     public void createFromOld() {
         JsonNode n= json();
-        ((ObjectNode)n).put(DocumentModel.ID,"1");
-        ((ObjectNode)n).put(DocumentModel.CREATED,json("{\"date\":\"today\"}"));
+        ((ObjectNode)n).put(Document.ID,"1");
+        ((ObjectNode)n).put(Document.CREATED,json("{\"date\":\"today\"}"));
 
-        DocumentModel dm= DocumentModel.from(n);
+        Document dm= Document.from(n);
         assertEquals(dm.getId(),"1");
-        assertEquals(dm.j().get(DocumentModel.CREATED),json("{\"date\":\"today\"}"));
+        assertEquals(dm.j().get(Document.CREATED),json("{\"date\":\"today\"}"));
     }
 
     @Test
     public void createFromOldNull() {
-        assertEquals(DocumentModel.from(null),null);
+        assertEquals(Document.from(null),null);
     }
 
     @Test
     public void getDataset() {
         JsonNode n= json();
-        ((ObjectNode)n).put(DocumentModel.ID,"1");
-        ((ObjectNode)n).put(DocumentModel.DATASET,"1");
+        ((ObjectNode)n).put(Document.ID,"1");
+        ((ObjectNode)n).put(Document.DATASET,"1");
 
-        DocumentModel dm= DocumentModel.from(n);
+        Document dm= Document.from(n);
         assertEquals(dm.getDataset(),"1");
     }
 
     @Test
     public void noDataset() {
         JsonNode n= json();
-        ((ObjectNode)n).put(DocumentModel.ID,"1");
+        ((ObjectNode)n).put(Document.ID,"1");
 
-        DocumentModel dm= DocumentModel.from(n);
+        Document dm= Document.from(n);
         assertEquals(dm.getDataset(),null);
     }
 }

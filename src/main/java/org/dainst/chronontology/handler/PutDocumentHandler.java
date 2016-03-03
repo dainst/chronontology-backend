@@ -12,9 +12,9 @@ import static org.dainst.chronontology.util.JsonUtils.json;
 /**
  * @author Daniel M. de Oliveira
  */
-public class PutHandler extends BaseDocumentHandler {
+public class PutDocumentHandler extends DocumentHandler {
 
-    public PutHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
+    public PutDocumentHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         super(dispatcher, rightsValidator);
     }
 
@@ -23,12 +23,12 @@ public class PutHandler extends BaseDocumentHandler {
             final Response res) throws IOException {
 
 
-        DocumentModel dm= makeDocumentModel(req,res,false);
+        Document dm= makeDocumentModel(req,res,false);
         if (dm==null) return json();
 
 
         int status;
-        DocumentModel oldDm = DocumentModel.from(
+        Document oldDm = Document.from(
                 dispatcher.dispatchGet(type(req), simpleId(req)));
 
         if (oldDm!=null) {

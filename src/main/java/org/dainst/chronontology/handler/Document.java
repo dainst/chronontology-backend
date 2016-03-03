@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * @author Daniel M. de Oliveira
  */
-public class DocumentModel {
+public class Document {
 
     public static final String VERSION = "version";
     public static final String MODIFIED = "modified";
@@ -28,7 +28,7 @@ public class DocumentModel {
      * @param node
      * @param id
      */
-    public DocumentModel(
+    public Document(
             final String id,
             final JsonNode node,
             final String userName) {
@@ -38,7 +38,7 @@ public class DocumentModel {
         initNode(id,userName);
     }
 
-    private DocumentModel(
+    private Document(
             final JsonNode node) {
 
         this.node = (ObjectNode) node;
@@ -49,13 +49,13 @@ public class DocumentModel {
      * @param oldDoc
      * @return null if oldDoc is null
      */
-    public static DocumentModel from(final JsonNode oldDoc) {
+    public static Document from(final JsonNode oldDoc) {
         if (oldDoc==null) return null;
         if (oldDoc.get(ID)==null) {
             throw new IllegalArgumentException(ID + Constants.MSG_NOT_NULL);
         }
 
-        return new DocumentModel(
+        return new Document(
             oldDoc
         );
     }
@@ -77,7 +77,7 @@ public class DocumentModel {
      * @param oldDm
      * @return
      */
-    public DocumentModel merge(final DocumentModel oldDm) {
+    public Document merge(final Document oldDm) {
         JsonNode oldNode= oldDm.j();
 
         mergeModifiedDates(oldNode);

@@ -16,11 +16,11 @@ import static org.dainst.chronontology.util.JsonUtils.json;
 /**
  * @author Daniel M. de Oliveira
  */
-public abstract class BaseDocumentHandler implements Handler {
+public abstract class DocumentHandler implements Handler {
 
     private static final String ID = ":id";
 
-    public BaseDocumentHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
+    public DocumentHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         this.dispatcher = dispatcher;
         this.rightsValidator= rightsValidator;
     }
@@ -29,7 +29,7 @@ public abstract class BaseDocumentHandler implements Handler {
     protected final RightsValidator rightsValidator;
 
 
-    protected final DocumentModel makeDocumentModel(
+    protected final Document makeDocumentModel(
             Request req,
             Response res,
             boolean createId) {
@@ -42,7 +42,7 @@ public abstract class BaseDocumentHandler implements Handler {
 
         String resourceId= (createId) ? req.pathInfo()+determineFreeId(req) : req.pathInfo();
 
-        DocumentModel dm = new DocumentModel(
+        Document dm = new Document(
                 resourceId, json(req.body()), req.attribute("user"));
 
         if (!userAccessLevelSufficient(req,dm, RightsValidator.Operation.EDIT)) {
@@ -52,7 +52,7 @@ public abstract class BaseDocumentHandler implements Handler {
         return dm;
     }
 
-    protected final boolean userAccessLevelSufficient(Request req, DocumentModel dm, RightsValidator.Operation operation) {
+    protected final boolean userAccessLevelSufficient(Request req, Document dm, RightsValidator.Operation operation) {
         if (dm.getDataset()!=null &&
                 !rightsValidator.hasPermission(req.attribute("user"),
                         dm.getDataset(), operation)) {

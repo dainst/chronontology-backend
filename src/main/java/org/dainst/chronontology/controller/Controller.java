@@ -20,11 +20,11 @@ public class Controller {
     public static final String ID = ":id";
 
     private final Dispatcher dispatcher;
-    private final SearchHandler searchHandler;
+    private final SearchDocumentHandler searchDocumentHandler;
     private final ServerStatusHandler serverStatusHandler;
-    private final PostHandler postHandler;
-    private final PutHandler putHandler;
-    private final GetHandler getHandler;
+    private final PostDocumentHandler postDocumentHandler;
+    private final PutDocumentHandler putDocumentHandler;
+    private final GetDocumentHandler getDocumentHandler;
 
     private void setUpTypeRoutes(
             final String typeName
@@ -35,19 +35,19 @@ public class Controller {
         });
         get( "/" + typeName + "/", (req,res) -> {
             setHeader(res);
-            return searchHandler.handle(req,res);
+            return searchDocumentHandler.handle(req,res);
         });
         get( "/" + typeName + "/" + ID, (req,res) -> {
             setHeader(req,res);
-            return getHandler.handle(req,res);
+            return getDocumentHandler.handle(req,res);
         });
         post("/" + typeName + "/", (req, res) ->  {
             setHeader(res);
-            return postHandler.handle(req,res);
+            return postDocumentHandler.handle(req,res);
         });
         put( "/" + typeName + "/" + ID, (req, res) -> {
             setHeader(req,res);
-            return putHandler.handle(req,res);
+            return putDocumentHandler.handle(req,res);
         });
     }
 
@@ -114,11 +114,11 @@ public class Controller {
             ){
 
         this.dispatcher = dispatcher;
-        this.searchHandler= new SearchHandler(dispatcher,rightsValidator);
+        this.searchDocumentHandler = new SearchDocumentHandler(dispatcher,rightsValidator);
         this.serverStatusHandler= new ServerStatusHandler(dispatcher);
-        this.postHandler = new PostHandler(dispatcher,rightsValidator);
-        this.putHandler = new PutHandler(dispatcher,rightsValidator);
-        this.getHandler = new GetHandler(dispatcher,rightsValidator);
+        this.postDocumentHandler = new PostDocumentHandler(dispatcher,rightsValidator);
+        this.putDocumentHandler = new PutDocumentHandler(dispatcher,rightsValidator);
+        this.getDocumentHandler = new GetDocumentHandler(dispatcher,rightsValidator);
 
         for (String typeName:typeNames)
             setUpTypeRoutes(typeName);
