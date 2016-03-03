@@ -50,7 +50,7 @@ public class SimpleDispatcher extends Dispatcher {
     }
 
     @Override
-    public JsonNode dispatchSearch(String bucket, String query) {
+    public Results dispatchSearch(String bucket, String query) {
         return datastore.search( bucket, query );
     }
 }

@@ -20,6 +20,6 @@ public abstract class Dispatcher {
     abstract public boolean dispatchPost(final String bucket, final String key, final JsonNode value);
     abstract public boolean dispatchPut(final String bucket, final String key, final JsonNode value);
     abstract public JsonNode dispatchGet(final String bucket, final String key, Request req);
-    abstract public JsonNode dispatchSearch(String bucket, String query);
+    abstract public Results dispatchSearch(String bucket, String query);
     abstract public void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException;
 }

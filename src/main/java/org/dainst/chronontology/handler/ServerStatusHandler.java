@@ -33,17 +33,17 @@ public class ServerStatusHandler implements Handler {
     @Override
     public Object handle(Request req, Response res) throws IOException {
 
-        JsonNode serverStatus= makeServerStatusJson();
+        Results serverStatus= makeServerStatusJson();
         res.status(HTTP_OK);
         if (serverStatus.toString().contains(DATASTORE_STATUS_DOWN))
             res.status(HTTP_NOT_FOUND);
         return serverStatus;
     }
 
-    private JsonNode makeServerStatusJson() throws IOException {
+    private Results makeServerStatusJson() throws IOException {
         Results datastores= new Results("datastores");
         dispatcher.addDatatoreStatus(this,datastores);
-        return datastores.j();
+        return datastores;
     }
 
 

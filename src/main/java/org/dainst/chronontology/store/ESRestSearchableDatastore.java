@@ -58,7 +58,7 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
      *   When errors occur, null gets returned.
      */
     @Override
-    public JsonNode search(
+    public Results search(
             final String typeName,
             final String queryString) {
 
@@ -74,7 +74,7 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
         return makeResults(searchHits);
     }
 
-    private JsonNode makeResults(ArrayNode searchHits) {
+    private Results makeResults(ArrayNode searchHits) {
         Results results = new Results("results");
         for (JsonNode o:searchHits) {
             try {
@@ -83,7 +83,7 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
                 return null;
             }
         }
-        return results.j();
+        return results;
     }
 
     @Override

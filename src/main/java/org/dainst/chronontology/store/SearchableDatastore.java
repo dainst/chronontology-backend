@@ -1,6 +1,7 @@
 package org.dainst.chronontology.store;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dainst.chronontology.util.Results;
 
 /**
  * @author Daniel M. de Oliveira
@@ -13,5 +14,5 @@ public interface SearchableDatastore extends Datastore {
      *                    Contains the bit after "_search?".
      * @return
      */
-    JsonNode search(final String bucket, final String queryString);
+    Results search(final String bucket, final String queryString);
 }

@@ -22,11 +22,25 @@ public class Results {
         } catch (IOException e) {} // WILL NOT HAPPEN
     }
 
+    public ArrayNode getAll() {
+        return (ArrayNode) json.get(this.arrayName);
+    }
+
     public Results add(final JsonNode jsonToAdd)
             throws JsonProcessingException {
         ArrayNode data=(ArrayNode) json.get(this.arrayName);
         data.add(jsonToAdd);
         return this;
+    }
+
+    public void remove(int index) {
+        ArrayNode data=(ArrayNode) json.get(this.arrayName);
+        data.remove(index);
+    }
+
+    @Override
+    public String toString() {
+        return json.toString();
     }
 
     public JsonNode j() {
