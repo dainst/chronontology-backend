@@ -8,12 +8,13 @@ import java.io.IOException;
 
 import static org.dainst.chronontology.Constants.*;
 import static org.dainst.chronontology.util.JsonUtils.json;
+import static org.dainst.chronontology.it.ResponseUtil.*;
 import static org.testng.Assert.assertEquals;
 
 /**
  * @author Daniel M. de Oliveira
  */
-public class StatusCodesIntegrationTest extends ResponseIntegrationTestBase {
+public class StatusCodesIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void putUnauthorized() throws IOException {

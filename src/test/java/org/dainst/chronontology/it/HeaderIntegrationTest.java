@@ -7,13 +7,14 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static org.dainst.chronontology.Constants.*;
-import static org.dainst.chronontology.util.JsonUtils.*;
+import static org.dainst.chronontology.it.ResponseUtil.getResponse;
+import static org.dainst.chronontology.util.JsonUtils.json;
 import static org.testng.Assert.*;
 
 /**
  * @author Daniel M. de Oliveira
  */
-public class HeaderIntegrationTest extends ResponseIntegrationTestBase {
+public class HeaderIntegrationTest extends IntegrationTestBase {
 
     @Test
     public void putHeaders() throws IOException {

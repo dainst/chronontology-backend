@@ -2,26 +2,21 @@ package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
 import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.JsonTestUtils;
 import org.dainst.chronontology.TestConstants;
-import org.dainst.chronontology.store.ESServerTestUtil;
 import org.dainst.chronontology.util.JsonUtils;
 import org.dainst.chronontology.util.Results;
 import org.testng.annotations.Test;
 
-import java.io.IOException;
-
 import static org.dainst.chronontology.util.JsonUtils.json;
+import static org.dainst.chronontology.it.ResponseUtil.*;
 import static org.testng.Assert.assertEquals;
 
 /**
  * @author Daniel M. de Oliveira
  */
-public class DatasetsIntegrationTest extends ResponseIntegrationTestBase {
+public class DatasetsIntegrationTest extends IntegrationTestBase {
 
     private JsonNode dataset(String nr) {
         return json("{ \"dataset\" : \"dataset"+nr+"\" }");

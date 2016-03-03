@@ -13,9 +13,9 @@ import java.util.Base64;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ResponseIntegrationTestBase extends IntegrationTestBase {
+public class ResponseUtil {
 
-    private void authorize(String username,String password,Request.Builder b) {
+    private static void authorize(String username,String password,Request.Builder b) {
         b.addHeader("Authorization","Basic "+ new String(
                 Base64.getEncoder().encode((username+":"+password).getBytes())));
     }
@@ -30,7 +30,7 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param password
      * @return the response object.
      */
-    protected Response getResponse(String path, String method, JsonNode json, String username, String password) {
+    protected static Response getResponse(String path, String method, JsonNode json, String username, String password) {
         return getResponse(path,method,json.toString(),username,password);
     }
 
@@ -44,7 +44,7 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param password
      * @return the response object.
      */
-    private Response getResponse(String path, String method, String json, String username, String password) {
+    private static Response getResponse(String path, String method, String json, String username, String password) {
 
         Request.Builder b= RestUtils.getRequestBuilder(method,json).url(TestConstants.SERVER_URL + path);
         if (username!=null) authorize(username,password,b);
@@ -66,7 +66,7 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param method
      * @return the response object.
      */
-    protected Response getResponse(String path, String method) {
+    protected static Response getResponse(String path, String method) {
         return getResponse(path,method,(String) null, TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
     }
 
@@ -78,7 +78,7 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param json
      * @return the response object.
      */
-    protected Response getResponse(String path, String method, JsonNode json) {
+    protected static Response getResponse(String path, String method, JsonNode json) {
         return getResponse(path,method,json, TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
     }
 
@@ -90,7 +90,7 @@ public class ResponseIntegrationTestBase extends IntegrationTestBase {
      * @param json
      * @return the response object.
      */
-    protected Response getResponse(String path, String method, String json) {
+    protected static Response getResponse(String path, String method, String json) {
         return getResponse(path,method,json, TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
     }
 }
