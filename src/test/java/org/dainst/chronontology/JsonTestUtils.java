@@ -52,16 +52,39 @@ public class JsonTestUtils {
         return json;
     }
 
-    private static Results results() {
-        return new Results("results");
-    }
-
+    /**
+     * Takes a <code>searchResult</code> as obtained from the search endpoint and
+     * tests if it contains results for any of the specified ids.
+     *
+     * For example, if <code>ids</code> is {1,2}, <code>searchResult</code> set must contain
+     * two nodes with at least the @id fields. All other fields are optional, but
+     * it must contain the two nodes.
+     *
+     * <pre>
+     * {
+     *     "results" : [
+     *          {
+     *              "@id" : "1"
+     *          },
+     *          {
+     *              "@id" : "2"
+     *          }
+     *     ]
+     * }
+     * </pre>
+     *
+     * If there is at least one node missing, the method fails with
+     * testng's fail().
+     *
+     * @param searchResult
+     * @param ids
+     */
     public static void assertResultsAreFound(JsonNode searchResult, List<String> ids)  {
 
-        Results expected= results();
+        Results expected= new Results("results");
         for (String id:ids) {
             try {
-                expected.add(json("{\"@id\" : \""+id+"\"}"));
+                expected.add(json("{\""+Document.ID+"\" : \""+id+"\"}"));
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
             }
