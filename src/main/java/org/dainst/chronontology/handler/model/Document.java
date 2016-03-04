@@ -8,6 +8,10 @@ import org.dainst.chronontology.Constants;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Daniel M. de Oliveira
@@ -15,11 +19,15 @@ import java.time.format.DateTimeFormatter;
 public class Document {
 
     public static final String VERSION = "version";
+    public static final String RESOURCE = "resource";
     public static final String MODIFIED = "modified";
     public static final String CREATED = "created";
     public static final String ID = "@id";
     public static final String DATASET = "dataset";
 
+    private static final String[] supportedProperties = new String[] {
+        VERSION,MODIFIED,CREATED,DATASET,ID, RESOURCE
+    };
 
     private final ObjectNode node;
 
@@ -34,7 +42,6 @@ public class Document {
             final String userName) {
 
         this.node = (ObjectNode) node;
-
         initNode(id,userName);
     }
 
@@ -60,10 +67,23 @@ public class Document {
         );
     }
 
+    private void filterUnwanted(){
+        List<String> toRemove= new ArrayList<String>();
+        Iterator<String> fn= node.fieldNames();
+        while (fn.hasNext()){
+            String fk= fn.next();
+            if (!Arrays.asList(supportedProperties).contains(fk))
+            toRemove.add(fk);
+        }
+        for (String fk:toRemove)
+            node.remove(fk);
+    }
+
     private void initNode(String id,String userName) {
         setNodeId(id);
         initVersion();
         initCreatedAndModifiedDates(userName);
+        filterUnwanted();
     }
 
     /**

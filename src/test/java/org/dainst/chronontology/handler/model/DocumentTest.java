@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dainst.chronontology.handler.model.Document;
+import org.dainst.chronontology.util.JsonUtils;
 import org.json.JSONException;
 import org.testng.annotations.Test;
 
@@ -68,6 +69,26 @@ public class DocumentTest {
                 dm.merge(old).j(),
                 nodeWithDates);
     }
+
+    @Test
+    public void filterUnsupported() {
+        JsonNode n= JsonUtils.json();
+        ((ObjectNode)n).put("a","a"); // unwanted
+        ((ObjectNode)n).put(Document.RESOURCE,"b");
+        ((ObjectNode)n).put(Document.DATASET,"c");
+
+        JsonNode exp= JsonUtils.json();
+        ((ObjectNode)exp).put(Document.RESOURCE,"b");
+        ((ObjectNode)exp).put(Document.DATASET,"c");
+
+        Document dm=
+                new Document("1",n, ADMIN);
+
+        assertEquals(dm.j().get(Document.RESOURCE).toString().replace("\"",""),"b");
+        assertEquals(dm.j().get(Document.DATASET).toString().replace("\"",""),"c");
+        assertEquals(dm.j().get("a"),null);
+    }
+
 
     @Test
     public void setVersionOnCreate() throws IOException, InterruptedException, JSONException {

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.JsonTestUtils;
 import org.dainst.chronontology.TestConstants;
+import org.dainst.chronontology.handler.model.Document;
 import org.dainst.chronontology.util.JsonUtils;
 import org.dainst.chronontology.handler.model.Results;
 import org.testng.annotations.Test;
@@ -169,7 +170,7 @@ public class DatasetsIntegrationTest extends IntegrationTest {
     @Test
     public void searchAndFilterOne() throws JsonProcessingException {
 
-        JsonNode a= JsonUtils.json("{ \"a\" : \"b\" }");
+        JsonNode a= JsonUtils.json("{ \""+ Document.RESOURCE +"\" : \"b\" }");
 
         client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
         client.post(TYPE_ROUTE, dataset("1"));

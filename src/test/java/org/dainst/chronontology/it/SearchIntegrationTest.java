@@ -25,8 +25,7 @@ public class SearchIntegrationTest extends IntegrationTest {
 
 
     private JsonNode searchResultJson(String id, String sampleFieldValue) throws IOException {
-        return results().add(
-                json("{\"a\":\"" + sampleFieldValue+"\",\"@id\":\""+id+"\"}")).j();
+        return results().add(sampleDocument(sampleFieldValue,id)).j();
     }
 
     private String identifier(String suffix) {
@@ -44,7 +43,7 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         refreshES();
         jsonAssertEquals(
-                client.get(TYPE_ROUTE + "?q=a:%22%2Fperiod%2F2%22"),
+                client.get(TYPE_ROUTE + "?q=resource:%22%2Fperiod%2F2%22"),
                 searchResultJson(id, identifier("2"))
         );
 
@@ -52,7 +51,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         String id2= idOf(client.post(TYPE_ROUTE, JsonTestUtils.sampleDocument(identifier("1"))));
         refreshES();
         jsonAssertEquals(
-                client.get(TYPE_ROUTE + "?q=a:%22%2Fperiod%2F1%22"),
+                client.get(TYPE_ROUTE + "?q=resource:%22%2Fperiod%2F1%22"),
                 searchResultJson(id2, identifier("1"))
         );
     }
@@ -94,7 +93,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         String id2= idOf(client.post(TYPE_ROUTE, JsonTestUtils.sampleDocument("b")));
 
         refreshES();
-        assertTwoResultsAreFound(client.get(TYPE_ROUTE + "?q=a:b"),id1,id2);
+        assertTwoResultsAreFound(client.get(TYPE_ROUTE + "?q=resource:b"),id1,id2);
     }
 
     @Test
@@ -107,7 +106,7 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         refreshES();
         jsonAssertEquals(
-                client.get(TYPE_ROUTE + "?q=a:a&size=1"),
+                client.get(TYPE_ROUTE + "?q=resource:a&size=1"),
                 results().add(sampleDocument("a",id)).j());
     }
 
@@ -132,6 +131,6 @@ public class SearchIntegrationTest extends IntegrationTest {
         String id2= idOf(client.post(TYPE_ROUTE, JsonTestUtils.sampleDocument("b")));
 
         refreshES();
-        assertTwoResultsAreFound(client.get(TYPE_ROUTE + "?q=a:b&size=-1"),id1,id2);
+        assertTwoResultsAreFound(client.get(TYPE_ROUTE + "?q=resource:b&size=-1"),id1,id2);
     }
 }

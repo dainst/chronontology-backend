@@ -2,6 +2,7 @@ package org.dainst.chronontology;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.dainst.chronontology.handler.model.Document;
 import org.dainst.chronontology.util.JsonUtils;
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -30,9 +31,9 @@ public class JsonTestUtils {
     public static JsonNode sampleDocument(final String sampleFieldValue, String id) {
         JsonNode json= null;
         json = JsonUtils.json();
-        ((ObjectNode)json).put("a",sampleFieldValue);
+        ((ObjectNode)json).put(Document.RESOURCE,sampleFieldValue);
         if (id!=null)
-            ((ObjectNode)json).put("@id",id);
+            ((ObjectNode)json).put(Document.ID,id);
         return json;
     }
 }
