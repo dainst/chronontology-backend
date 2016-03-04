@@ -8,6 +8,9 @@ import org.dainst.chronontology.handler.model.Results;
 public interface SearchableDatastore extends Datastore {
 
     /**
+     * Implementations must make sure the search
+     * results are returned in the same order every time.
+     *
      * @param bucket
      * @param queryString an elasticsearch type query string.
      *                    Contains the bit after "_search?".

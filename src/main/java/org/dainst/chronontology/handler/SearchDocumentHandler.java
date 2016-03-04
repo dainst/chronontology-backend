@@ -31,18 +31,35 @@ public class SearchDocumentHandler extends DocumentHandler {
 
         String queryString= req.queryString();
         Integer size= null;
+        Integer offset= null;
         if (queryString!=null) {
-            Matcher m = Pattern.compile("([&|?]size=\\d+)").matcher(queryString);
-            while (m.find()) {
-                String s = m.group(1);
+            Matcher sizeMatcher = Pattern.compile("([&|?]size=\\d+)").matcher(queryString);
+            while (sizeMatcher.find()) {
+                String s = sizeMatcher.group(1);
                 size = Integer.parseInt(s.split("=")[1]);
+                queryString = queryString.replace(s, "");
+            }
+            Matcher offsetMatcher = Pattern.compile("([&|?]offset=\\d+)").matcher(queryString);
+            while (offsetMatcher.find()) {
+                String s = offsetMatcher.group(1);
+                offset = Integer.parseInt(s.split("=")[1]);
                 queryString = queryString.replace(s, "");
             }
         }
         Results results= dispatcher.dispatchSearch(req.pathInfo(),queryString);
         removeNodes(results, indicesToRemove(req, results));
+
+
+        trimUntilOffset(results,offset);
         trimToSize(results,size);
         return results;
+    }
+
+    private void trimUntilOffset(Results results, Integer offset) {
+        if (offset==null) return;
+        for (int i=0;i<offset;i++) {
+            results.remove(i);
+        }
     }
 
     private void trimToSize(Results results, Integer size) {

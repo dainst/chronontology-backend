@@ -1,5 +1,6 @@
 package org.dainst.chronontology.it;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.dainst.chronontology.handler.model.Document;
 import org.testng.annotations.Test;
 
@@ -11,6 +12,7 @@ import static org.dainst.chronontology.JsonTestUtils.assertResultsAreFound;
 import static org.dainst.chronontology.JsonTestUtils.sampleDocument;
 import static org.dainst.chronontology.it.ESClientTestUtil.refreshES;
 
+import static org.testng.Assert.assertEquals;
 
 // TODO factor out some tests to become unit tests
 /**
@@ -18,10 +20,10 @@ import static org.dainst.chronontology.it.ESClientTestUtil.refreshES;
  */
 public class SearchIntegrationTest extends IntegrationTest {
 
-    private List<String> postSampleData(String... sampleData) {
+    private List<String> postSampleData(String dataset,String... sampleData) {
         List<String> ids= new ArrayList<String>();
         for (String sample:sampleData) {
-            ids.add(idOf(client.post(TYPE_ROUTE, sampleDocument(sample))));
+            ids.add(idOf(client.post(TYPE_ROUTE, sampleDocument(sample,null,dataset))));
         }
         refreshES();
         return ids;
@@ -30,7 +32,7 @@ public class SearchIntegrationTest extends IntegrationTest {
     @Test
     public void matchQueryTermWithUrlEncodedSlashes() throws IOException, InterruptedException {
 
-        List<String> ids= postSampleData("/type/1","/type/2");
+        List<String> ids= postSampleData(null,"/type/1","/type/2");
         ids.remove(1);
 
         assertResultsAreFound(
@@ -41,7 +43,7 @@ public class SearchIntegrationTest extends IntegrationTest {
     @Test
     public void searchInAllFields() throws IOException, InterruptedException {
 
-        List<String> ids= postSampleData("abc","def");
+        List<String> ids= postSampleData(null,"abc","def");
         ids.remove(0);
 
         assertResultsAreFound(
@@ -52,7 +54,7 @@ public class SearchIntegrationTest extends IntegrationTest {
     @Test
     public void searchWithoutSizeRestriction() throws IOException, InterruptedException {
 
-        List<String> ids= postSampleData("b","b");
+        List<String> ids= postSampleData(null,"b","b");
 
         assertResultsAreFound(
                 client.get(TYPE_ROUTE + "?q="+ Document.RESOURCE+":b")
@@ -62,7 +64,7 @@ public class SearchIntegrationTest extends IntegrationTest {
     @Test
     public void restrictedSizeSearchSizeLowerThanZero() throws IOException, InterruptedException {
 
-        List<String> ids= postSampleData("b","b");
+        List<String> ids= postSampleData(null,"b","b");
 
         assertResultsAreFound(
                 client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":b&size=-1")
@@ -72,7 +74,7 @@ public class SearchIntegrationTest extends IntegrationTest {
     @Test
     public void restrictedSizeSearch() throws IOException, InterruptedException {
 
-        List<String> ids= postSampleData("b","b","a");
+        List<String> ids= postSampleData(null,"b","b","a");
         ids.remove(0);
         ids.remove(0);
 
@@ -84,26 +86,46 @@ public class SearchIntegrationTest extends IntegrationTest {
     @Test
     public void restrictedSizeSearchSizeIsZero() throws IOException, InterruptedException {
 
-        postSampleData("b","b","a");
+        postSampleData(null,"b","b","a");
 
         assertResultsAreFound(
                 client.get(TYPE_ROUTE + "?q=a:b&size=0")
                 ,new ArrayList<String>());
     }
 
+
+
     @Test
     public void restrictedSizeSearchWithDatasets() throws IOException, InterruptedException {
 
         // TODO make sure elasticsearch sort order returns these objects first
-        client.post(TYPE_ROUTE, sampleDocument("a",null,"ds1"));
-        client.post(TYPE_ROUTE, sampleDocument("a",null,"ds1"));
-        client.post(TYPE_ROUTE, sampleDocument("a",null,"ds1"));
-        refreshES();
-        List<String> ids= postSampleData("a","a","a");
+        postSampleData("ds1","a","a","a");
+        List<String> ids= postSampleData(null,"a","a","a");
 
         client.authenticate(null,null);
+
         assertResultsAreFound(client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=3"),ids);
     }
 
+    @Test
+    public void sizeAndOffsetSearchWithDatasets() throws IOException, InterruptedException {
 
+        postSampleData("ds1","a","a","a");
+        postSampleData(null,"a","a","a");
+
+        client.authenticate(null,null);
+
+        assertEquals(
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=3&offset=1")
+                    .get("results")).size()
+            ,2);
+        assertEquals(
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=1&offset=1")
+                    .get("results")).size()
+            ,1);
+        assertEquals(
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&offset=2")
+                    .get("results")).size()
+            ,1);
+    }
 }

@@ -107,4 +107,24 @@ public class SearchDocumentHandlerTest {
         handler.handle(reqMock,resMock);
         verify(dispatcher, atLeastOnce()).dispatchSearch("/path/","?width=10&length=9");
     }
+
+    @Test
+    public void returnCorrectResultsWithOffsetParam() throws IOException {
+
+        when(reqMock.queryString()).thenReturn("?offset=1");
+
+        JsonTestUtils.assertResultsAreFound(
+                ((Results) handler.handle(reqMock,resMock)).j(),
+                Arrays.asList("3","5"));
+    }
+
+    @Test
+    public void returnCorrectResultsWithOffsetAndSizeParams() throws IOException {
+
+        when(reqMock.queryString()).thenReturn("?offset=1&size=1");
+
+        JsonTestUtils.assertResultsAreFound(
+                ((Results) handler.handle(reqMock,resMock)).j(),
+                Arrays.asList("3"));
+    }
 }
