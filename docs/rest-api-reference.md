@@ -63,7 +63,7 @@ and will look something like this:
    "resource": {
        "a" : "b"
    },
-   "@id": "/period/T7UlxIk8miMQ",
+   "@id": "/typename/T7UlxIk8miMQ",
    "version": 1,
    "created": {
        "user": "karl",
@@ -125,7 +125,7 @@ be valid JSON, for example:
 ```
 {
     "resource": { "a" : "b" },
-    "@id": "/period/T7UlxIk8miMQ",
+    "@id": "/typename/T7UlxIk8miMQ",
     "version": 2,
     "created": {
         "user": "karl",
@@ -202,7 +202,7 @@ Get json stored for type with name :typeName and id :id.
     "resource": {
         "a" : "b"
     },           
-    "@id": "/period/T7UlxIk8miMQ",
+    "@id": "/typename/T7UlxIk8miMQ",
     "version": 2,
     "created": {
         "user": "karl",
@@ -242,7 +242,7 @@ This works for connected mode and is ignored in single mode.
     "resource": {
         "a" : "b"
     },           
-    "@id": "/period/T7UlxIk8miMQ",
+    "@id": "/typename/T7UlxIk8miMQ",
     "version": 2,
     "created": {
         "user": "karl",
@@ -299,7 +299,7 @@ GET /typename/?q=*
 and
 
 ```
-GET /period/?q=a:b
+GET /typename/?q=a:b
 ```
 
 The query params get simply handed over to elasticsearch.
@@ -343,7 +343,7 @@ contains the json for the search hits.
             "resource": {
                 "a" : "b"
             },
-            "@id": "/period/T7UlxIk8miMQ",
+            "@id": "/typename/T7UlxIk8miMQ",
             "version": 2,
             "created": {
                 "user": "karl",
@@ -360,7 +360,7 @@ contains the json for the search hits.
             "resource": {
                 "a" : "d"
             },
-            "@id": "/period/MG6UPjCMKmk",
+            "@id": "/typename/MG6UPjCMKmk",
             "version": 1,
             "created": {
                 "user": "ove",
