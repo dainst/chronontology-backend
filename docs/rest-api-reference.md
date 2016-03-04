@@ -305,7 +305,7 @@ GET /period/?q=a:b
 The query params get simply handed over to elasticsearch.
 
 ***Second*** there are query params which
-are natively into the application. 
+are built in natively into the application. 
 
 The currently built in query params are ***size*** and ***offset***, which are
 typically used for pagination. You can use one or both of them together like in
