@@ -15,6 +15,7 @@ import java.io.IOException;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
+// TODO remove duplication by factoring out method from similar code blocks
 /**
  * NOTE that here we test both functionality of {@link Dispatcher}
  * as well as of {@link SimpleDispatcher}.

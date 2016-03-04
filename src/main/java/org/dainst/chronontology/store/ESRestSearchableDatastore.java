@@ -77,11 +77,7 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
     private Results makeResults(ArrayNode searchHits) {
         Results results = new Results("results");
         for (JsonNode o:searchHits) {
-            try {
-                results.add(o.get("_source"));
-            } catch (JsonProcessingException e) {
-                return null;
-            }
+            results.add(o.get("_source"));
         }
         return results;
     }

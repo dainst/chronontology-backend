@@ -17,12 +17,9 @@ public class ServerStatusIntegrationTest extends IntegrationTest {
 
     private JsonNode dataStoresJson(String status) {
         Results datastores = new Results("datastores");
-        try {
-            datastores.add(json("{ \"type\" : \"main\", \"status\" : \""+ Constants.DATASTORE_STATUS_OK+"\" }"));
-            datastores.add(json("{ \"type\" : \"connect\", \"status\" : \""+status+"\" }"));
-            return datastores.j();
-        } catch (IOException e) {}
-        return null;
+        datastores.add(json("{ \"type\" : \"main\", \"status\" : \""+ Constants.DATASTORE_STATUS_OK+"\" }"));
+        datastores.add(json("{ \"type\" : \"connect\", \"status\" : \""+status+"\" }"));
+        return datastores.j();
     }
 
     @Test

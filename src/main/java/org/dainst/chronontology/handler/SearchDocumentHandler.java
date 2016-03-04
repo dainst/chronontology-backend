@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Daniel M. de Oliveira
@@ -27,9 +29,27 @@ public class SearchDocumentHandler extends DocumentHandler {
             final Request req,
             final Response res) throws IOException {
 
-        Results results= dispatcher.dispatchSearch(req.pathInfo(),req.queryString());
+        String queryString= req.queryString();
+        Integer size= null;
+        if (queryString!=null) {
+            Matcher m = Pattern.compile("([&|?]size=\\d+)").matcher(queryString);
+            while (m.find()) {
+                String s = m.group(1);
+                size = Integer.parseInt(s.split("=")[1]);
+                queryString = queryString.replace(s, "");
+            }
+        }
+        Results results= dispatcher.dispatchSearch(req.pathInfo(),queryString);
         removeNodes(results, indicesToRemove(req, results));
+        trimToSize(results,size);
         return results;
+    }
+
+    private void trimToSize(Results results, Integer size) {
+        if (size==null) return;
+        for (int i=results.getAll().size()-1;i>0;i--) {
+            if (i>=size) results.remove(i);
+        }
     }
 
     private void removeNodes(Results r, List<Integer> indicesToRemove) {

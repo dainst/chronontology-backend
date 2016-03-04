@@ -26,8 +26,7 @@ public class Results {
         return (ArrayNode) json.get(this.arrayName);
     }
 
-    public Results add(final JsonNode jsonToAdd)
-            throws JsonProcessingException {
+    public Results add(final JsonNode jsonToAdd) {
         ArrayNode data=(ArrayNode) json.get(this.arrayName);
         data.add(jsonToAdd);
         return this;

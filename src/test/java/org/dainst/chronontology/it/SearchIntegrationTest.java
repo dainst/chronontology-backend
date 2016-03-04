@@ -1,27 +1,18 @@
 package org.dainst.chronontology.it;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import org.dainst.chronontology.JsonTestUtils;
-import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.handler.model.Document;
-import org.dainst.chronontology.handler.model.Results;
-import org.json.JSONException;
-import org.skyscreamer.jsonassert.JSONCompare;
-import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.skyscreamer.jsonassert.JSONCompareResult;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import static org.dainst.chronontology.JsonTestUtils.*;
+import static org.dainst.chronontology.JsonTestUtils.assertResultsAreFound;
+import static org.dainst.chronontology.JsonTestUtils.sampleDocument;
 import static org.dainst.chronontology.it.ESClientTestUtil.refreshES;
-import static org.dainst.chronontology.util.JsonUtils.json;
-import static org.testng.Assert.fail;
 
+
+// TODO factor out some tests to become unit tests
 /**
  * @author Daniel M. de Oliveira
  */
@@ -100,18 +91,19 @@ public class SearchIntegrationTest extends IntegrationTest {
                 ,new ArrayList<String>());
     }
 
-//    @Test
-//    public void restrictedSizeSearchWithDatasets() throws IOException, InterruptedException {
-//
-//        // TODO make sure elasticsearch sort order returns these objects first
-//        client.post(TYPE_ROUTE, sampleDocument("a",null,"ds1"));
-//        client.post(TYPE_ROUTE, sampleDocument("a",null,"ds1"));
-//        client.post(TYPE_ROUTE, sampleDocument("a",null,"ds1"));
-//        List<String> ids= postSampleData("a","a","a");
-//
-//        client.authenticate(null,null);
-//        assertResultsAreFound(client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=3"),ids);
-//    }
+    @Test
+    public void restrictedSizeSearchWithDatasets() throws IOException, InterruptedException {
+
+        // TODO make sure elasticsearch sort order returns these objects first
+        client.post(TYPE_ROUTE, sampleDocument("a",null,"ds1"));
+        client.post(TYPE_ROUTE, sampleDocument("a",null,"ds1"));
+        client.post(TYPE_ROUTE, sampleDocument("a",null,"ds1"));
+        refreshES();
+        List<String> ids= postSampleData("a","a","a");
+
+        client.authenticate(null,null);
+        assertResultsAreFound(client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=3"),ids);
+    }
 
 
 }

@@ -83,11 +83,7 @@ public class JsonTestUtils {
 
         Results expected= new Results("results");
         for (String id:ids) {
-            try {
-                expected.add(json("{\""+Document.ID+"\" : \""+id+"\"}"));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
-            }
+            expected.add(json("{\""+Document.ID+"\" : \""+id+"\"}"));
         }
 
         try {
