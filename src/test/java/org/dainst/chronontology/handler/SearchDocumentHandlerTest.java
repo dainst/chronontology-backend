@@ -45,7 +45,7 @@ public class SearchDocumentHandlerTest {
 
         JsonTestUtils.assertResultsAreFound(
                 ((Results) handler.handle(reqMock,resMock)).j(),
-                Arrays.asList(new String[]{"1","3"}));
+                Arrays.asList("1","3"));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class SearchDocumentHandlerTest {
 
         JsonTestUtils.assertResultsAreFound(
                 ((Results) handler.handle(reqMock,resMock)).j(),
-                Arrays.asList(new String[]{"1","3"}));
+                Arrays.asList("1","3"));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class SearchDocumentHandlerTest {
 
         JsonTestUtils.assertResultsAreFound(
                 ((Results) handler.handle(reqMock,resMock)).j(),
-                Arrays.asList(new String[]{"1","3","5"}));
+                Arrays.asList("1","3","5"));
     }
 
     @Test
@@ -75,7 +75,7 @@ public class SearchDocumentHandlerTest {
 
         JsonTestUtils.assertResultsAreFound(
                 ((Results) handler.handle(reqMock,resMock)).j(),
-                Arrays.asList(new String[]{"1","3","5"}));
+                Arrays.asList("1","3","5"));
     }
 
     @Test
@@ -85,7 +85,7 @@ public class SearchDocumentHandlerTest {
 
         JsonTestUtils.assertResultsAreFound(
                 ((Results) handler.handle(reqMock,resMock)).j(),
-                Arrays.asList(new String[]{"1","3","5"}));
+                Arrays.asList("1","3","5"));
     }
 
     @Test
