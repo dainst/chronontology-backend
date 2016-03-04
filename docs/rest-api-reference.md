@@ -91,7 +91,7 @@ the created element, if successful. It is the same
 as the @id field of the response body. It will be a string like
 
 ```
-/period/T7UlxIk8miMQ
+/typename/T7UlxIk8miMQ
 ```  
   
 It contains both the type name as well as a 
@@ -272,7 +272,7 @@ Performs a search over all documents of the :typeName bucket.
 The simplest version, which returns all documents, looks like this
 
 ```
-GET /period/
+GET /typename/
 ```
 
 However due to potentially large result sets, one can and should narrow
@@ -293,7 +293,7 @@ A simple example can be
 Simple examples are 
 
 ```
-GET /period/?q=*
+GET /typename/?q=*
 ```
 
 and
@@ -311,7 +311,7 @@ The currently built in query params are ***size*** and ***offset***, which are
 typically used for pagination. You can use one or both of them together like in
 
 ```
-GET /typeName/?size=10&offset=10
+GET /typename/?size=10&offset=10
 ```
 
 This will return the 10 results starting from the 10th result.
@@ -322,7 +322,7 @@ how they work.
 An example a search for combined params is
 
 ```
-GET /period/?q=a:b&size=10
+GET /typename/?q=a:b&size=10
 ```
 
 The build in query params get not handed over to the datastores (elasticsearch for example)
