@@ -34,7 +34,9 @@ assigned to a dataset group, as shown in the example.
 
 ```
 {
-  "a" : "c" 
+  "resource": {
+      "a" : "b"
+      },
   "dataset" : "ds1"
 }
 ```
@@ -49,7 +51,9 @@ a certain identifier.
 
 ```
 {
-  "a" : "c" 
+  "resource": {
+      "a" : "b"
+  },
   "dataset" : "ds1"
 }
 ```
@@ -64,7 +68,9 @@ When used to update an existing document, the user must have been granted
 
 ```
 {
-  "a" : "c" 
+  "resource": {
+      "a" : "b"
+  },
   "dataset" : "ds1"
 }
 ```
@@ -74,7 +80,9 @@ assigned dataset group.
 
 ```
 {
-  "a" : "c" 
+  "resource": {
+      "a" : "b"
+  },
 }
 ```
 
@@ -83,7 +91,9 @@ is assigned to an existing dataset group, like
  
 ```
 {
-    "a" : "c" 
+    "resource": {
+        "a" : "b"
+    },
     "dataset" : "ds0"
 }
 ```
@@ -99,7 +109,9 @@ A document
 
 ```
 {
-    "a" : "c" 
+    "resource": {
+        "a" : "b"
+    },
     "dataset" : "ds1"
 }
 ```
@@ -116,12 +128,16 @@ For example a search for all documents, where all documents are the following tw
 
 ```
 {
-    "a" : "c" 
+    "resource": {
+        "a" : "b"
+    },
     "dataset" : "ds1"
 }
 
 {
-    "a" : "c" 
+    "resource": {
+        "a" : "c"
+    },
 }
 ```
 

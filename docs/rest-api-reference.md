@@ -9,13 +9,48 @@ management](dataset-management.md) with the connected backend.
 ## POST /:typeName/
 
 Post json to store a a document of type :typeName.
-The request body must be valid JSON. For example
+The request body must be valid JSON and should contain
+at least a **resource** field. For example
 
 ```
 {
-  "a" : "c" 
+  "resource" : "c" 
 }
 ```
+
+or 
+
+```
+{
+  "resource" : {
+    "a" : "b"
+  } 
+}
+```
+
+The ***resource*** field is meant to contain the 
+resources content as specified by a client.
+ 
+**Note** that, with the exception of the ***resource*** and ***dataset*** fields,
+
+as in
+
+
+```
+{
+  "resource" : {
+    "a" : "b"
+  } 
+  "dataset" : "dataset1"
+}
+```
+
+(see for [dataset management](dataset-management.md)),
+
+
+connected-backend
+not only ignores all other fields of the incoming JSON, but also removes them before
+storing the documents.
 
 ### Response body
 
@@ -25,7 +60,9 @@ and will look something like this:
 
 ```
 {
-   "a": "c",
+   "resource": {
+       "a" : "b"
+   },
    "@id": "/period/T7UlxIk8miMQ",
    "version": 1,
    "created": {
@@ -79,7 +116,7 @@ be valid JSON, for example:
 
 ```
 {
-  "a" : "d" 
+  "resource" : { "a" : "b" } 
 }
 ```
 
@@ -87,7 +124,7 @@ be valid JSON, for example:
 
 ```
 {
-    "a": "d",
+    "resource": { "a" : "b" },
     "@id": "/period/T7UlxIk8miMQ",
     "version": 2,
     "created": {
@@ -162,7 +199,9 @@ Get json stored for type with name :typeName and id :id.
 
 ```
 {
-    "a": "d",            <= CAN BE MORE THAN THIS
+    "resource": {
+        "a" : "b"
+    },           
     "@id": "/period/T7UlxIk8miMQ",
     "version": 2,
     "created": {
@@ -200,7 +239,9 @@ This works for connected mode and is ignored in single mode.
 
 ```
 {
-    "a": "d",           
+    "resource": {
+        "a" : "b"
+    },           
     "@id": "/period/T7UlxIk8miMQ",
     "version": 2,
     "created": {
@@ -256,7 +297,9 @@ contains the json for the search hits.
 {
     "results": [
         {
-            "a": "c",
+            "resource": {
+                "a" : "b"
+            },
             "@id": "/period/T7UlxIk8miMQ",
             "version": 2,
             "created": {
@@ -271,7 +314,9 @@ contains the json for the search hits.
             ]
         },
         {
-            "a": "d",
+            "resource": {
+                "a" : "d"
+            },
             "@id": "/period/MG6UPjCMKmk",
             "version": 1,
             "created": {
