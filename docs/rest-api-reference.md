@@ -265,27 +265,70 @@ This works for connected mode and is ignored in single mode.
 404 if the document was not found.
 ```
 
-## GET /:typeName/:esQueryString
+## GET /:typeName/:queryParams
 
-Performs a search specified by :esQueryString 
-over the documents of the type named :typeName.
-
-
-An example could be
-
-```
-GET /period/?q=*
-```
-
-The simplest version looks like this
+Performs a search over all documents of the :typeName bucket.
+ 
+The simplest version, which returns all documents, looks like this
 
 ```
 GET /period/
 ```
 
+However due to potentially large result sets, one can and should narrow
+down the search with the use of :queryParams. These narrow down the 
+result set.
+
+There are two sorts of query params. 
+
+***First*** there are query params which depend
+on the underlying datastores. Currently these work for elasticsearch
+based searches and are ignored in when elasticsearch is not configured as a datastore.
 The query string gets handed over to elasticsearch, so it 
 should be a valid search string for elasticsearch
 and should **not** include the "_search" prefix but everything after it.
+
+A simple example can be
+
+Simple examples are 
+
+```
+GET /period/?q=*
+```
+
+and
+
+```
+GET /period/?q=a:b
+```
+
+The query params get simply handed over to elasticsearch.
+
+***Second*** there are query params which
+are natively into the application. 
+
+The currently built in query params are ***size*** and ***offset***, which are
+typically used for pagination. You can use one or both of them together like in
+
+```
+GET /typeName/?size=10&offset=10
+```
+
+This will return the 10 results starting from the 10th result.
+
+These parameter can be used in conjunction with the other params, however, is is useful to understand
+how they work. 
+
+An example a search for combined params is
+
+```
+GET /period/?q=a:b&size=10
+```
+
+The build in query params get not handed over to the datastores (elasticsearch for example)
+but are filtered out from the query string in order to apply them to the resultset retrieved
+from the datastore afterwards. That means first all the results matching a:b are retrieved
+and then the size param is applied afterwards to select only the first 10 of them.
 
 ### Response body 
 
