@@ -191,7 +191,7 @@ The response body will look similiar to this:
 404 if Server is running but at least one datastore is not available.
 ```
 
-## GET /:type/:id:queryParams
+## GET /:type/\:id\:queryParams
 
 Get json stored for type with name :type and id :id.
 This is a simple example without :queryParams:
