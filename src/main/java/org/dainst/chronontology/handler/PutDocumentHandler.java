@@ -39,9 +39,7 @@ public class PutDocumentHandler extends DocumentHandler {
                 res.status(HTTP_FORBIDDEN);
                 return json();
             } else {
-                dm.merge(oldDm); // TODO Review neccessary to clarify what
-                // happens if an enriched version gets fetched in connect mode and got merged with the incoming
-                // json. Does the enriched version gets send to the main datastore then?
+                dm.merge(oldDm);
                 status= HTTP_OK;
             }
 
