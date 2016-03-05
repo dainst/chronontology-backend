@@ -17,9 +17,6 @@ import java.io.IOException;
  */
 public class ESRestSearchableDatastore implements SearchableDatastore {
 
-
-    final static Logger logger = Logger.getLogger(ESRestSearchableDatastore.class);
-
     private JsonRestClient client;
 
     private final String indexName;
@@ -35,18 +32,14 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
         this.client= client;
     }
 
-
     /**
      * @param key identifies the item uniquely.
      * @return null if item not found.
-     * @throws IOException
      */
     @Override
     public JsonNode get(final String typeName,final String key) {
         return client.get("/" + indexName+ "/" + typeName + "/" + key).get("_source");
     };
-
-
 
     /**
      * @param queryString an elastic search url query string.
@@ -75,7 +68,7 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
     }
 
     private Results makeResults(ArrayNode searchHits) {
-        Results results = new Results("results");
+        Results results = SearchableDatastore.results();
         for (JsonNode o:searchHits) {
             results.add(o.get("_source"));
         }
@@ -84,16 +77,12 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
 
     @Override
     public boolean isConnected() {
-        if (client.get("/")==null) return false;
-        return true;
+        return (client.get("/")!=null);
     }
-
-
 
     @Override
     public boolean put(final String typeName,final String key,final JsonNode value) {
-        client.post("/" + indexName + "/" + typeName + "/" + key, value);
-        return true; // TODO improve
+        return (client.post("/" + indexName + "/" + typeName + "/" + key, value)!=null);
     }
 
     @Override

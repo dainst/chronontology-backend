@@ -7,6 +7,10 @@ import org.dainst.chronontology.handler.model.Results;
  */
 public interface SearchableDatastore extends Datastore {
 
+    static Results results() {
+        return new Results("results");
+    }
+
     /**
      * Implementations must make sure the search
      * results are returned in the same order every time.
