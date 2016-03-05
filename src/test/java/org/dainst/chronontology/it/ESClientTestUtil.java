@@ -27,23 +27,6 @@ public class ESClientTestUtil {
         return TEST_INDEX;
     }
 
-    private static JsonNode loadTestTypeMapping(String path) {
-        JsonNode n= null;
-        try {
-            String content = new String(Files.readAllBytes(
-                    Paths.get(path)));
-            n= new ObjectMapper().readTree(content);
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        return n;
-    }
-
-    public static void createEsTypeAndMapping() {
-        esClient.put("/"+ TEST_INDEX +"/_mapping/"+ TestConstants.TEST_TYPE,
-                loadTestTypeMapping(TestConstants.TEST_FOLDER+"mapping.json"));
-    }
-
     public static void deleteESTypeAndMapping() {
         esClient.delete("/"+ TEST_INDEX +"/"+TestConstants.TEST_TYPE);
         esClient.delete("/"+ TEST_INDEX +"/"+TestConstants.TEST_TYPE);
