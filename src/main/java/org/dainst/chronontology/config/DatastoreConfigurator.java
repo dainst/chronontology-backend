@@ -13,8 +13,6 @@ import java.io.File;
  */
 public class DatastoreConfigurator implements Configurator<Datastore,DatastoreConfig> {
 
-    final static Logger logger = Logger.getLogger(DatastoreConfigurator.class);
-
     public Datastore configure(DatastoreConfig config) {
 
         if (config.getType().equals(ConfigConstants.DATASTORE_TYPE_ES)) {
@@ -28,11 +26,6 @@ public class DatastoreConfigurator implements Configurator<Datastore,DatastoreCo
     private FileSystemDatastore initDS(DatastoreConfig config) {
 
         String datastorePath= config.getPath();
-
-        if (!(new File(datastorePath).exists())) {
-            logger.error("Creating directory \"" + datastorePath + "\" for usage by main datastore.");
-            new File(datastorePath).mkdirs();
-        }
         return new FileSystemDatastore(datastorePath);
     }
 }

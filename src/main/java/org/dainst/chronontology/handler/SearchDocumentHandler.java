@@ -33,6 +33,7 @@ public class SearchDocumentHandler extends DocumentHandler {
         Integer size= null;
         Integer offset= null;
         if (queryString!=null) {
+            // TODO refactor
             Matcher sizeMatcher = Pattern.compile("([&|?]size=\\d+)").matcher(queryString);
             while (sizeMatcher.find()) {
                 String s = sizeMatcher.group(1);

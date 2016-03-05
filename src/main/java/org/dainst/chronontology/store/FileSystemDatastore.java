@@ -25,7 +25,6 @@ public class FileSystemDatastore implements Datastore {
     private final String baseFolder;
 
     public FileSystemDatastore(String baseFolder) {
-        if (!baseFolder.endsWith("/")) baseFolder+="/";
         this.baseFolder=baseFolder;
     }
 
@@ -40,7 +39,7 @@ public class FileSystemDatastore implements Datastore {
         String content= "";
         try {
             content = new String(Files.readAllBytes(
-                    path(typeName,key)));
+                    filePath(typeName,key)));
         } catch (IOException e) {
             return null;
         }
@@ -54,8 +53,12 @@ public class FileSystemDatastore implements Datastore {
         return n;
     };
 
-    private Path path(final String typeName, final String key) {
-        return Paths.get(baseFolder + typeName + "/" + key + SUFFIX);
+    private Path filePath(final String typeName, final String key) {
+        return Paths.get(dirPath(typeName,key).toString(),"1" + SUFFIX);
+    }
+
+    private Path dirPath(final String typeName,final String key) {
+        return Paths.get(baseFolder,typeName,key);
     }
 
     /**
@@ -69,8 +72,13 @@ public class FileSystemDatastore implements Datastore {
             final String typeName,
             String key,
             JsonNode value) {
+
+        if (!dirPath(typeName,key).toFile().exists()) {
+            dirPath(typeName,key).toFile().mkdirs();
+        }
+
         try {
-            Files.write( path(typeName,key)
+            Files.write( filePath(typeName,key)
                     , value.toString().getBytes());
         } catch (IOException e) {
             logger.error(e.getMessage());

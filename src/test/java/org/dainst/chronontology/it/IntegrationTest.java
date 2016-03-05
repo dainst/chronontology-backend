@@ -1,6 +1,7 @@
 package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.io.FileUtils;
 import org.dainst.chronontology.App;
 import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.config.*;
@@ -16,6 +17,7 @@ import org.testng.annotations.BeforeMethod;
 import spark.Spark;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 
@@ -55,16 +57,9 @@ public abstract class IntegrationTest {
     }
 
     @AfterMethod
-    public void afterMethod() {
-        cleanFileSystemDatastore();
+    public void afterMethod() throws IOException {
         ESClientTestUtil.deleteESTypeAndMapping();
-    }
-
-
-    protected static final void cleanFileSystemDatastore() {
-
-        for (File f : new File(TestConstants.TEST_FOLDER+TestConstants.TEST_TYPE).listFiles())
-            if (f.getName().endsWith(".txt")) f.delete();
+        FileUtils.deleteDirectory(new File("src/test/resources/period"));
     }
 
 

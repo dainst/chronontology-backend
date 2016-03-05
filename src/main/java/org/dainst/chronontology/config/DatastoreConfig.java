@@ -2,6 +2,7 @@ package org.dainst.chronontology.config;
 
 import org.dainst.chronontology.Constants;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
 

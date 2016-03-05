@@ -33,6 +33,7 @@ public class JsonTestUtils {
         }
     }
 
+    // TODO rename to sampleresource
     public static JsonNode sampleDocument(final String sampleFieldValue) {
         return sampleDocument(sampleFieldValue,null,null);
     }
