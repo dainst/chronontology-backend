@@ -42,12 +42,7 @@ public class DispatcherConfig extends Config {
         return allViolations;
     }
 
-    private boolean esConfigsClash() {
-        // TODO implement equals
-        return ((datastoreConfigs[0].getType().equals(datastoreConfigs[1].getType()))
-                && (datastoreConfigs[0].getUrl().equals(datastoreConfigs[1].getUrl()))
-                && (datastoreConfigs[0].getIndexName().equals(datastoreConfigs[1].getIndexName())));
-    }
+
 
     private void validateDatastore(Integer nr) {
         datastoreConfigs[nr]= new DatastoreConfig(nr.toString());
@@ -63,7 +58,8 @@ public class DispatcherConfig extends Config {
 
         if (!useIt.equals("false")) {
             validateDatastore(1);
-            if (esConfigsClash()) throw new ConfigValidationException(MSG_ES_CLASH);
+            if (datastoreConfigs[0].equals(datastoreConfigs[1]))
+                throw new ConfigValidationException(MSG_ES_CLASH);
         } else
             useConnect= false;
     }

@@ -79,4 +79,14 @@ public class DatastoreConfig extends Config {
     public String getType() {
         return this.type;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (!other.getClass().equals(DatastoreConfig.class)) return false;
+        DatastoreConfig o= (DatastoreConfig) other;
+
+        return ((this.getType().equals(o.getType()))
+                && (this.getUrl().equals(o.getUrl()))
+                && (this.getIndexName().equals(o.getIndexName())));
+    }
 }
