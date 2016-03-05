@@ -22,7 +22,7 @@ import java.util.Comparator;
  *
  * @author Daniel M. de Oliveira
  */
-public class FileSystemDatastore implements Datastore {
+public class FileSystemDatastore implements VersionedDatastore {
 
     final static Logger logger = Logger.getLogger(FileSystemDatastore.class);
 
@@ -33,15 +33,11 @@ public class FileSystemDatastore implements Datastore {
         this.baseFolder=baseFolder;
     }
 
-    /**
-     * @param key
-     * @return null if there exists no item for key.
-     */
-    public JsonNode get(
-            final String typeName,
-            final String key) {
 
-        File dir= dirPath(typeName,key).toFile();
+    @Override
+    public JsonNode get(String bucket, String key, Integer version) {
+
+        File dir= dirPath(bucket,key).toFile();
         if (!dir.exists()) return null;
         File latest= getLatest(dir);
         if (latest==null) return null;
@@ -49,7 +45,7 @@ public class FileSystemDatastore implements Datastore {
         String content= "";
         try {
             content = new String(Files.readAllBytes(
-                    filePath(typeName,key,latest.getName())));
+                    filePath(bucket,key,latest.getName())));
         } catch (IOException e) {
             logger.error(e.getMessage());
             return null;
@@ -63,6 +59,19 @@ public class FileSystemDatastore implements Datastore {
             return null;
         }
         return n;
+    }
+
+
+    /**
+     * @param key
+     * @return null if there exists no item for key.
+     */
+    @Override
+    public JsonNode get(
+            final String bucket,
+            final String key) {
+
+        return get(bucket,key,null);
     };
 
     private Path filePath(final String typeName, final String key,String filename) {
@@ -158,4 +167,6 @@ public class FileSystemDatastore implements Datastore {
         // This is sufficient for the moment.
         return true;
     }
+
+
 }

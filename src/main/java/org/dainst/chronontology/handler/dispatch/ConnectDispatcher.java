@@ -5,6 +5,7 @@ import org.dainst.chronontology.handler.ServerStatusHandler;
 import org.dainst.chronontology.handler.model.Results;
 import org.dainst.chronontology.store.Datastore;
 import org.dainst.chronontology.store.SearchableDatastore;
+import org.dainst.chronontology.store.VersionedDatastore;
 import spark.Request;
 
 import java.io.IOException;
@@ -20,10 +21,10 @@ import java.io.IOException;
  */
 public class ConnectDispatcher extends Dispatcher {
 
-    protected final Datastore mainDatastore;
+    protected final VersionedDatastore mainDatastore;
     protected final SearchableDatastore connectDatastore;
 
-    public ConnectDispatcher(Datastore mainDatastore, SearchableDatastore connectDatastore) {
+    public ConnectDispatcher(VersionedDatastore mainDatastore, SearchableDatastore connectDatastore) {
         this.mainDatastore= mainDatastore;
         this.connectDatastore= connectDatastore;
     }

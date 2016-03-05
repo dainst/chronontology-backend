@@ -16,7 +16,7 @@ import static org.mockito.Mockito.verify;
  */
 public class SimpleDispatcherStatusCodesTest extends StatusCodesTest {
 
-    private Dispatcher dispatcher = new SimpleDispatcher(mockDS1);
+    private Dispatcher dispatcher = new SimpleDispatcher(mockDS2);
     private PostDocumentHandler postDocumentHandler = new PostDocumentHandler(dispatcher,new RightsValidator());
     private PutDocumentHandler putDocumentHandler = new PutDocumentHandler(dispatcher,new RightsValidator());
 
