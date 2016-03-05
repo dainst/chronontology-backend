@@ -4,6 +4,7 @@ import org.dainst.chronontology.JsonTestUtils;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
 import org.dainst.chronontology.handler.model.Results;
 import org.dainst.chronontology.handler.model.RightsValidator;
+import org.dainst.chronontology.store.SearchableDatastore;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import spark.Request;
@@ -28,7 +29,7 @@ public class SearchDocumentHandlerTest {
 
     @BeforeMethod
     public void before() {
-        Results dispatchResults= new Results("results");
+        Results dispatchResults= SearchableDatastore.results();
         dispatchResults.add(JsonTestUtils.sampleDocument("a","1"));
         dispatchResults.add(JsonTestUtils.sampleDocument("a","2","dataset1"));
         dispatchResults.add(JsonTestUtils.sampleDocument("a","3"));

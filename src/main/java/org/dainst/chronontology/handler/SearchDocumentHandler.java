@@ -1,6 +1,7 @@
 package org.dainst.chronontology.handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.RuntimeJsonMappingException;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
 import org.dainst.chronontology.handler.model.Document;
 import org.dainst.chronontology.handler.model.RightsValidator;
@@ -20,6 +21,8 @@ import java.util.regex.Pattern;
  */
 public class SearchDocumentHandler extends DocumentHandler {
 
+    public static final String COULD_NOT_REMOVE_ELEMENT = "Could not remove element";
+
     public SearchDocumentHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         super(dispatcher,rightsValidator);
     }
@@ -34,7 +37,6 @@ public class SearchDocumentHandler extends DocumentHandler {
         Results results= dispatcher.dispatchSearch(req.pathInfo(),q.queryString);
         removeNodes(results, indicesToRemove(req, results));
 
-
         trimUntilOffset(results,q.offset);
         trimToSize(results,q.size);
         return results;
@@ -43,21 +45,23 @@ public class SearchDocumentHandler extends DocumentHandler {
     private void trimUntilOffset(Results results, Integer offset) {
         if (offset==null) return;
         for (int i=0;i<offset;i++) {
-            results.remove(i);
+            if (!results.remove(i)) throw new RuntimeJsonMappingException(COULD_NOT_REMOVE_ELEMENT);
         }
     }
 
     private void trimToSize(Results results, Integer size) {
         if (size==null) return;
         for (int i=results.getAll().size()-1;i>0;i--) {
-            if (i>=size) results.remove(i);
+            if (i>=size) {
+                if (!results.remove(i)) throw new RuntimeException(COULD_NOT_REMOVE_ELEMENT);
+            }
         }
     }
 
     private void removeNodes(Results r, List<Integer> indicesToRemove) {
-        Collections.reverse(indicesToRemove); // TODO write test
+        Collections.reverse(indicesToRemove);
         for (Integer index:indicesToRemove) {
-            r.remove(index); // TODO check removal
+            if (!r.remove(index)) throw new RuntimeException(COULD_NOT_REMOVE_ELEMENT);
         }
     }
 

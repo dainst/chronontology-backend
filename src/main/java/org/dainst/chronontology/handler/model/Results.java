@@ -32,9 +32,9 @@ public class Results {
         return this;
     }
 
-    public void remove(int index) {
+    public boolean remove(int index) {
         ArrayNode data=(ArrayNode) json.get(this.arrayName);
-        data.remove(index);
+        return (data.remove(index)!=null);
     }
 
     @Override
