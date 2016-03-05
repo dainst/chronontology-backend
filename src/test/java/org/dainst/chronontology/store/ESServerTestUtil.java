@@ -1,14 +1,16 @@
 package org.dainst.chronontology.store;
 
+import org.apache.commons.io.FileUtils;
 import org.dainst.chronontology.TestConstants;
 import org.elasticsearch.common.settings.ImmutableSettings;
 import org.elasticsearch.node.Node;
 
+import java.io.File;
+import java.io.IOException;
+
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 /**
- * TODO clean up test dir after tests
- *
  * @author Daniel M. de Oliveira
  */
 public class ESServerTestUtil {
@@ -39,5 +41,8 @@ public class ESServerTestUtil {
         if (esNode==null) return;
         esNode.close();
         esNode=null;
+        try {
+            FileUtils.deleteDirectory(new File("src/test/resources/test_es_data"));
+        } catch (IOException e) { }
     }
 }
