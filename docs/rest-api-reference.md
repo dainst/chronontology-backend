@@ -6,9 +6,9 @@ is also dedicated document that focuses [dataset based access
 management](dataset-management.md) with the connected backend.
 
 
-## POST /:typeName/
+## POST /:type/
 
-Post json to store a a document of type :typeName.
+Post json to store a a document of type :type.
 The request body must be valid JSON and should contain
 at least a **resource** field. For example
 
@@ -108,7 +108,7 @@ in the rest of the document.
   like missing access to a datastore.
 ```
 
-## PUT /:typeName/:id
+## PUT /:type/:id
 
 Used to update an existing document or to create 
 a document with a pre-determinded id. The request body must
@@ -191,9 +191,34 @@ The response body will look similiar to this:
 404 if Server is running but at least one datastore is not available.
 ```
 
-## GET /:typeName/:id
+## GET /:type/:id:queryParams
 
-Get json stored for type with name :typeName and id :id.
+Get json stored for type with name :type and id :id.
+This is a simple example without :queryParams:
+
+```
+GET /typename/x1Xz
+```
+
+In **connected** mode, there are two possible optional :queryParams.
+These are ignored, if in **single** mode.
+The first query param is **direct**. When used with the value true, as in
+
+```
+GET /typename/x1Xz?direct=true
+```
+
+the document is fetched from the main datastore.
+
+The second query param is **version**, which can be used to fetch a specific version
+of a document, as in
+
+```
+GET /typename/x1Xz?version=2
+```
+
+This specific version of a document gets fetched from the main datastore. The direct param
+gets ignored if ***version*** is used.
 
 ### Response body
 
@@ -225,49 +250,12 @@ additional fields added by the iDAI.connect component.
 ```
 200 if the document has been found.
 403 if there is no permission to see a document which is assigned to a dataset.
-404 if the document was not found.
+404 if the document or the specified version of a document was not found.
 ```
 
-## GET /:typeName/:id?direct=true
+## GET /:type/:queryParams
 
-Get json stored for type with name :typeName and id :id. the json is retrieved from 
-the main storage this time, not from the connected storage.
-
-This works for connected mode and is ignored in single mode.
-
-### Response body
-
-```
-{
-    "resource": {
-        "a" : "b"
-    },           
-    "@id": "/typename/T7UlxIk8miMQ",
-    "version": 2,
-    "created": {
-        "user": "karl",
-        "date": "2016-02-09T10:21:15.721Z"
-    },
-    "modified": [
-        {
-            "user": "karl",
-            "date": "2016-02-09T10:21:15.721Z"
-        }
-    ]
-}
-```
-
-### Status codes:
-
-```
-200 if the document has been found.
-403 if there is no permission to see a document which is assigned to a dataset.
-404 if the document was not found.
-```
-
-## GET /:typeName/:queryParams
-
-Performs a search over all documents of the :typeName bucket.
+Performs a search over all documents of the :type bucket.
  
 The simplest version, which returns all documents, looks like this
 
