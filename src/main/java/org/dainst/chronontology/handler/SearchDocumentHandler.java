@@ -29,30 +29,14 @@ public class SearchDocumentHandler extends DocumentHandler {
             final Request req,
             final Response res) throws IOException {
 
-        String queryString= req.queryString();
-        Integer size= null;
-        Integer offset= null;
-        if (queryString!=null) {
-            // TODO refactor
-            Matcher sizeMatcher = Pattern.compile("([&|?]size=\\d+)").matcher(queryString);
-            while (sizeMatcher.find()) {
-                String s = sizeMatcher.group(1);
-                size = Integer.parseInt(s.split("=")[1]);
-                queryString = queryString.replace(s, "");
-            }
-            Matcher offsetMatcher = Pattern.compile("([&|?]offset=\\d+)").matcher(queryString);
-            while (offsetMatcher.find()) {
-                String s = offsetMatcher.group(1);
-                offset = Integer.parseInt(s.split("=")[1]);
-                queryString = queryString.replace(s, "");
-            }
-        }
-        Results results= dispatcher.dispatchSearch(req.pathInfo(),queryString);
+        Query q = new Query(req.queryString());
+
+        Results results= dispatcher.dispatchSearch(req.pathInfo(),q.queryString);
         removeNodes(results, indicesToRemove(req, results));
 
 
-        trimUntilOffset(results,offset);
-        trimToSize(results,size);
+        trimUntilOffset(results,q.offset);
+        trimToSize(results,q.size);
         return results;
     }
 
@@ -88,5 +72,30 @@ public class SearchDocumentHandler extends DocumentHandler {
             i++;
         }
         return indicesToRemove;
+    }
+
+    private class Query {
+        public String queryString=null;
+        public Integer size= null;
+        public Integer offset= null;
+
+        public Query(String qs) {
+            if (qs!=null) {
+                queryString = qs;
+                size= mod("([&|?]size=\\d+)");
+                offset= mod("([&|?]offset=\\d+)");
+            }
+        }
+
+        private Integer mod(String pattern) {
+            Integer nr= null;
+            Matcher sizeMatcher = Pattern.compile(pattern).matcher(queryString);
+            while (sizeMatcher.find()) {
+                String s = sizeMatcher.group(1);
+                nr = Integer.parseInt(s.split("=")[1]);
+                queryString = queryString.replace(s, "");
+            }
+            return nr;
+        }
     }
 }
