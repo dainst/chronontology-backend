@@ -25,7 +25,7 @@ public class SimpleDispatcher extends Dispatcher {
     }
 
     @Override
-    public JsonNode dispatchGet(String bucket, String key) {
+    public JsonNode dispatchGet(final String bucket, final String key) {
         return datastore.get(bucket,key);
     }
 
@@ -35,22 +35,25 @@ public class SimpleDispatcher extends Dispatcher {
     }
 
     @Override
-    public boolean dispatchPost(String bucket, String key, JsonNode value) {
+    public boolean dispatchPost(final String bucket, final String key, final JsonNode value) {
         return datastore.put(bucket,key, value);
     }
 
     @Override
-    public boolean dispatchPut(String bucket, String key, JsonNode value) {
+    public boolean dispatchPut(final String bucket, final String key, final JsonNode value) {
         return datastore.put(bucket,key, value);
     }
 
     @Override
-    public JsonNode dispatchGet(String bucket, String key, Request req) {
-        return datastore.get(bucket,key);
+    public JsonNode dispatchGet(final String bucket, final String key,
+                                final Boolean direct, // ignored
+                                final Integer version
+        ) {
+        return dispatchGet(bucket,key);
     }
 
     @Override
-    public Results dispatchSearch(String bucket, String query) {
+    public Results dispatchSearch(final String bucket, final String query) {
         return datastore.search( bucket, query );
     }
 }

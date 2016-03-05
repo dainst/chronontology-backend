@@ -39,13 +39,21 @@ public class FileSystemDatastore implements VersionedDatastore {
 
         File dir= dirPath(bucket,key).toFile();
         if (!dir.exists()) return null;
-        File latest= getLatest(dir);
-        if (latest==null) return null;
+
+
+        File fileToRetrieve= null;
+        if (version==null) {
+            fileToRetrieve= getLatest(dir);
+            if (fileToRetrieve == null) return null;
+        } else {
+            fileToRetrieve=new File(version+EXT);
+        }
+
 
         String content= "";
         try {
             content = new String(Files.readAllBytes(
-                    filePath(bucket,key,latest.getName())));
+                    filePath(bucket,key,fileToRetrieve.getName())));
         } catch (IOException e) {
             logger.error(e.getMessage());
             return null;

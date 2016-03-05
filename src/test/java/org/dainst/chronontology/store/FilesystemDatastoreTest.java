@@ -64,4 +64,24 @@ public class FilesystemDatastoreTest {
     public void notexistingDir() throws IOException {
         assertEquals(store.get(TYPE_NAME,"a"), null);
     }
+
+    @Test
+    public void getSpecificVersions() throws IOException {
+        store.put(TYPE_NAME,"a", JsonTestUtils.sampleDocument("1"));
+        store.put(TYPE_NAME,"a", JsonTestUtils.sampleDocument("2"));
+        JsonTestUtils.jsonAssertEquals(
+                store.get(TYPE_NAME,"a",1),
+                JsonTestUtils.sampleDocument("1"));
+        JsonTestUtils.jsonAssertEquals(
+                store.get(TYPE_NAME,"a",2),
+                JsonTestUtils.sampleDocument("2"));
+    }
+
+    @Test
+    public void specificVersionDoesNotExist() throws IOException {
+        store.put(TYPE_NAME,"a", JsonTestUtils.sampleDocument("1"));
+        assertEquals(
+                store.get(TYPE_NAME,"a",2),
+                null);
+    }
 }

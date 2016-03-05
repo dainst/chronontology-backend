@@ -30,8 +30,8 @@ public class ConnectDispatcher extends Dispatcher {
     }
 
     @Override
-    public JsonNode dispatchGet(String bucket, String key) {
-        return mainDatastore.get(bucket,key);
+    public JsonNode dispatchGet(final String bucket, final String key) {
+        return dispatchGet(bucket,key,true,null);
     }
 
     @Override
@@ -41,32 +41,37 @@ public class ConnectDispatcher extends Dispatcher {
     }
 
     @Override
-    public boolean dispatchPost(String bucket, String key, JsonNode value) {
+    public boolean dispatchPost(final String bucket, final String key, final JsonNode value) {
         return (mainDatastore.put(bucket,key, value) & connectDatastore.put(bucket,key, value));
     }
 
     @Override
-    public boolean dispatchPut(String bucket, String key, JsonNode value) {
+    public boolean dispatchPut(final String bucket, final String key, final JsonNode value) {
         return (mainDatastore.put(bucket,key, value) && connectDatastore.put(bucket,key, value));
     }
 
     @Override
-    public JsonNode dispatchGet(String bucket, String key, Request req) {
-        JsonNode result= shouldBeDirect(req.queryParams("direct"))
+    public JsonNode dispatchGet(
+            final String bucket,
+            final String key,
+            final Boolean direct,
+            final Integer version) {
+
+        if (version!=null)
+            return mainDatastore.get(bucket,key,version);
+
+        JsonNode result= direct
                 ? mainDatastore.get(bucket,key)
                 : connectDatastore.get(bucket,key);
         return result;
     }
 
     @Override
-    public Results dispatchSearch(String bucket, String query) {
+    public Results dispatchSearch(final String bucket, final String query) {
         return connectDatastore.search( bucket, query );
     }
 
-    private boolean shouldBeDirect(final String directParam) {
-        return (directParam!=null&&
-                directParam.equals("true"));
-    }
+
 
     public Datastore[] getDatatores() {
         Datastore[] datastores= new Datastore[2];

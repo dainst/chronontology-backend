@@ -26,7 +26,7 @@ public class GetDocumentHandler extends DocumentHandler {
             final Request req,
             final Response res) throws IOException {
 
-        Document result= Document.from(dispatcher.dispatchGet(type(req), simpleId(req),req));
+        Document result= Document.from(dispatcher.dispatchGet(type(req), simpleId(req),shouldBeDirect(req),version(req)));
         if (result==null){
             res.status(HTTP_NOT_FOUND);
             return "";
@@ -36,6 +36,20 @@ public class GetDocumentHandler extends DocumentHandler {
             return JsonUtils.json();
         }
         return result;
+    }
+
+    private Integer version(Request req) {
+        if (req.queryParams("version")==null) return null;
+        try {
+            return Integer.parseInt(req.queryParams("version"));
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    private boolean shouldBeDirect(Request req) {
+        return (req.queryParams("direct")!=null&&
+                req.queryParams("direct").equals("true"));
     }
 
 }

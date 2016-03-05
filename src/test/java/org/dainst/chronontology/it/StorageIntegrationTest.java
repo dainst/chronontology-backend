@@ -101,6 +101,21 @@ public class StorageIntegrationTest extends IntegrationTest {
     }
 
     @Test
+    public void fetchSpecificVersions() throws IOException {
+
+        mainDatastore.put(TestConstants.TEST_TYPE,"1", sampleDocument("a","1"));
+        mainDatastore.put(TestConstants.TEST_TYPE,"1", sampleDocument("b","1"));
+
+        jsonAssertEquals(
+                client.get(TYPE_ROUTE+"1" + "?version=1"),
+                JsonTestUtils.sampleDocument("a"));
+        jsonAssertEquals(
+                client.get(TYPE_ROUTE+"1" + "?version=2"),
+                JsonTestUtils.sampleDocument("b"));
+    }
+
+
+    @Test
     public void respondWithEnrichedJSONonPost() throws IOException, JSONException {
         JsonNode n= client.post(TYPE_ROUTE, JsonTestUtils.sampleDocument("b"));
         String id= idOf(n);
