@@ -4,15 +4,14 @@
 
 The connected backend can operate in two modes.
 
-In **connect** mode there are two datastores. The first datastore (id "0") is the connect datastore,
-where data get send to to get enriched by the yet to be implemented connect component. 
-The second one (id "1") is the main datastore where the original data get stored.
-In **single** mode there is only one datastore (id "0"). 
+In **single** mode there is one datastore (id "0"), which is of type **elasticsearch**.
 
-
-A datastore with the id 0 is of type elasticsearch in any case.
-A additonal datastore with the id 1 in **connect**-mode 
-can be either of type "filesystem" or of type "elasticsearch".
+In **connect** mode there are two datastores. The first datastore (id "0") is the **connect** 
+datastore, where data get send to to get enriched by the yet to be implemented connect component. 
+The second one (id "1") is the **main** datastore where the original data get stored. In addition
+to that that ***main*** datastore is versioned so that it holds old versions of documents.
+The ***main*** datastore must be of type **filesystem** while the ***connect*** datastore must be
+of type ***elasticsearch***.
 
 The "connect" mode is default but can be turned off with using the property
 
@@ -88,7 +87,7 @@ lean configurations.
 ### Connect mode
 
 According to the defaulting rules as described in the paragraphs above 
-the simplest possible configuration for connect mode would either be
+the simplest possible configuration for connect mode would be
 
 ```
 datastores.1.type=filesystem
@@ -103,24 +102,6 @@ datastores.0.indexName=connect
 datastores.0.url=http://localhost:9202
 datastores.1.type=filesystem
 datastores.1.path=datastore/
-```
-
-or be
-
-```
-datastores.1.indexName=main
-```
-
-which equals 
-
-```
-useConnect=true
-datastores.0.type=elasticsearch
-datastores.0.indexName=connect
-datastores.0.url=http://localhost:9202
-datastores.1.type=elasticsearch
-datastores.1.indexName=main
-datastores.1.url=http://localhost:9202
 ```
 
 ### Single mode

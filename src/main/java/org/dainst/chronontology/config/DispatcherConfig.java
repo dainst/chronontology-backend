@@ -13,6 +13,9 @@ public class DispatcherConfig extends Config {
 
     static final String MSG_MUST_TYPE_ES= "datastores.0 must be of type \""+
         ConfigConstants.DATASTORE_TYPE_ES+"\".";
+    static final String MSG_MUST_TYPE_FS= "datastores.1 must be of type \""+
+            ConfigConstants.DATASTORE_TYPE_FS+"\".";
+
     static final String MSG_ES_CLASH= "When both datastores use the same elasticsearch url, the index names must be different.";
 
     private DatastoreConfig[] datastoreConfigs = new DatastoreConfig[2];
@@ -58,8 +61,8 @@ public class DispatcherConfig extends Config {
 
         if (!useIt.equals("false")) {
             validateDatastore(1);
-            if (datastoreConfigs[0].equals(datastoreConfigs[1]))
-                throw new ConfigValidationException(MSG_ES_CLASH);
+            if (!datastoreConfigs[1].getType().equals(ConfigConstants.DATASTORE_TYPE_FS))
+                throw new ConfigValidationException(MSG_MUST_TYPE_FS);
         } else
             useConnect= false;
     }

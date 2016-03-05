@@ -62,30 +62,34 @@ public class DispatcherConfigTest {
         assertEquals(dispatcherConfig.getDatastoreConfigs()[0].getUrl(), ConfigConstants.EMBEDDED_ES_URL);
     }
 
-    @Test
-    public void twoEShaveSameUrlIndexName() {
-        props.put("useConnect","true");
-        props.put("datastores.0.indexName","index");
-        props.put("datastores.0.url","http://localhost:9200");
-        props.put("datastores.1.indexName","index");
-        props.put("datastores.1.url","http://localhost:9200");
 
-        assertFalse(dispatcherConfig.validate(props));
-        assertTrue(dispatcherConfig.getConstraintViolations().contains(
-                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ DispatcherConfig.MSG_ES_CLASH));
-    }
+//    Currently this scenario is not possible since in connect mode
+//    ds0 has to be es and ds1 has to be fs.
 
-    @Test
-    public void twoEShaveSameUrlButDifferentIndexName() {
-        props.put("useConnect","true");
-        props.put("datastores.0.indexName","index1");
-        props.put("datastores.0.url","http://localhost:9200");
-        props.put("datastores.1.indexName","index2");
-        props.put("datastores.1.url","http://localhost:9200");
-
-        assertTrue(dispatcherConfig.validate(props));
-        assertTrue(dispatcherConfig.getConstraintViolations().isEmpty());
-    }
+//    @Test
+//    public void twoEShaveSameUrlIndexName() {
+//        props.put("useConnect","true");
+//        props.put("datastores.0.indexName","index");
+//        props.put("datastores.0.url","http://localhost:9200");
+//        props.put("datastores.1.indexName","index");
+//        props.put("datastores.1.url","http://localhost:9200");
+//
+//        assertFalse(dispatcherConfig.validate(props));
+//        assertTrue(dispatcherConfig.getConstraintViolations().contains(
+//                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ DispatcherConfig.MSG_ES_CLASH));
+//    }
+//
+//    @Test
+//    public void twoEShaveSameUrlButDifferentIndexName() {
+//        props.put("useConnect","true");
+//        props.put("datastores.0.indexName","index1");
+//        props.put("datastores.0.url","http://localhost:9200");
+//        props.put("datastores.1.indexName","index2");
+//        props.put("datastores.1.url","http://localhost:9200");
+//
+//        assertTrue(dispatcherConfig.validate(props));
+//        assertTrue(dispatcherConfig.getConstraintViolations().isEmpty());
+//    }
 
 
     @Test
@@ -100,11 +104,19 @@ public class DispatcherConfigTest {
 
     @Test
     public void datastore0isNotES_connect() {
-        props.put("datastores.0.type","filesystem");
+        props.put("datastores.0.type",ConfigConstants.DATASTORE_TYPE_FS);
 
         assertFalse(dispatcherConfig.validate(props));
         assertTrue(dispatcherConfig.getConstraintViolations().contains(
                 ConfigConstants.MSG_CONSTRAINT_VIOLATION+ DispatcherConfig.MSG_MUST_TYPE_ES));
+    }
+
+    @Test
+    public void datastore1isNotFS_connect() {
+
+        assertFalse(dispatcherConfig.validate(props));
+        assertTrue(dispatcherConfig.getConstraintViolations().contains(
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ DispatcherConfig.MSG_MUST_TYPE_FS));
     }
 
 }
