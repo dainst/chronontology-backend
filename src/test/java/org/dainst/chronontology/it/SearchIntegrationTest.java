@@ -14,7 +14,6 @@ import static org.dainst.chronontology.it.ESClientTestUtil.refreshES;
 
 import static org.testng.Assert.assertEquals;
 
-// TODO factor out some tests to become unit tests
 /**
  * @author Daniel M. de Oliveira
  */
@@ -98,7 +97,6 @@ public class SearchIntegrationTest extends IntegrationTest {
     @Test
     public void restrictedSizeSearchWithDatasets() throws IOException, InterruptedException {
 
-        // TODO make sure elasticsearch sort order returns these objects first
         postSampleData("ds1","a","a","a");
         List<String> ids= postSampleData(null,"a","a","a");
 
