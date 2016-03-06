@@ -8,6 +8,7 @@ import com.squareup.okhttp.RequestBody;
 import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.dainst.chronontology.store.ESServerTestUtil;
+import org.dainst.chronontology.util.JsonUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -41,5 +42,23 @@ public class ESClientTestUtil {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static JsonNode loadTestTypeMapping(String path) {
+        JsonNode n= null;
+        try {
+            String content = new String(Files.readAllBytes(
+                    Paths.get(path)));
+            n= new ObjectMapper().readTree(content);
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+        return n;
+    }
+
+    public static void createEsTypeAndMapping() {
+        esClient.put("/"+ TEST_INDEX +"/", JsonUtils.json());
+        System.out.println(esClient.put("/"+ TEST_INDEX +"/_mapping/"+ TestConstants.TEST_TYPE,
+                loadTestTypeMapping(TestConstants.TEST_FOLDER+"mapping.json")));
     }
 }

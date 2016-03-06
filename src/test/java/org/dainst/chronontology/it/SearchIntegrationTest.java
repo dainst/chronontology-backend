@@ -31,6 +31,9 @@ public class SearchIntegrationTest extends IntegrationTest {
     @Test
     public void matchQueryTermWithUrlEncodedSlashes() throws IOException, InterruptedException {
 
+        ESClientTestUtil.createEsTypeAndMapping();
+        refreshES();
+
         List<String> ids= postSampleData(null,"/type/1","/type/2");
         ids.remove(1);
 

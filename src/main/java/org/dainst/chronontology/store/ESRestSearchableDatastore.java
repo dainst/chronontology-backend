@@ -3,11 +3,17 @@ package org.dainst.chronontology.store;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.handler.model.Results;
 import org.dainst.chronontology.store.rest.JsonRestClient;
+import org.dainst.chronontology.util.JsonUtils;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -41,6 +47,8 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
         return client.get("/" + indexName+ "/" + typeName + "/" + key).get("_source");
     };
 
+
+
     /**
      * @param queryString an elastic search url query string.
      *                    Should contain the only part after
@@ -55,8 +63,10 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
             final String typeName,
             final String queryString) {
 
-        JsonNode response= client.get("/" + indexName + "/" + typeName + "/_search?" +
-                queryString);
+        JsonNode q= convert(queryString);
+
+        JsonNode response= client.post("/" + indexName + "/" + typeName + "/_search",
+                q);
         if ((response==null)||
                 (response.get("hits")==null)) return null;
 
@@ -88,5 +98,82 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
     @Override
     public void remove(final String typeName, final String key) {
         client.delete("/" + indexName + "/" + typeName + "/" + key);
+    }
+
+    private JsonNode convert(String queryString) {
+        JsonNode j= JsonUtils.json("{\"query\":{\"bool\":{ \"should\":[],\"must_not\":[] }}}");
+
+        if (queryString==null) return j;
+        Query q = new Query(URLDecoder.decode(queryString));
+        queryString= normalize(q.queryString);
+        if (q.size!=null) ((ObjectNode)j).put("size",q.size);
+        if (q.from!=null) ((ObjectNode)j).put("from",q.from);
+
+        Matcher m = Pattern.compile("[A-Za-z0-9:%@]+").matcher(queryString);
+        while (m.find()) {
+            String s = m.group();
+            array(j,"should").add(boolTerm(s.replace("%","/")));
+        }
+        return j;
+    }
+
+    private class Query {
+        public String queryString=null;
+        public Integer size= null;
+        public Integer from= null;
+
+        public Query(String qs) {
+            if (qs!=null) {
+                queryString = qs;
+                size= mod("([&|?]size=\\d+)");
+                from= mod("([&|?]from=\\d+)");
+            }
+        }
+
+        private Integer mod(String pattern) {
+            Integer nr= null;
+            Matcher sizeMatcher = Pattern.compile(pattern).matcher(queryString);
+            while (sizeMatcher.find()) {
+                String s = sizeMatcher.group(1);
+                nr = Integer.parseInt(s.split("=")[1]);
+                queryString = queryString.replace(s, "");
+            }
+            return nr;
+        }
+    }
+
+    private ArrayNode array(JsonNode n,String predicate) {
+        return (ArrayNode) n.get("query").get("bool").get(predicate);
+    }
+
+    private JsonNode boolTerm(String pair) {
+        String field="";
+        String value="";
+        if (pair.split(":").length<2) {
+            field="_all";
+            value=pair;
+        } else {
+            field= pair.split(":")[0];
+            value= pair.split(":")[1];
+        }
+        return JsonUtils.json("{ \"term\" : {\""+field+"\" : \""+value+"\"} }");
+    }
+
+    private String normalize(String s) {
+        String q= s+" ";
+        q=q.replace("\"","");
+        q=q.replaceAll("/","%");
+        q=q.replaceFirst("q="," ");
+        q=q.replaceAll("&"," ");
+        q=q.replaceAll("\\?"," ");
+        return q;
+    }
+
+    private JsonNode exclude(JsonNode n,List<String> excludes) {
+        ArrayNode b= array(n,"must_not");
+        for (String e:excludes) {
+            b.add(boolTerm(e));
+        }
+        return n;
     }
 }
