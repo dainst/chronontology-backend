@@ -3,7 +3,6 @@ package org.dainst.chronontology.store;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.filefilter.FileFileFilter;
 import org.apache.log4j.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -22,19 +21,18 @@ import java.util.Comparator;
  *
  * @author Daniel M. de Oliveira
  */
-public class FileSystemDatastore implements VersionedDatastore {
+public class FilesystemDatastore implements Datastore {
 
-    final static Logger logger = Logger.getLogger(FileSystemDatastore.class);
+    final static Logger logger = Logger.getLogger(FilesystemDatastore.class);
 
     private static final String EXT = ".txt";
     private final String baseFolder;
 
-    public FileSystemDatastore(String baseFolder) {
+    public FilesystemDatastore(String baseFolder) {
         this.baseFolder=baseFolder;
     }
 
 
-    @Override
     public JsonNode get(String bucket, String key, Integer version) {
 
         File dir= dirPath(bucket,key).toFile();

@@ -4,9 +4,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.handler.ServerStatusHandler;
 import org.dainst.chronontology.handler.model.Results;
 import org.dainst.chronontology.store.Datastore;
-import org.dainst.chronontology.store.SearchableDatastore;
-import org.dainst.chronontology.store.VersionedDatastore;
-import spark.Request;
+import org.dainst.chronontology.store.ElasticsearchDatastore;
+import org.dainst.chronontology.store.FilesystemDatastore;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,10 +21,10 @@ import java.util.List;
  */
 public class ConnectDispatcher extends Dispatcher {
 
-    protected final VersionedDatastore mainDatastore;
-    protected final SearchableDatastore connectDatastore;
+    protected final FilesystemDatastore mainDatastore;
+    protected final ElasticsearchDatastore connectDatastore;
 
-    public ConnectDispatcher(VersionedDatastore mainDatastore, SearchableDatastore connectDatastore) {
+    public ConnectDispatcher(FilesystemDatastore mainDatastore, ElasticsearchDatastore connectDatastore) {
         this.mainDatastore= mainDatastore;
         this.connectDatastore= connectDatastore;
     }

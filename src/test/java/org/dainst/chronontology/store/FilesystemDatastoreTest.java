@@ -1,10 +1,7 @@
 package org.dainst.chronontology.store;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
 import org.dainst.chronontology.JsonTestUtils;
-import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.Test;
 
@@ -20,7 +17,7 @@ public class FilesystemDatastoreTest {
 
     private static final String TYPE_NAME= "typename";
     private static final String BASE_FOLDER = "src/test/resources/datastoretest/";
-    private static final FileSystemDatastore store = new FileSystemDatastore(BASE_FOLDER);
+    private static final FilesystemDatastore store = new FilesystemDatastore(BASE_FOLDER);
 
     @AfterMethod
     public static void after() throws IOException {

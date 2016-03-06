@@ -7,9 +7,9 @@ import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.config.*;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.dainst.chronontology.handler.dispatch.ConnectDispatcher;
-import org.dainst.chronontology.store.ElasticsearchSearchableDatastore;
+import org.dainst.chronontology.store.ElasticsearchDatastore;
 import org.dainst.chronontology.store.ESServerTestUtil;
-import org.dainst.chronontology.store.FileSystemDatastore;
+import org.dainst.chronontology.store.FilesystemDatastore;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -32,9 +32,9 @@ public abstract class IntegrationTest {
     protected static final JsonRestClient client = new JsonRestClient(TestConstants.SERVER_URL);
 
     // To allow direct data manipulation for testing purposes
-    protected static ElasticsearchSearchableDatastore connectDatastore = null;
+    protected static ElasticsearchDatastore connectDatastore = null;
     // To allow direct data manipulation for testing purposes
-    protected static FileSystemDatastore mainDatastore = null;
+    protected static FilesystemDatastore mainDatastore = null;
 
 
     @BeforeClass
@@ -92,8 +92,8 @@ public abstract class IntegrationTest {
         App app=  new AppConfigurator().configure(makeAppConfig());
         ConnectDispatcher controller= (ConnectDispatcher) app.getController().getDispatcher();
 
-        mainDatastore= (FileSystemDatastore) controller.getDatatores()[1];
-        connectDatastore= (ElasticsearchSearchableDatastore) controller.getDatatores()[0];
+        mainDatastore= (FilesystemDatastore) controller.getDatatores()[1];
+        connectDatastore= (ElasticsearchDatastore) controller.getDatatores()[0];
 
         Thread.sleep(1000);
     }

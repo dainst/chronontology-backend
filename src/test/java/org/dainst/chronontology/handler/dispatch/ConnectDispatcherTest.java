@@ -1,7 +1,7 @@
 package org.dainst.chronontology.handler.dispatch;
 
-import org.dainst.chronontology.store.SearchableDatastore;
-import org.dainst.chronontology.store.VersionedDatastore;
+import org.dainst.chronontology.store.ElasticsearchDatastore;
+import org.dainst.chronontology.store.FilesystemDatastore;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -12,14 +12,14 @@ import static org.mockito.Mockito.*;
  */
 public class ConnectDispatcherTest {
 
-    private VersionedDatastore mockDS1;
-    private SearchableDatastore mockDS2;
+    private FilesystemDatastore mockDS1;
+    private ElasticsearchDatastore mockDS2;
     private ConnectDispatcher disp;
 
     @BeforeMethod
     public void before() {
-        mockDS1= mock(VersionedDatastore.class);
-        mockDS2= mock(SearchableDatastore.class);
+        mockDS1= mock(FilesystemDatastore.class);
+        mockDS2= mock(ElasticsearchDatastore.class);
         disp= new ConnectDispatcher(mockDS1,mockDS2);
     }
 

@@ -1,7 +1,7 @@
 package org.dainst.chronontology.handler;
 
-import org.dainst.chronontology.store.SearchableDatastore;
-import org.dainst.chronontology.store.VersionedDatastore;
+import org.dainst.chronontology.store.ElasticsearchDatastore;
+import org.dainst.chronontology.store.FilesystemDatastore;
 import org.testng.annotations.BeforeMethod;
 import spark.Request;
 import spark.Response;
@@ -21,8 +21,8 @@ public class StatusCodesTest {
     protected Request reqMock;
     protected Response resMock;
 
-    protected final VersionedDatastore mockDS1= mock(VersionedDatastore.class);
-    protected final SearchableDatastore mockDS2= mock(SearchableDatastore.class);
+    protected final FilesystemDatastore mockDS1= mock(FilesystemDatastore.class);
+    protected final ElasticsearchDatastore mockDS2= mock(ElasticsearchDatastore.class);
 
     @BeforeMethod
     public void before() {

@@ -20,12 +20,12 @@ import static org.dainst.chronontology.TestConstants.*;
 /**
  * @author Daniel M. de Oliveira
  */
-public class ElasticsearchSearchableDatastoreTest {
+public class ElasticsearchDatastoreTest {
 
 
     private final JsonRestClient client= new JsonRestClient(ESServerTestUtil.getUrl());
-    private final ElasticsearchSearchableDatastore store=
-            new ElasticsearchSearchableDatastore(client,TEST_INDEX);
+    private final ElasticsearchDatastore store=
+            new ElasticsearchDatastore(client,TEST_INDEX);
 
     private JsonNode sampleJson(final String sampleFieldValue) throws IOException {
         return new ObjectMapper().readTree

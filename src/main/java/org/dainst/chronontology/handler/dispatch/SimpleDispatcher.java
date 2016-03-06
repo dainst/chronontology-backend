@@ -6,8 +6,7 @@ package org.dainst.chronontology.handler.dispatch;
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.handler.ServerStatusHandler;
 import org.dainst.chronontology.handler.model.Results;
-import org.dainst.chronontology.store.SearchableDatastore;
-import spark.Request;
+import org.dainst.chronontology.store.ElasticsearchDatastore;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,9 +18,9 @@ import java.util.List;
  */
 public class SimpleDispatcher extends Dispatcher {
 
-    protected final SearchableDatastore datastore;
+    protected final ElasticsearchDatastore datastore;
 
-    public SimpleDispatcher(SearchableDatastore datastore) {
+    public SimpleDispatcher(ElasticsearchDatastore datastore) {
         this.datastore = datastore;
     }
 

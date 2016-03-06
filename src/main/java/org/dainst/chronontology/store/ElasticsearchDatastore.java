@@ -18,16 +18,16 @@ import java.util.regex.Pattern;
  *
  * @author Daniel M. de Oliveira
  */
-public class ElasticsearchSearchableDatastore implements SearchableDatastore {
+public class ElasticsearchDatastore implements Datastore {
 
     private JsonRestClient client;
 
     private final String indexName;
 
     @SuppressWarnings("unused")
-    private ElasticsearchSearchableDatastore() {indexName=null;};
+    private ElasticsearchDatastore() {indexName=null;};
 
-    public ElasticsearchSearchableDatastore(
+    public ElasticsearchDatastore(
             final JsonRestClient client,
             final String indexName) {
 
@@ -55,7 +55,6 @@ public class ElasticsearchSearchableDatastore implements SearchableDatastore {
      *   The results array can be empty if there where no results.
      *   When errors occur, null gets returned.
      */
-    @Override
     public Results search(
             final String typeName,
             final String queryString,
@@ -78,7 +77,7 @@ public class ElasticsearchSearchableDatastore implements SearchableDatastore {
     }
 
     private Results makeResults(ArrayNode searchHits) {
-        Results results = SearchableDatastore.results();
+        Results results = new Results("results");
         for (JsonNode o:searchHits) {
             results.add(o.get("_source"));
         }
