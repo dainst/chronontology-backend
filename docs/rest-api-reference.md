@@ -171,6 +171,8 @@ In case of status 400 errors the response body is an empty JSON.
 Get information regarding the server status. 
 Also Lists information for each datastore individually.
 
+See [here](datastore-configuration-reference.md) for information on how to configure the datastores. 
+
 ### Response body
 
 The response body will look similiar to this:
@@ -178,8 +180,8 @@ The response body will look similiar to this:
 ```
 { 
     "datastores" : [
-      { "type" : "main", "status" : "ok" },
-      { "type" : "connect", "status" : "down" }
+      { "id" : "0", "role" : "connect", "type" : "elasticsearch", "status" : "down" },
+      { "id" : "1", "role" : "main" , "type" : "filesytem", "status" : "ok" }
     ]
 }
 ```

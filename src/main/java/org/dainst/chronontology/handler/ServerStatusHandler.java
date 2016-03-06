@@ -1,6 +1,7 @@
 package org.dainst.chronontology.handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
 import org.dainst.chronontology.store.Connector;
 import org.dainst.chronontology.util.JsonUtils;
@@ -47,9 +48,17 @@ public class ServerStatusHandler implements Handler {
     }
 
 
-    public JsonNode makeDataStoreStatus(String type, Connector store) throws IOException {
-        String status = DATASTORE_STATUS_DOWN;
-        if (store.isConnected()) status = DATASTORE_STATUS_OK;
-        return JsonUtils.json("{ \"type\" : \""+type+"\", \"status\" : \""+status+"\" }");
+    public JsonNode makeDataStoreStatus(String id,String role, String type, Connector store) throws IOException {
+        String status= (store.isConnected())
+                ? DATASTORE_STATUS_OK
+                : DATASTORE_STATUS_DOWN;
+
+        JsonNode n= JsonUtils.json();
+        ((ObjectNode)n).put("id",id);
+        ((ObjectNode)n).put("role",role);
+        ((ObjectNode)n).put("type",type);
+        ((ObjectNode)n).put("status",status);
+
+        return n;
     }
 }

@@ -4,14 +4,25 @@
 
 The connected backend can operate in two modes.
 
-In **single** mode there is one datastore (id "0"), which is of type **elasticsearch**.
+In **single** mode there is one datastore (id "0"), which is of type **elasticsearch**. Datastores
+of this type are searchable.
 
 In **connect** mode there are two datastores. The first datastore (id "0") is the **connect** 
 datastore, where data get send to to get enriched by the yet to be implemented connect component. 
-The second one (id "1") is the **main** datastore where the original data get stored. In addition
-to that that ***main*** datastore is versioned so that it holds old versions of documents.
-The ***main*** datastore must be of type **filesystem** while the ***connect*** datastore must be
-of type ***elasticsearch***.
+It must be of type ***elasticsearch***.
+The second one (id "1") is the **main** datastore where the original data get stored. 
+It must be of type **filesystem**. A datastore of this type is not searchable, like datastores
+of type ***elasticsearch***, but it has another rather distinctive feature: it collects and 
+maintains a version history of documents. 
+
+When the application runs, you can watch the datastore configuration and status
+by performing a GET request to the base route.
+
+```
+GET /
+```
+
+as is also documented [here](rest-api-reference.md).
 
 The "connect" mode is default but can be turned off with using the property
 
