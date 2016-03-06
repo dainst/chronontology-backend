@@ -1,6 +1,7 @@
 package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.handler.model.Document;
 import org.testng.annotations.Test;
 
@@ -98,9 +99,31 @@ public class SearchIntegrationTest extends IntegrationTest {
 
 
     @Test
+    public void adminSeesAllDatasets() throws IOException, InterruptedException {
+
+        List<String> ids=postSampleData("dataset1","a","a","a");
+        ids.addAll(postSampleData(null,"a","a","a"));
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
+
+        assertResultsAreFound(client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a"),ids);
+    }
+
+    @Test
+    public void readerWithPermissionSeesHisDatasets() throws IOException, InterruptedException {
+
+        List<String> ids=postSampleData("dataset1","a","a","a");
+        ids.addAll(postSampleData(null,"a","a","a"));
+
+        client.authenticate(TestConstants.USER_NAME_3,TestConstants.PASS_WORD);
+
+        assertResultsAreFound(client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a"),ids);
+    }
+
+    @Test
     public void restrictedSizeSearchWithDatasets() throws IOException, InterruptedException {
 
-        postSampleData("ds1","a","a","a");
+        postSampleData("dataset1","a","a","a");
         List<String> ids= postSampleData(null,"a","a","a");
 
         client.authenticate(null,null);
@@ -117,15 +140,15 @@ public class SearchIntegrationTest extends IntegrationTest {
         client.authenticate(null,null);
 
         assertEquals(
-            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=3&offset=1")
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=3&from=1")
                     .get("results")).size()
             ,2);
         assertEquals(
-            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=1&offset=1")
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=1&from=1")
                     .get("results")).size()
             ,1);
         assertEquals(
-            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&offset=2")
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&from=2")
                     .get("results")).size()
             ,1);
     }

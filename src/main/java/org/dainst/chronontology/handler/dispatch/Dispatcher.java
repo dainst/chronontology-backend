@@ -6,6 +6,7 @@ import org.dainst.chronontology.handler.model.Results;
 import spark.Request;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Dispatcher are used to proxy datastore access calls issued
@@ -20,6 +21,6 @@ public abstract class Dispatcher {
     abstract public boolean dispatchPost(final String bucket, final String key, final JsonNode value);
     abstract public boolean dispatchPut(final String bucket, final String key, final JsonNode value);
     abstract public JsonNode dispatchGet(final String bucket, final String key, final Boolean direct,final Integer version);
-    abstract public Results dispatchSearch(String bucket, String query);
+    abstract public Results dispatchSearch(String bucket,final String query,final List<String> excludes);
     abstract public void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException;
 }

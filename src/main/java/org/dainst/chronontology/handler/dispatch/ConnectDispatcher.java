@@ -9,6 +9,7 @@ import org.dainst.chronontology.store.VersionedDatastore;
 import spark.Request;
 
 import java.io.IOException;
+import java.util.List;
 
 
 /**
@@ -67,8 +68,8 @@ public class ConnectDispatcher extends Dispatcher {
     }
 
     @Override
-    public Results dispatchSearch(final String bucket, final String query) {
-        return connectDatastore.search( bucket, query );
+    public Results dispatchSearch(final String bucket, final String query, final List<String> excludes) {
+        return connectDatastore.search( bucket, query, excludes );
     }
 
 

@@ -84,6 +84,8 @@ public class Document {
         initVersion();
         initCreatedAndModifiedDates(userName);
         filterUnwanted();
+        if (node.get("dataset")==null)
+            ((ObjectNode)node).put("dataset","none");
     }
 
     /**
@@ -171,7 +173,7 @@ public class Document {
      * @return null if the document belongs to no dataset.
      */
     public String getDataset() {
-        if (node.get(DATASET)==null) return null;
+        if (node.get(DATASET)==null||node.get(DATASET).toString().replace("\"","").equals("none")) return null;
         return toString(node.get(DATASET));
     }
 }

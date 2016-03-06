@@ -1,15 +1,12 @@
 package org.dainst.chronontology.store;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.log4j.Logger;
 import org.dainst.chronontology.handler.model.Results;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.dainst.chronontology.util.JsonUtils;
 
-import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,16 +18,16 @@ import java.util.regex.Pattern;
  *
  * @author Daniel M. de Oliveira
  */
-public class ESRestSearchableDatastore implements SearchableDatastore {
+public class ElasticsearchSearchableDatastore implements SearchableDatastore {
 
     private JsonRestClient client;
 
     private final String indexName;
 
     @SuppressWarnings("unused")
-    private ESRestSearchableDatastore() {indexName=null;};
+    private ElasticsearchSearchableDatastore() {indexName=null;};
 
-    public ESRestSearchableDatastore(
+    public ElasticsearchSearchableDatastore(
             final JsonRestClient client,
             final String indexName) {
 
@@ -61,12 +58,15 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
     @Override
     public Results search(
             final String typeName,
-            final String queryString) {
+            final String queryString,
+            final List<String> includes) {
 
         JsonNode q= convert(queryString);
+        if (includes!=null) q= include(q,includes);
 
         JsonNode response= client.post("/" + indexName + "/" + typeName + "/_search",
                 q);
+
         if ((response==null)||
                 (response.get("hits")==null)) return null;
 
@@ -101,7 +101,7 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
     }
 
     private JsonNode convert(String queryString) {
-        JsonNode j= JsonUtils.json("{\"query\":{\"bool\":{ \"should\":[],\"must_not\":[] }}}");
+        JsonNode j= JsonUtils.json("{\"query\":{\"bool\":{ \"must\" : [ {\"bool\":{ \"should\" : [] }},{\"bool\":{ \"should\" : [] }} ] }}}");
 
         if (queryString==null) return j;
         Query q = new Query(URLDecoder.decode(queryString));
@@ -112,9 +112,13 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
         Matcher m = Pattern.compile("[A-Za-z0-9:%@]+").matcher(queryString);
         while (m.find()) {
             String s = m.group();
-            array(j,"should").add(boolTerm(s.replace("%","/")));
+            array(j,0).add(boolTerm(s.replace("%","/")));
         }
         return j;
+    }
+
+    private ArrayNode array(JsonNode n,int index) {
+        return (ArrayNode) n.get("query").get("bool").get("must").get(index).get("bool").get("should");
     }
 
     private class Query {
@@ -142,9 +146,7 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
         }
     }
 
-    private ArrayNode array(JsonNode n,String predicate) {
-        return (ArrayNode) n.get("query").get("bool").get(predicate);
-    }
+
 
     private JsonNode boolTerm(String pair) {
         String field="";
@@ -169,8 +171,8 @@ public class ESRestSearchableDatastore implements SearchableDatastore {
         return q;
     }
 
-    private JsonNode exclude(JsonNode n,List<String> excludes) {
-        ArrayNode b= array(n,"must_not");
+    private JsonNode include(JsonNode n, List<String> excludes) {
+        ArrayNode b= array(n,1);
         for (String e:excludes) {
             b.add(boolTerm(e));
         }

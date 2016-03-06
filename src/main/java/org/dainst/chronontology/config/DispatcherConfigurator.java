@@ -3,7 +3,7 @@ package org.dainst.chronontology.config;
 import org.dainst.chronontology.handler.dispatch.ConnectDispatcher;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
 import org.dainst.chronontology.handler.dispatch.SimpleDispatcher;
-import org.dainst.chronontology.store.ESRestSearchableDatastore;
+import org.dainst.chronontology.store.ElasticsearchSearchableDatastore;
 import org.dainst.chronontology.store.VersionedDatastore;
 
 /**
@@ -13,7 +13,7 @@ public class DispatcherConfigurator implements Configurator<Dispatcher,Dispatche
 
     public Dispatcher configure(DispatcherConfig config) {
 
-        ESRestSearchableDatastore searchable= (ESRestSearchableDatastore)
+        ElasticsearchSearchableDatastore searchable= (ElasticsearchSearchableDatastore)
                 new DatastoreConfigurator().configure(config.getDatastoreConfigs()[0]);
 
         Dispatcher dispatcher = null;

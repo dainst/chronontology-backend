@@ -10,6 +10,7 @@ import org.dainst.chronontology.store.SearchableDatastore;
 import spark.Request;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * The simple dispatcher holds a single searchable datastore.
@@ -53,8 +54,8 @@ public class SimpleDispatcher extends Dispatcher {
     }
 
     @Override
-    public Results dispatchSearch(final String bucket, final String query) {
-        return datastore.search( bucket, query );
+    public Results dispatchSearch(final String bucket, final String query, final List<String> excludes) {
+        return datastore.search( bucket, query, excludes );
     }
 }
 

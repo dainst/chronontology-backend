@@ -2,6 +2,8 @@ package org.dainst.chronontology.store;
 
 import org.dainst.chronontology.handler.model.Results;
 
+import java.util.List;
+
 /**
  * @author Daniel M. de Oliveira
  */
@@ -20,5 +22,5 @@ public interface SearchableDatastore extends Datastore {
      *                    Contains the bit after "_search?".
      * @return
      */
-    Results search(final String bucket, final String queryString);
+    Results search(final String bucket, final String queryString, final List<String> forbiddenDatasets);
 }

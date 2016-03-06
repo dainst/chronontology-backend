@@ -1,12 +1,12 @@
 package org.dainst.chronontology.handler.model;
 
-import org.dainst.chronontology.handler.model.RightsValidator;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -59,6 +59,22 @@ public class RightsValidatorTest {
     public void specifiedAuthenticatedEditorUserHasAccess() {
         usersRules.put("karl","editor");
         assertTrue(validator.hasPermission("karl","dataset1", RightsValidator.Operation.READ));
+    }
+
+    @Test
+    public void readableDatasets() {
+        rules.put("dataset1",usersRules);
+        usersRules.put("karl","editor");
+
+        assertEquals(validator.readableDatasets("karl").get(0),"dataset1");
+    }
+
+    @Test
+    public void noReadableDatasets() {
+        rules.put("dataset1",usersRules);
+        usersRules.put("karl","editor");
+
+        assertEquals(validator.readableDatasets("ove").get(0),"none");
     }
 
 }

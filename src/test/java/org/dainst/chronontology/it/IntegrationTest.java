@@ -7,7 +7,7 @@ import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.config.*;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.dainst.chronontology.handler.dispatch.ConnectDispatcher;
-import org.dainst.chronontology.store.ESRestSearchableDatastore;
+import org.dainst.chronontology.store.ElasticsearchSearchableDatastore;
 import org.dainst.chronontology.store.ESServerTestUtil;
 import org.dainst.chronontology.store.FileSystemDatastore;
 import org.testng.annotations.AfterClass;
@@ -32,7 +32,7 @@ public abstract class IntegrationTest {
     protected static final JsonRestClient client = new JsonRestClient(TestConstants.SERVER_URL);
 
     // To allow direct data manipulation for testing purposes
-    protected static ESRestSearchableDatastore connectDatastore = null;
+    protected static ElasticsearchSearchableDatastore connectDatastore = null;
     // To allow direct data manipulation for testing purposes
     protected static FileSystemDatastore mainDatastore = null;
 
@@ -93,7 +93,7 @@ public abstract class IntegrationTest {
         ConnectDispatcher controller= (ConnectDispatcher) app.getController().getDispatcher();
 
         mainDatastore= (FileSystemDatastore) controller.getDatatores()[1];
-        connectDatastore= (ESRestSearchableDatastore) controller.getDatatores()[0];
+        connectDatastore= (ElasticsearchSearchableDatastore) controller.getDatatores()[0];
 
         Thread.sleep(1000);
     }

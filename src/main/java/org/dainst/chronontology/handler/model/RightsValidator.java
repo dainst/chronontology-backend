@@ -2,7 +2,9 @@ package org.dainst.chronontology.handler.model;
 
 import org.dainst.chronontology.Constants;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,6 +19,7 @@ public class RightsValidator {
     private static final String EDITOR = "editor";
     private static final String READER = "reader";
 
+
     public enum Operation {
         EDIT,
         READ
@@ -30,6 +33,16 @@ public class RightsValidator {
      */
     public void setRules(Map<String,Map<String,String>> rules) {
         this.rules = rules;
+    }
+
+    public List<String> readableDatasets(String user) {
+        List<String> readableDatasets= new ArrayList<String>();
+        for (String dataset:rules.keySet()) {
+            if (hasPermission(user,dataset,Operation.READ))
+                readableDatasets.add(dataset);
+        }
+        readableDatasets.add("none");
+        return readableDatasets;
     }
 
     /**
