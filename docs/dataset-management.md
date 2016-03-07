@@ -65,26 +65,10 @@ This can also be done explicitely by setting "dataset" to "none".
 }
 ```
 
-## PUT /:type/:new_id
+## PUT /:type/:id
 
-The same applies to the put endpoint, when used to create an object with
-a certain identifier.
-
-```
-{
-  "resource": {
-      "a" : "b"
-  },
-  "dataset" : "ds1"
-}
-```
-
-Again, this is only allowed if the user posting to the backend is 
-granted **editor** rights for the dataset group under consideration.
-
-## PUT /:type/:existing_id
-
-In case PUT is used to create document, its behaviour is exactly like described in
+In case PUT is used to create (i.e. if :id is an unkown id within the system) a 
+document, its behaviour is exactly like described in
 the POST section above.
 
 In case the document is to be updated and the last version of the document 
