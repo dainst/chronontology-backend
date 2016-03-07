@@ -257,7 +257,7 @@ additional fields added by the iDAI.connect component.
 
 ## GET /:type/:queryParams
 
-Performs a search over all documents of the :type bucket.
+Performs a search over all documents of the :type.
  
 The simplest version, which returns all documents, looks like this
 
@@ -266,59 +266,61 @@ GET /typename/
 ```
 
 However due to potentially large result sets, one can and should narrow
-down the search with the use of :queryParams. These narrow down the 
-result set.
+down the search with the use of :queryParams. 
 
-There are two sorts of query params. 
+The **size** and **from** query params
+are used to only show a result set of size ***size***, starting with the document with the
+id ***from*** of an ordered result set. These params can be used solo or together, but you'll
+probably find it most useful when used together, for example for paginating through a result 
+set. Here are some valid examples of its usage:
 
-***First*** there are query params which depend
-on the underlying datastores. Currently these work for elasticsearch
-based searches and are ignored in when elasticsearch is not configured as a datastore.
-The query string gets handed over to elasticsearch, so it 
-should be a valid search string for elasticsearch
-and should **not** include the "_search" prefix but everything after it.
-
-A simple example can be
-
-Simple examples are 
-
-```
-GET /typename/?q=*
-```
-
-and
-
-```
-GET /typename/?q=a:b
-```
-
-The query params get simply handed over to elasticsearch.
-
-***Second*** there are query params which
-are built in natively into the application. 
-
-The currently built in query params are ***size*** and ***offset***, which are
-typically used for pagination. You can use one or both of them together like in
 
 ```
 GET /typename/?size=10&offset=10
+GET /typename/?from=0&size=10
+GET /typename/?from=10&size=10
+GET /typename/?from=10
+GET /typename/?size=3
 ```
 
-This will return the 10 results starting from the 10th result.
+The first example will return the 10 results starting from the 10th result.
 
-These parameter can be used in conjunction with the other params, however, is is useful to understand
-how they work. 
-
-An example a search for combined params is
+Another means of narrowing down the result set is by use of **query terms**.
+These are related to the elasticsearch uri search usage. Here are some examples:
 
 ```
-GET /typename/?q=a:b&size=10
+GET /typename/?a
 ```
 
-The build in query params get not handed over to the datastores (elasticsearch for example)
-but are filtered out from the query string in order to apply them to the resultset retrieved
-from the datastore afterwards. That means first all the results matching a:b are retrieved
-and then the size param is applied afterwards to select only the first 10 of them.
+will match documents that have "a" as a value of some of their fields.
+
+```
+GET /typename/?user:karl
+```
+
+will match documents who have some "user" field where there is a "karl" value.
+
+Queries of the second type can be chained like
+
+```
+GET /typename/?user:karl&a:b
+```
+
+This will combine the search by using a logical "or". It matches documents who
+have either a "user" field with the value "karl" or an "a" field with the value "b" (or both).
+
+A search can combine both ***query terms*** and ***size*** params.
+For example
+
+
+```
+GET /typename/?user:karl&a:b&size=1&from=2
+```
+
+Please **note** no matter what search params you use, a user will always only see 
+search results for datasets he is allowed to see. For more information on datasets see
+[this](dataset-management.md) document.
+
 
 ### Response body 
 
