@@ -143,16 +143,15 @@ For example a search for all documents, where all documents are the following tw
 
 ```
 {
-    "resource": {
-        "a" : "b"
-    },
-    "dataset" : "ds1"
+  "resource": ...,
+  "dataset" : "ds1",
+  ...
 }
 
 {
-    "resource": {
-        "a" : "c"
-    },
+  "resource": ...,
+  "dataset" : "none",
+  ...
 }
 ```
 
