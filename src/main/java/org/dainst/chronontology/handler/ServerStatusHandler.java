@@ -48,13 +48,12 @@ public class ServerStatusHandler implements Handler {
     }
 
 
-    public JsonNode makeDataStoreStatus(String id,String role, String type, Connector store) throws IOException {
+    public JsonNode makeDataStoreStatus(String role, String type, Connector store) throws IOException {
         String status= (store.isConnected())
                 ? DATASTORE_STATUS_OK
                 : DATASTORE_STATUS_DOWN;
 
         JsonNode n= JsonUtils.json();
-        ((ObjectNode)n).put("id",id);
         ((ObjectNode)n).put("role",role);
         ((ObjectNode)n).put("type",type);
         ((ObjectNode)n).put("status",status);

@@ -36,8 +36,8 @@ public class ConnectDispatcher extends Dispatcher {
 
     @Override
     public void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException {
-        r.add(handler.makeDataStoreStatus("0","connect","elasticsearch",connectDatastore));
-        r.add(handler.makeDataStoreStatus("1","main","filesystem",mainDatastore));
+        r.add(handler.makeDataStoreStatus("connect","elasticsearch",connectDatastore));
+        r.add(handler.makeDataStoreStatus("main","filesystem",mainDatastore));
     }
 
     @Override

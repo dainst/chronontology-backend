@@ -31,7 +31,7 @@ public class SimpleDispatcher extends Dispatcher {
 
     @Override
     public void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException {
-        r.add(handler.makeDataStoreStatus("0","single","elasticsearch", datastore));
+        r.add(handler.makeDataStoreStatus("single","elasticsearch", datastore));
     }
 
     @Override
