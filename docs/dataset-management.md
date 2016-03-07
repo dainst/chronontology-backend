@@ -117,22 +117,20 @@ PUT
 
 ## GET /:type/:id
 
-If enriched with the dataset property, only users with who are granted 
-the proper permission rights can access a document
+If assigned to a dataset, only users who are granted ***reader*** level 
+permissions for that dataset can access that document
 
 A document
 
 ```
 {
-    "resource": {
-        "a" : "b"
-    },
-    "dataset" : "ds1"
+  "resource": ...,
+  "dataset" : "ds1",
+  ...
 }
 ```
 
-can only be accessed by a user who is either an **editor** or a **reader** for
-the dataset ds1.
+Here the user needs ***reader*** level permissions for dataset "ds1".
 
 ## GET /:type/
 
