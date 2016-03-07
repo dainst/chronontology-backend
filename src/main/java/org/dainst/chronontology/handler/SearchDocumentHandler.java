@@ -1,5 +1,6 @@
 package org.dainst.chronontology.handler;
 
+import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
 import org.dainst.chronontology.handler.model.RightsValidator;
 import org.dainst.chronontology.handler.model.Results;
@@ -15,8 +16,6 @@ import java.util.List;
  */
 public class SearchDocumentHandler extends DocumentHandler {
 
-    public static final String COULD_NOT_REMOVE_ELEMENT = "Could not remove element";
-
     public SearchDocumentHandler(Dispatcher dispatcher, RightsValidator rightsValidator) {
         super(dispatcher,rightsValidator);
     }
@@ -30,7 +29,7 @@ public class SearchDocumentHandler extends DocumentHandler {
         for (String include:rightsValidator.readableDatasets(req.attribute("user"))) {
             includes.add("dataset:"+include);
         }
-        if (req.attribute("user").equals("admin"))
+        if (req.attribute("user").equals(Constants.USER_NAME_ADMIN))
             includes=null;
 
         Results results= dispatcher.dispatchSearch(req.pathInfo(),req.queryString(),includes);

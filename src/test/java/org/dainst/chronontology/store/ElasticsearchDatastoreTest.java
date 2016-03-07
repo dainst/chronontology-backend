@@ -79,6 +79,12 @@ public class ElasticsearchDatastoreTest {
         JsonTestUtils.assertResultsAreFound(
                 store.search(TEST_TYPE,"a", null).j(),
                 Arrays.asList("1","2","3","4","5"));
+        JsonTestUtils.assertResultsAreFound(
+                store.search(TEST_TYPE,"size=1", Arrays.asList(new String[]{"dataset:none"})).j(),
+                Arrays.asList("1"));
+        JsonTestUtils.assertResultsAreFound(
+                store.search(TEST_TYPE,"size=1&from=2", Arrays.asList(new String[]{"dataset:none"})).j(),
+                Arrays.asList("5"));
     }
 
     @Test

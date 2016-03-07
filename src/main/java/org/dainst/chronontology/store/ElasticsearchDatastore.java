@@ -134,8 +134,8 @@ public class ElasticsearchDatastore implements Datastore {
 
         public Query(final String qs) {
             queryString = qs;
-            size= extractElement("([&|?]size=\\d+)");
-            from= extractElement("([&|?]from=\\d+)");
+            size= extractElement("([&|?]*size=\\d+)");
+            from= extractElement("([&|?]*from=\\d+)");
         }
 
         private Integer extractElement(final String pattern) {
