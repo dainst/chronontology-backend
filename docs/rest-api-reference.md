@@ -47,10 +47,8 @@ as in
 
 (see for [dataset management](dataset-management.md)),
 
-
-connected-backend
-not only ignores all other fields of the incoming JSON, but also removes them before
-storing the documents.
+connected-backend not only ignores all other fields of the incoming JSON, 
+but also removes them before storing the documents. 
 
 ### Response body
 
@@ -63,6 +61,7 @@ and will look something like this:
    "resource": {
        "a" : "b"
    },
+   "dataset" : "none",
    "@id": "/typename/T7UlxIk8miMQ",
    "version": 1,
    "created": {
@@ -127,6 +126,7 @@ be valid JSON, for example:
     "resource": { "a" : "b" },
     "@id": "/typename/T7UlxIk8miMQ",
     "version": 2,
+    "dataset" : "none",
     "created": {
         "user": "karl",
         "date": "2016-02-09T10:21:15.721Z"
@@ -180,8 +180,8 @@ The response body will look similiar to this:
 ```
 { 
     "datastores" : [
-      { "id" : "0", "role" : "connect", "type" : "elasticsearch", "status" : "down" },
-      { "id" : "1", "role" : "main" , "type" : "filesytem", "status" : "ok" }
+      { "role" : "connect", "type" : "elasticsearch", "status" : "down" },
+      { "role" : "main" , "type" : "filesystem", "status" : "ok" }
     ]
 }
 ```
@@ -228,9 +228,10 @@ gets ignored if ***version*** is used.
 {
     "resource": {
         "a" : "b"
-    },           
+    },        
+    "dataset" : "none",
     "@id": "/typename/T7UlxIk8miMQ",
-    "version": 2,
+    "version": 1,
     "created": {
         "user": "karl",
         "date": "2016-02-09T10:21:15.721Z"
@@ -337,6 +338,7 @@ contains the json for the search hits.
             },
             "@id": "/typename/T7UlxIk8miMQ",
             "version": 2,
+            "dataset" : "none",
             "created": {
                 "user": "karl",
                 "date": "2016-02-09T10:21:15.721Z"
@@ -345,6 +347,10 @@ contains the json for the search hits.
                 {
                     "user": "karl",
                     "date": "2016-02-09T10:21:15.721Z"
+                },
+                {
+                    "user": "ove",
+                    "date": "2016-02-10T11:30:16.423Z"
                 }
             ]
         },
@@ -353,18 +359,15 @@ contains the json for the search hits.
                 "a" : "d"
             },
             "@id": "/typename/MG6UPjCMKmk",
+            "dataset" : "dataset1",
             "version": 1,
-            "created": {
-                "user": "ove",
-                "date": "2016-02-09T00:26:25.287Z"
-            },
-            "modified": [
-                {
-                    "user": "ove",
-                    "date": "2016-02-09T00:26:25.287Z"
-                }
-            ]
+            ...
         },
+        {
+            "resource": ...,
+            ...
+        },
+        ...
     ]
 }
 ```
