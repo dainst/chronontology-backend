@@ -35,7 +35,7 @@ access control for ***edit*** operations. ***edit*** operations can never be per
 The user authenticated under the user name **admin** has permissions to perform any operation
 on any dataset, regardless of wether or not beeing explicitely assigned rights to any dataset group.
 
-## POST /:typeName/
+## POST /:type/
 
 If enriched with the dataset property, a document gets
 assigned to a dataset group, as shown in the example.
@@ -65,7 +65,7 @@ This can also be done explicitely by setting "dataset" to "none".
 }
 ```
 
-## PUT /:typeName/:preDetermindedIdentifier
+## PUT /:type/:new_id
 
 The same applies to the put endpoint, when used to create an object with
 a certain identifier.
@@ -82,7 +82,7 @@ a certain identifier.
 Again, this is only allowed if the user posting to the backend is 
 granted **editor** rights for the dataset group under consideration.
 
-## PUT /:typeName/:existingIdentifier
+## PUT /:type/:existing_id
 
 In case PUT is used to create document, its behaviour is exactly like described in
 the POST section above.
@@ -131,7 +131,7 @@ PUT
 }
 ```
 
-## GET /:typeName/:identifier
+## GET /:type/:id
 
 If enriched with the dataset property, only users with who are granted 
 the proper permission rights can access a document
