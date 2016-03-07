@@ -2,9 +2,9 @@
 
 # Dataset based access management
 
-The connected backend has the ability to provide access control for groups
+The *connected backend* has the ability to control access to groups
 of documents known as **datasets**. For these datasets, users can be granted permissions
-to perform certain operations, like **read** or **modify**.
+to perform the operations **read** or **modify**.
 
 ## Basic rules
 
@@ -13,19 +13,27 @@ and modified only by logged in users.
 
 If a documents belongs to a dataset or a new one should be created and assigned to a dataset,
 the user needs **editor** grade permissions for that dataset in order to do so. 
-For reading documents assigned to a datagroup, the user need **reader** level permissions 
-for that dataset. This also applies to search, which is a variation of read. When searching 
-for documents, only documents are shown which are either not assigned to any dataset or which
-are assigned to datasets the user has **read** permissions.
+For reading the documents of any dataset, the user needs **reader** level permissions 
+for that dataset. 
 
-Datasets can also get marked for **anonymous access** in which case anyone, even without beeing
- authenticated, can read or search for documents in the dataset while there is still user based
- access control for ***edit*** operations. ***edit*** operations can never be performed for 
- ***anonymous*** users.
+A user having the ***editor*** permission level on a dataset can perfom the operations ***read***
+and ***modify***, which a user having the ***reader*** permission level can perform the ***read***
+operation only.
 
-The user with the user name **admin** has special permissions. Once successfully 
-authenticated under the name ***admin*** has the right to do anything, 
-regardless of wether or not beeing explicitely assigned rights to any dataset group.
+This also applies to search, which in this context is seen as just 
+a variation of read. When searching for documents, only documents are shown 
+which are either not assigned to any dataset or which
+are assigned to any specific dataset or to which the user has **read** permissions.
+
+### Special user roles
+
+Datasets can also get marked for **anonymous** access, in which case anyone, even without beeing
+authenticated, can read or search for documents in the dataset while there is still user based
+access control for ***edit*** operations. ***edit*** operations can never be performed for 
+***anonymous*** users.
+
+The user authenticated under the user name **admin** has permissions to perform any operation
+on any dataset, regardless of wether or not beeing explicitely assigned rights to any dataset group.
 
 ## POST /:typeName/
 
@@ -43,6 +51,19 @@ assigned to a dataset group, as shown in the example.
 
 This is only allowed if the user posting to the backend is 
 granted **editor** rights for the dataset group under consideration.
+
+If the dataset property is ommited on POST, the document gets created without any specific
+dataset assignment. The system then sets the value "none" for the dataset of the document.
+This can also be done explicitely by setting "dataset" to "none".
+
+```
+{
+  "resource": {
+      "a" : "b"
+  },
+  "dataset" : "none"
+}
+```
 
 ## PUT /:typeName/:preDetermindedIdentifier
 
@@ -63,42 +84,52 @@ granted **editor** rights for the dataset group under consideration.
 
 ## PUT /:typeName/:existingIdentifier
 
-When used to update an existing document, the user must have been granted
-**editor** rights for the dataset specified in the json of the request body.
+In case PUT is used to create document, its behaviour is exactly like described in
+the POST section above.
+
+In case the document is to be updated and the last version of the document 
+is already assigned to a dataset, the user needs ***editor*** level permissions for that
+dataset in order to change the document.
+
+An existing document
 
 ```
 {
-  "resource": {
-      "a" : "b"
-  },
-  "dataset" : "ds1"
+  "resource": ...
+  "dataset" : "ds1",
+  ...
 }
 ```
 
-If the user omits the dataset property, the document gets un-assigned from any previously
-assigned dataset group.
+can be changed only if the user has ***editor*** level permissions for the dataset "ds1".
+
+If it should get assigned to any other dataset, 
+like when trying to PUT with a request body like
 
 ```
 {
-  "resource": {
-      "a" : "b"
-  },
+  "resource": ...
+  "dataset" : "ds2",
+  ...
 }
 ```
 
-**Note** that in both cases, if the last version of the document to be updated
-is assigned to an existing dataset group, like
- 
+the user needs also ***editor*** level permissions for the dataset "ds2".
+
+If the user omits the dataset property (or sets it to "none"), 
+the document gets un-assigned from any specific dataset.
+
 ```
+PUT
 {
-    "resource": {
-        "a" : "b"
-    },
-    "dataset" : "ds0"
+  "resource": ...
+}
+PUT
+{
+  "resource": ...
+  "dataset" : "none"
 }
 ```
- 
- the user must have **editor** rights on both the old and the new dataset group.
 
 ## GET /:typeName/:identifier
 
@@ -141,8 +172,8 @@ For example a search for all documents, where all documents are the following tw
 }
 ```
 
-and the user has no permissions for ds1, gives a result set only containing the 
-second hit.
+and the user has no ***reader*** level permissions for "ds1", 
+gives a result set only containing the second hit.
 
 
 
