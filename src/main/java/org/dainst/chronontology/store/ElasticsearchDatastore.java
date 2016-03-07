@@ -70,19 +70,16 @@ public class ElasticsearchDatastore implements Datastore {
      */
     public Results search(
             final String typeName,
-            final String queryString,
+            String queryString,
             final List<String> includes) {
 
-        JsonNode q= convert(queryString);
+        JsonNode requestBody= baseRequestBody();
+        requestBody= inflateRequestBody(requestBody,
+                URLDecoder.decode((queryString!=null) ? queryString : "" ));
+        if (includes!=null) requestBody= incorporateIncludes(requestBody,includes);
 
-
-
-        if (includes!=null) q= include(q,includes);
-
-        JsonNode response= client.post("/" + indexName + "/" + typeName + "/_search",
-                q);
-
-        return makeResultsFrom(searchHits(response));
+        return makeResultsFrom(searchHits(
+                client.post("/" + indexName + "/" + typeName + "/_search", requestBody)));
     }
 
     private ArrayNode searchHits(JsonNode response) {
@@ -95,7 +92,7 @@ public class ElasticsearchDatastore implements Datastore {
         return searchHits;
     }
 
-    private Results makeResultsFrom(ArrayNode searchHits) {
+    private Results makeResultsFrom(final ArrayNode searchHits) {
         if (searchHits==null) return null;
 
         Results results = new Results("results");
@@ -105,29 +102,28 @@ public class ElasticsearchDatastore implements Datastore {
         return results;
     }
 
-    private JsonNode convert(String queryString) {
-        JsonNode j= JsonUtils.json(
+    private JsonNode baseRequestBody() {
+        return JsonUtils.json(
                 "{\"query\":{\"bool\":{ \"must\" : [ " +
                         "{\"bool\":{ \"should\" : [] }}," +
                         "{\"bool\":{ \"should\" : [] }} " +
                         "] }}}");
+    }
 
-        if (queryString==null) return j;
-        Query q = new Query(URLDecoder.decode(queryString));
-        queryString= normalize(q.queryString);
+    private JsonNode inflateRequestBody(final JsonNode j, final String queryString) {
+
+        if (queryString.isEmpty()) return j;
+        Query q = new Query(queryString);
         if (q.size!=null) ((ObjectNode)j).put("size",q.size);
         if (q.from!=null) ((ObjectNode)j).put("from",q.from);
 
-        Matcher m = Pattern.compile("[A-Za-z0-9:%@]+").matcher(queryString);
-        while (m.find()) {
-            String s = m.group();
-            array(j,0).add(boolTerm(s.replace("%","/")));
-        }
-
+        Matcher m = Pattern.compile("[A-Za-z0-9:%@]+").matcher(
+                q.queryString.replace("\"","").replaceAll("/","%"));
+        while (m.find()) array(j, 0).add(termQueryElement(m.group().replace("%","/")));
         return j;
     }
 
-    private ArrayNode array(JsonNode n,int index) {
+    private ArrayNode array(final JsonNode n,final int index) {
         return (ArrayNode) n.get("query").get("bool").get("must").get(index).get("bool").get("should");
     }
 
@@ -136,15 +132,13 @@ public class ElasticsearchDatastore implements Datastore {
         public Integer size= null;
         public Integer from= null;
 
-        public Query(String qs) {
-            if (qs!=null) {
-                queryString = qs;
-                size= mod("([&|?]size=\\d+)");
-                from= mod("([&|?]from=\\d+)");
-            }
+        public Query(final String qs) {
+            queryString = qs;
+            size= extractElement("([&|?]size=\\d+)");
+            from= extractElement("([&|?]from=\\d+)");
         }
 
-        private Integer mod(String pattern) {
+        private Integer extractElement(final String pattern) {
             Integer nr= null;
             Matcher m = Pattern.compile(pattern).matcher(queryString);
             while (m.find()) {
@@ -156,9 +150,7 @@ public class ElasticsearchDatastore implements Datastore {
         }
     }
 
-
-
-    private JsonNode boolTerm(String pair) {
+    private JsonNode termQueryElement(final String pair) {
         String field="";
         String value="";
         if (pair.split(":").length<2) {
@@ -171,20 +163,10 @@ public class ElasticsearchDatastore implements Datastore {
         return JsonUtils.json("{ \"term\" : {\""+field+"\" : \""+value+"\"} }");
     }
 
-    private String normalize(String s) {
-        String q= s+" ";
-        q=q.replace("\"","");
-        q=q.replaceAll("/","%");
-        q=q.replaceFirst("q="," ");
-        q=q.replaceAll("&"," ");
-        q=q.replaceAll("\\?"," ");
-        return q;
-    }
-
-    private JsonNode include(JsonNode n, List<String> excludes) {
+    private JsonNode incorporateIncludes(final JsonNode n, final List<String> includes) {
         ArrayNode b= array(n,1);
-        for (String e:excludes) {
-            b.add(boolTerm(e));
+        for (String e:includes) {
+            b.add(termQueryElement(e));
         }
         return n;
     }
