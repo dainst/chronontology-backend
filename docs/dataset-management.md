@@ -150,7 +150,7 @@ A document
 can only be accessed by a user who is either an **editor** or a **reader** for
 the dataset ds1.
 
-## GET /:typeName/
+## GET /:type/
 
 Searching respects the dataset groups insofar as documents, which are assigned to datasets and
 for which the actual user has not either **editor** or **reader** permissions, are filtered out.
