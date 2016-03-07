@@ -38,13 +38,13 @@ a ***filesystem*** datastore.
 Depending on which datastore you configure, you specify properties either of type
 
 ```
-datastores.elasticsearch.
+datastore.elasticsearch.
 ```
 
 or
 
 ```
-datastores.filesystem.
+datastore.filesystem.
 ```
 
 The specific properties differ on both datastores.
@@ -80,7 +80,7 @@ into. If it does not exist, it will get created at application start.
 The path param can be empty and default to "datastore/".
 
 ```
-datastores.filesystem.path=myDataStorePath/
+datastore.filesystem.path=myDataStorePath/
 ```
 
 The simplest possible configuration in such a case
