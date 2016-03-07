@@ -9,13 +9,19 @@ import java.util.*;
  */
 public class RightsValidatorConfig extends Config {
 
+    public static final String DATASET= "dataset";
+    public static final String DATASET_NAME_NONE = "none";
+
     public static final String MSG_ANONYMOUS_EDITORS_NOT_ALLOWED=
             "Anonymous editor access to datasets not supported.";
-
     public static final String MSG_PERMISSION_LEVEL_UNKNOWN=
             "Permission level unkown in \"PROPERTY\".";
+    public static final String MSG_NONE_RESERVED_TERM=
+            "The term \"none\" is a reserved term an cannot be used as a dataset name.";
 
-    public static final String DATASET= "dataset";
+    public static final String PERMISSION_LEVEL_EDITOR = "editor";
+    public static final String PERMISSION_LEVEL_READER = "reader";
+
 
     public RightsValidatorConfig() {
         this.prefix= DATASET+".";
@@ -46,7 +52,7 @@ public class RightsValidatorConfig extends Config {
      * Side effect: can add entries to contraintViolations.
      *
      * @param dataset
-     * @param props
+     * @param props all properties, whether relevant or not to {@link RightsValidatorConfig}.
      * @return
      */
     private Map<String, String> getUserRulesFor(String dataset,Properties props) {
@@ -63,28 +69,39 @@ public class RightsValidatorConfig extends Config {
     }
 
 
+    /**
+     * Evaluates a single line of a <code>props</code>.
+     *
+     * @param props all properties, whether relevant or not to {@link RightsValidatorConfig}.
+     * @param userRules is affected. One new userRule is put if the propertyName
+     *   can get evaluated successfully.
+     * @param propertyName full name of the property line to be evaluated
+     */
     private void evaluateProperty(
             Properties props,
             Map<String, String> userRules,
             String propertyName) {
 
-        if (propertyName.endsWith(Constants.PERMISSION_LEVEL_EDITOR)) {
+        if (propertyName.contains(DATASET_NAME_NONE))
+            addToConstraintViolations(MSG_NONE_RESERVED_TERM);
+
+        if (propertyName.endsWith(PERMISSION_LEVEL_EDITOR)) {
 
             for (String editor: props.getProperty(propertyName).split(",")) {
 
                 if (editor.equals(Constants.USER_NAME_ANONYMOUS))
                     addToConstraintViolations(MSG_ANONYMOUS_EDITORS_NOT_ALLOWED);
                 else
-                  userRules.put(editor, Constants.PERMISSION_LEVEL_EDITOR);
+                  userRules.put(editor, PERMISSION_LEVEL_EDITOR);
             }
 
         }
-        else if (propertyName.endsWith(Constants.PERMISSION_LEVEL_READER)) {
+        else if (propertyName.endsWith(PERMISSION_LEVEL_READER)) {
 
             for (String reader: props.getProperty(propertyName).split(",")) {
 
                 if (isNotAlreadyEditor(reader,userRules)) {
-                    userRules.put(reader, Constants.PERMISSION_LEVEL_READER);
+                    userRules.put(reader, PERMISSION_LEVEL_READER);
                 }
             }
 
@@ -97,12 +114,12 @@ public class RightsValidatorConfig extends Config {
 
     private boolean isNotAlreadyEditor(String user,Map<String, String> userRules) {
         return (userRules.get(user) == null || (
-                !userRules.get(user).equals(Constants.PERMISSION_LEVEL_EDITOR)));
+                !userRules.get(user).equals(PERMISSION_LEVEL_EDITOR)));
     }
 
 
     /**
-     * @param props
+     * @param props all properties, whether relevant or not to {@link RightsValidatorConfig}.
      * @return list of all dataset names mentioned in props.
      */
     private List<String> datasets(Properties props) {

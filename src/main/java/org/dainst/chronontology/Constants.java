@@ -31,6 +31,4 @@ public class Constants {
     public static final String MSG_USER_NAME_NOT_NULL = "userName"+MSG_NOT_NULL;
     public static final String MSG_OPERATION_NOT_NULL = "operation"+MSG_NOT_NULL;
 
-    public static final String PERMISSION_LEVEL_EDITOR = "editor";
-    public static final String PERMISSION_LEVEL_READER = "reader";
 }

@@ -10,6 +10,7 @@ import static org.testng.Assert.assertFalse;
 
 import static org.dainst.chronontology.Constants.*;
 import static org.dainst.chronontology.TestConstants.*;
+import static org.dainst.chronontology.config.RightsValidatorConfig.*;
 
 /**
  * @author Daniel M. de Oliveira
@@ -20,7 +21,7 @@ public class RightsValidatorConfigTest {
     private Properties props= null;
 
     static String datasetProperty(String permissionLevel) {
-        return RightsValidatorConfig.DATASET+"."+dataset+"."+permissionLevel;
+        return DATASET+"."+dataset+"."+permissionLevel;
     }
     static final String dataset= "dataset1";
 
@@ -107,6 +108,15 @@ public class RightsValidatorConfigTest {
 
         assertFalse(config.validate(props));
         assertEquals(config.getConstraintViolations().get(0),
-                ConfigConstants.MSG_CONSTRAINT_VIOLATION+RightsValidatorConfig.MSG_ANONYMOUS_EDITORS_NOT_ALLOWED);
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+MSG_ANONYMOUS_EDITORS_NOT_ALLOWED);
+    }
+
+    @Test
+    public void datasetNoneReservedTerm() {
+        props.put(DATASET+"."+DATASET_NAME_NONE+"."+PERMISSION_LEVEL_READER,USER_NAME_ANONYMOUS);
+
+        assertFalse(config.validate(props));
+        assertEquals(config.getConstraintViolations().get(0),
+                ConfigConstants.MSG_CONSTRAINT_VIOLATION+MSG_NONE_RESERVED_TERM);
     }
 }

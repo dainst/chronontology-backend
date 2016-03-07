@@ -7,7 +7,6 @@
 typeNames=period
 credentials=admin:abc
 useEmbeddedES=true
-useConnect=false
 
 
 ## DETAILED INFORMATION ##
@@ -26,24 +25,35 @@ useConnect=false
 #
 # serverPort=4567
 
+# # # # #
+#
+# typeNames=<type_name>[,...]
+#
 # the typenames to be used. Use , to separat them. Don't use whitespaces in between.
 #
 # typeNames=period
 
+# # # # #
+#
+# credentials=<user:password>[,...]
+#
 # List of username/passwords pairs. Don't use whitespaces.
 #
 # credentials=admin:s3cr3t,user1:abc
 
+# # # # #
+#
+# dataset.<name>.<permission_level>=<anonymous|user_name>[,...]
+#
 # Dataset configuration. Starting with dataset., the second part determines
 # the dataset name and the third part the role. The value lists the names of users
-# that are assigned the specified permission grade.
-# Don't use whitespaces.
+# that are assigned the specified permission grade. Don't use whitespaces to separate the user names.
 # 
-# One can create as many dataset groups as one wants.
-# Currently there exist the permission grades **editor** and **reader** where the editor
-# includes the reader permisssion so an editor can automatically do everything a reader can do.
+# One can create as many dataset groups as one wants, though it has to noted that
+# "none" is a reserved term and cannot be used as a dataset name.
+# Currently there are the permission levels **editor** and **reader**.
 # 
-# For editor access, make sure the user is are granted general access by beeing listed under credentials.
+# For editor access, also make sure the user is are granted general access by beeing listed under credentials.
 # For read access by anonymous users, one can add **anonymous** to the datasets reader user list.
 # In that case you don't need to specify any other reader for the dataset since anyone can read it then.
 #
