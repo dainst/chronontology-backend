@@ -42,10 +42,9 @@ assigned to a dataset group, as shown in the example.
 
 ```
 {
-  "resource": {
-      "a" : "b"
-      },
-  "dataset" : "ds1"
+  "resource": ...,
+  "dataset" : "ds1",
+  ...
 }
 ```
 
@@ -58,10 +57,9 @@ This can also be done explicitely by setting "dataset" to "none".
 
 ```
 {
-  "resource": {
-      "a" : "b"
-  },
-  "dataset" : "none"
+  "resource": ...,
+  "dataset" : "none",
+  ...
 }
 ```
 
