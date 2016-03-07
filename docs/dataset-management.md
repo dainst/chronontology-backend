@@ -29,7 +29,7 @@ are assigned to any specific dataset or to which the user has **reader** level p
 
 Datasets can also get marked for **anonymous** access, in which case anyone, even without beeing
 authenticated, can read or search for documents in the dataset while there is still user based
-access control for ***edit*** operations. ***edit*** operations can never be performed for 
+access control for ***edit*** operations. ***edit*** operations can never be performed by 
 ***anonymous*** users.
 
 The user authenticated under the user name **admin** has permissions to perform any operation
