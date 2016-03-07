@@ -44,7 +44,20 @@ public class ElasticsearchDatastore implements Datastore {
         return client.get("/" + indexName+ "/" + typeName + "/" + key).get("_source");
     };
 
+    @Override
+    public boolean isConnected() {
+        return (client.get("/")!=null);
+    }
 
+    @Override
+    public boolean put(final String typeName,final String key,final JsonNode value) {
+        return (client.post("/" + indexName + "/" + typeName + "/" + key, value)!=null);
+    }
+
+    @Override
+    public void remove(final String typeName, final String key) {
+        client.delete("/" + indexName + "/" + typeName + "/" + key);
+    }
 
     /**
      * @param queryString an elastic search url query string.
@@ -61,22 +74,30 @@ public class ElasticsearchDatastore implements Datastore {
             final List<String> includes) {
 
         JsonNode q= convert(queryString);
+
+
+
         if (includes!=null) q= include(q,includes);
 
         JsonNode response= client.post("/" + indexName + "/" + typeName + "/_search",
                 q);
 
+        return makeResultsFrom(searchHits(response));
+    }
+
+    private ArrayNode searchHits(JsonNode response) {
         if ((response==null)||
                 (response.get("hits")==null)) return null;
 
         ArrayNode searchHits= (ArrayNode) response.get("hits").get("hits");
         if (searchHits==null)
             return null;
-
-        return makeResults(searchHits);
+        return searchHits;
     }
 
-    private Results makeResults(ArrayNode searchHits) {
+    private Results makeResultsFrom(ArrayNode searchHits) {
+        if (searchHits==null) return null;
+
         Results results = new Results("results");
         for (JsonNode o:searchHits) {
             results.add(o.get("_source"));
@@ -84,23 +105,12 @@ public class ElasticsearchDatastore implements Datastore {
         return results;
     }
 
-    @Override
-    public boolean isConnected() {
-        return (client.get("/")!=null);
-    }
-
-    @Override
-    public boolean put(final String typeName,final String key,final JsonNode value) {
-        return (client.post("/" + indexName + "/" + typeName + "/" + key, value)!=null);
-    }
-
-    @Override
-    public void remove(final String typeName, final String key) {
-        client.delete("/" + indexName + "/" + typeName + "/" + key);
-    }
-
     private JsonNode convert(String queryString) {
-        JsonNode j= JsonUtils.json("{\"query\":{\"bool\":{ \"must\" : [ {\"bool\":{ \"should\" : [] }},{\"bool\":{ \"should\" : [] }} ] }}}");
+        JsonNode j= JsonUtils.json(
+                "{\"query\":{\"bool\":{ \"must\" : [ " +
+                        "{\"bool\":{ \"should\" : [] }}," +
+                        "{\"bool\":{ \"should\" : [] }} " +
+                        "] }}}");
 
         if (queryString==null) return j;
         Query q = new Query(URLDecoder.decode(queryString));
@@ -113,6 +123,7 @@ public class ElasticsearchDatastore implements Datastore {
             String s = m.group();
             array(j,0).add(boolTerm(s.replace("%","/")));
         }
+
         return j;
     }
 
@@ -135,9 +146,9 @@ public class ElasticsearchDatastore implements Datastore {
 
         private Integer mod(String pattern) {
             Integer nr= null;
-            Matcher sizeMatcher = Pattern.compile(pattern).matcher(queryString);
-            while (sizeMatcher.find()) {
-                String s = sizeMatcher.group(1);
+            Matcher m = Pattern.compile(pattern).matcher(queryString);
+            while (m.find()) {
+                String s = m.group(1);
                 nr = Integer.parseInt(s.split("=")[1]);
                 queryString = queryString.replace(s, "");
             }
