@@ -20,10 +20,10 @@ A user having the ***editor*** permission level on a dataset can perfom the oper
 and ***modify***, which a user having the ***reader*** permission level can perform the ***read***
 operation only.
 
-This also applies to search, which in this context is seen as just 
-a variation of read. When searching for documents, only documents are shown 
+This also applies to **search**, which in this context is seen as just 
+a variation of ***read***. When searching for documents, only documents are shown 
 which are either not assigned to any dataset or which
-are assigned to any specific dataset or to which the user has **read** permissions.
+are assigned to any specific dataset or to which the user has **reader** level permissions.
 
 ### Special user roles
 
