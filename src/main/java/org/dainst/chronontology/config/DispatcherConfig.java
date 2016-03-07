@@ -11,18 +11,14 @@ import java.util.Properties;
  */
 public class DispatcherConfig extends Config {
 
-    static final String MSG_MUST_TYPE_ES= "datastores.0 must be of type \""+
-        ConfigConstants.DATASTORE_TYPE_ES+"\".";
-    static final String MSG_MUST_TYPE_FS= "datastores.1 must be of type \""+
-            ConfigConstants.DATASTORE_TYPE_FS+"\".";
-
-    static final String MSG_ES_CLASH= "When both datastores use the same elasticsearch url, the index names must be different.";
-
-    private DatastoreConfig[] datastoreConfigs = new DatastoreConfig[2];
-
     private boolean useConnect = true;
 
     private Properties props= null;
+
+    private ElasticsearchDatastoreConfig esConfig= null;
+
+    private FilesystemDatastoreConfig fsConfig= null;
+
 
     @Override
     public boolean validate(Properties props) {
@@ -38,31 +34,20 @@ public class DispatcherConfig extends Config {
     public ArrayList<String> getConstraintViolations() {
         ArrayList<String> allViolations= new ArrayList<String>();
         allViolations.addAll(constraintViolations);
-        for (DatastoreConfig config: Arrays.asList(datastoreConfigs)) {
-            if (config!=null)
-                allViolations.addAll(config.getConstraintViolations());
-        }
+        allViolations.addAll(esConfig.getConstraintViolations());
+        if (fsConfig!=null) allViolations.addAll(fsConfig.getConstraintViolations());
         return allViolations;
     }
 
-
-
-    private void validateDatastore(Integer nr) {
-        datastoreConfigs[nr]= new DatastoreConfig(nr.toString());
-        if (!datastoreConfigs[nr].validate(props)) throw new ConfigValidationException();
-    }
-
-
     void setUseConnect(String useIt) {
 
-        validateDatastore(0);
-        if (!datastoreConfigs[0].getType().equals(ConfigConstants.DATASTORE_TYPE_ES))
-            throw new ConfigValidationException(MSG_MUST_TYPE_ES);
+        esConfig= new ElasticsearchDatastoreConfig();
+        if (!esConfig.validate(props)) throw new ConfigValidationException();
 
         if (!useIt.equals("false")) {
-            validateDatastore(1);
-            if (!datastoreConfigs[1].getType().equals(ConfigConstants.DATASTORE_TYPE_FS))
-                throw new ConfigValidationException(MSG_MUST_TYPE_FS);
+
+            fsConfig= new FilesystemDatastoreConfig();
+            if (!fsConfig.validate(props)) throw new ConfigValidationException();
         } else
             useConnect= false;
     }
@@ -71,9 +56,12 @@ public class DispatcherConfig extends Config {
         return useConnect;
     }
 
-    public DatastoreConfig[] getDatastoreConfigs() {
-        return datastoreConfigs;
+    public FilesystemDatastoreConfig getFilesystemDatastoreConfig() {
+        return fsConfig;
     }
 
+    public ElasticsearchDatastoreConfig getElasticsearchDatastoreConfig() {
+        return esConfig;
+    }
 
 }

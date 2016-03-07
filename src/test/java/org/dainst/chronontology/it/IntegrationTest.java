@@ -66,10 +66,9 @@ public abstract class IntegrationTest {
 
         Properties props= new Properties();
         props.put("serverPort",TestConstants.SERVER_PORT);
-        props.put("datastores.0.indexName",ESClientTestUtil.getIndexName());
-        props.put("datastores.0.url",ESServerTestUtil.getUrl());
-        props.put("datastores.1.path",TestConstants.TEST_FOLDER);
-        props.put("datastores.1.type", ConfigConstants.DATASTORE_TYPE_FS);
+        props.put("datastore.elasticsearch.indexName",ESClientTestUtil.getIndexName());
+        props.put("datastore.elasticsearch.url",ESServerTestUtil.getUrl());
+        props.put("datastore.filesystem.path",TestConstants.TEST_FOLDER);
         props.put("typeNames",TestConstants.TEST_TYPE);
         props.put("credentials", makeCredentials());
         props.put("dataset.dataset1.editor", TestConstants.USER_NAME_1);

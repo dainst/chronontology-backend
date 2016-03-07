@@ -117,7 +117,6 @@ public class AppConfigTest {
         props.put("credentials","abc:def");
         props.put("useEmbeddedES","true");
         props.put("useConnect","true");
-        props.put("datastores.1.type","filesystem");
 
         assertTrue(appConfig.validate(props));
         assertEquals(appConfig.getDispatcherConfig().isUseConnect(),true);
@@ -134,22 +133,6 @@ public class AppConfigTest {
                 ConfigConstants.MSG_CONSTRAINT_VIOLATION+AppConfig.MSG_SERVER_PORT_NAN));
     }
 
-
-
-    @Test
-    public void mergeMessagesWithControllerMessages() {
-        props.put("serverPort","a7");
-        props.put("typeNames","period");
-        props.put("credentials","abc:def");
-        props.put("datastores.0.type","filesystem");
-
-        assertFalse(appConfig.validate(props));
-
-        assertTrue(appConfig.getConstraintViolations().contains(
-                ConfigConstants.MSG_CONSTRAINT_VIOLATION+AppConfig.MSG_SERVER_PORT_NAN+"\"a7\"."));
-        assertTrue(appConfig.getConstraintViolations().contains(
-                ConfigConstants.MSG_CONSTRAINT_VIOLATION+ DispatcherConfig.MSG_MUST_TYPE_ES));
-    }
 
     @Test
     public void prohibitReserverdUsernameAnonymous() {

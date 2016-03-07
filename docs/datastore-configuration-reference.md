@@ -4,16 +4,16 @@
 
 The connected backend can operate in two modes.
 
-In **single** mode there is one datastore (id "0"), which is of type **elasticsearch**. Datastores
+In **single** mode there is one datastore, which is of type **elasticsearch**. Datastores
 of this type are searchable.
 
-In **connect** mode there are two datastores. The first datastore (id "0") is the **connect** 
-datastore, where data get send to to get enriched by the yet to be implemented connect component. 
-It must be of type ***elasticsearch***.
-The second one (id "1") is the **main** datastore where the original data get stored. 
-It must be of type **filesystem**. A datastore of this type is not searchable, like datastores
+In **connect** mode there are two datastores. 
+The first one is the **main** datastore where the original data get stored. 
+It is of type **filesystem**. A datastore of this type is not searchable, like datastores
 of type ***elasticsearch***, but it has another rather distinctive feature: it collects and 
-maintains a version history of documents. 
+maintains a version history of documents. The second datastore is the **connect** 
+datastore, where data get send to to get enriched by the yet to be implemented connect component. 
+It is of type ***elasticsearch***.
 
 When the application runs, you can watch the datastore configuration and status
 by performing a GET request to the base route.
@@ -24,7 +24,7 @@ GET /
 
 as is also documented [here](rest-api-reference.md).
 
-The "connect" mode is default but can be turned off with using the property
+The ***connect*** mode is default but can be turned off with using the property
 
 ```
 useConnect=false
@@ -32,19 +32,22 @@ useConnect=false
 
 ## Datestore configuration
 
-A datastore can be either an "elasticsearch" datastore or 
-a "filesystem" datastore. This can be specified explicitely by
-the property
+As stated earlier, a datastore can be either an ***elasticsearch*** datastore or 
+a ***filesystem*** datastore. 
+
+Depending on which datastore you configure, you specify properties either of type
 
 ```
-datastores.[id].type=elasticsearch
-datastores.[id].type=filesystem
+datastores.elasticsearch.
 ```
 
-If ommitted, it will default to "elasticsearch".
+or
 
-Depending on which type you choose for the datastore,
-different properties are necessary.
+```
+datastores.filesystem.
+```
+
+The specific properties differ on both datastores.
 
 ### Elasticsearch datastore configuration
 
@@ -52,22 +55,21 @@ The url param can be ommitted and defaults to "http://localhost:9202", which is
 also the default of the embedded elasticsearch server.
 
 ```
-datastores.[id].url=http://localhost:9200
+datastore.elasticsearch.url=http://localhost:9200
 ```
 
 The indexName can be ommitted and defaults to "connect".
 
 ```
-datastores.[id].indexName=myIndex
+datastore.elasticsearch.indexName=myIndex
 ```
 
 The simplest possible configuration for such a datastore is empty.
 It will automatically be configured by default to
 
 ```
-datastores.[id].type=elasticsearch
-datastores.[id].indexName=myIndex
-datastores.[id].url=http://localhost:9202
+datastore.elasticsearch.indexName=myIndex
+datastore.elasticsearch.url=http://localhost:9202
 ```
 
 ### Filesystem datastore configuration
@@ -78,17 +80,11 @@ into. If it does not exist, it will get created at application start.
 The path param can be empty and default to "datastore/".
 
 ```
-datastores.[id].path=myDataStorePath/
+datastores.filesystem.path=myDataStorePath/
 ```
 
 The simplest possible configuration in such a case
-would be just
-
-```
-datastores.[id].type=filesystem
-```
-
-which is necessary, because otherwise it would default to "elasticsearch".
+would is empty because it then defaults as shown above.
 
 ## Simple Configuration examples
 
@@ -98,21 +94,16 @@ lean configurations.
 ### Connect mode
 
 According to the defaulting rules as described in the paragraphs above 
-the simplest possible configuration for connect mode would be
+the simplest possible configuration for connect mode would just be empty.
 
-```
-datastores.1.type=filesystem
-```
 
 which equals 
 
 ```
 useConnect=true
-datastores.0.type=elasticsearch
-datastores.0.indexName=connect
-datastores.0.url=http://localhost:9202
-datastores.1.type=filesystem
-datastores.1.path=datastore/
+datastore.elasticsearch.indexName=connect
+datastore.elasticsearch.url=http://localhost:9202
+datastore.filesystem.path=datastore/
 ```
 
 ### Single mode
@@ -127,8 +118,7 @@ which equals
 
 ```
 useConnect=false
-datastores.0.type=elasticsearch
-datastores.0.indexName=myIndex
-datastores.0.url=http://localhost:9202
+datastore.elasticsearch.indexName=myIndex
+datastore.elasticsearch.url=http://localhost:9202
 ```
 

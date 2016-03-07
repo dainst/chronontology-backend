@@ -13,13 +13,13 @@ public class DispatcherConfigurator implements Configurator<Dispatcher,Dispatche
 
     public Dispatcher configure(DispatcherConfig config) {
 
-        ElasticsearchDatastore searchable= (ElasticsearchDatastore)
-                new DatastoreConfigurator().configure(config.getDatastoreConfigs()[0]);
+        ElasticsearchDatastore searchable=
+                new ElasticsearchDatastoreConfigurator().configure(config.getElasticsearchDatastoreConfig());
 
         Dispatcher dispatcher = null;
         if (config.isUseConnect())
             dispatcher = new ConnectDispatcher(
-                    (FilesystemDatastore) new DatastoreConfigurator().configure(config.getDatastoreConfigs()[1]),
+                    new FilesystemDatastoreConfigurator().configure(config.getFilesystemDatastoreConfig()),
                     searchable);
         else
             dispatcher = new SimpleDispatcher(searchable);
