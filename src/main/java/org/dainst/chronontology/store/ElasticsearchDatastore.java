@@ -60,16 +60,49 @@ public class ElasticsearchDatastore implements Datastore {
     }
 
     /**
-     * @param queryString an elastic search url query string.
-     *                    Should contain the only part after
-     *                    "_search?".
+     * Performs a search for documents in one of the types of an elasticsearch index.
+     *
+     * @param type search will be only performed on documents of the given <code>type</code>.
+     * @param queryString a query string consisting of one or more
+     *   query elements, combining the query
+     *   elements with "&". A single query element can be one of the following
+     *   <ul>
+     *   <li>&lt;searchTerm&gt; - search for the given term in all fields</li>
+     *   <li>&lt;fieldName&gt;:&lt;searchTerm&gt; - search for the given term in specific fields</li>
+     *   <li>size=&lt;size&gt; - size of search result set</li>
+     *   <li>from=&lt;startIndex&gt; - search result set starting at index</li>
+     *   </ul>
+     *   It may optionally start with "q=". Examples for valid query strings are
+     *   <ul>
+     *   <li>q=size=4&from=3&abc</li>
+     *   <li>name:anton&abc</li>
+     *   <li>q=anton</li>
+     *   <li>size=10&name:anton&dataset:dataset3</li>
+     *   </ul>
+     *   Asides from "size" and "from", search elements are comined with logical "or", that means
+     *   that if two or more query partials are given, documents matching at least one of these
+     *   will be included in the result set.
+     * @param includes when beeing non empty, the list elements get combined with logical "or". The
+     *   <code>boolean</code> result of this will then combined with logical "and" to the query as
+     *   specified by <code>queryString</code>. An example is
+     *
+     *   <code>
+     *   queryString -> q=anton&user=tim
+     *   includes.get(0) -> dataset:dataset1
+     *   includes.get(1) -> dataset:dataset2
+     *   </code>
+     *
+     *   The search will match all documents which have some value "anton" <b>or</b> some field
+     *   named "user" containing a value named "tim" <b>and</b> at the same time meeting the condition
+     *   that the document a field named dataset containing either the value "dataset1" <b>or</b> "dataset2".
+     *
      * @return a JsonNode with a top level field named results which
      *   is an array containing objects representing the search hits.
      *   The results array can be empty if there where no results.
      *   When errors occur, null gets returned.
      */
     public Results search(
-            final String typeName,
+            final String type,
             String queryString,
             final List<String> includes) {
 
@@ -79,7 +112,7 @@ public class ElasticsearchDatastore implements Datastore {
         if (includes!=null) requestBody= incorporateIncludes(requestBody,includes);
 
         return makeResultsFrom(searchHits(
-                client.post("/" + indexName + "/" + typeName + "/_search", requestBody)));
+                client.post("/" + indexName + "/" + type + "/_search", requestBody)));
     }
 
     private ArrayNode searchHits(JsonNode response) {
