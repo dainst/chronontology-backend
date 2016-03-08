@@ -146,7 +146,7 @@ public class ElasticsearchDatastore implements Datastore {
     private JsonNode inflateRequestBody(final JsonNode j, final String queryString) {
 
         if (queryString.isEmpty()) return j;
-        Query q = new Query(queryString);
+        SizeFromExtractor q = new SizeFromExtractor(queryString);
         if (q.size!=null) ((ObjectNode)j).put("size",q.size);
         if (q.from!=null) ((ObjectNode)j).put("from",q.from);
 
@@ -160,12 +160,22 @@ public class ElasticsearchDatastore implements Datastore {
         return (ArrayNode) n.get("query").get("bool").get("must").get(index).get("bool").get("should");
     }
 
-    private class Query {
+    /**
+     * Removes "size" and "from" elements (including possible "&" or "?" prefixes)
+     * and provides the result as <code>queryString</code> as well as the size
+     * and from values as Integers. When size or from are specified more than once, only
+     * the value of their last match is taken.
+     */
+    private class SizeFromExtractor {
+
+          // the original query string "qs" without "size" or "from" elements.
         public String queryString=null;
+          // size as derived from the last size element in queryString, null if not found.
         public Integer size= null;
+          // from as derived from the last from element in queryString, null if not found.
         public Integer from= null;
 
-        public Query(final String qs) {
+        public SizeFromExtractor(final String qs) {
             queryString = qs;
             size= extractElement("([&|?]*size=\\d+)");
             from= extractElement("([&|?]*from=\\d+)");
