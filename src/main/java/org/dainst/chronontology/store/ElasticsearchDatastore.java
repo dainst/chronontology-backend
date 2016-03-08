@@ -72,11 +72,11 @@ public class ElasticsearchDatastore implements Datastore {
      *   <li>size=&lt;size&gt; - size of search result set</li>
      *   <li>from=&lt;startIndex&gt; - search result set starting at index</li>
      *   </ul>
-     *   It may optionally start with "q=". Examples for valid query strings are
+     *   Examples for valid query strings are
      *   <ul>
-     *   <li>q=size=4&from=3&abc</li>
+     *   <li>size=4&from=3&abc</li>
      *   <li>name:anton&abc</li>
-     *   <li>q=anton</li>
+     *   <li>anton</li>
      *   <li>size=10&name:anton&dataset:dataset3</li>
      *   </ul>
      *   Asides from "size" and "from", search elements are comined with logical "or", that means
@@ -87,7 +87,7 @@ public class ElasticsearchDatastore implements Datastore {
      *   specified by <code>queryString</code>. An example is
      *
      *   <code>
-     *   queryString -> q=anton&user=tim
+     *   queryString -> anton&user=tim
      *   includes.get(0) -> dataset:dataset1
      *   includes.get(1) -> dataset:dataset2
      *   </code>
