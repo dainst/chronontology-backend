@@ -79,17 +79,18 @@ result.fetch do |row|
 	label = UnicodeUtils.titlecase label
 	label = label.sub('Ii', 'II').sub('IIi', 'III')
 	
-	period = {
-		"prefLabel" => {
-			"de" => label
-		},
-		"provenance" => ["Arachne"]
-	}
+	period = { "resource" => {
+			"prefLabel" => {
+				"de" => label
+			},
+			"provenance" => ["Arachne"]
+		}
+  }
 
 	puts "%-50s %-50s %-50s" % [(" " * level) + label, "parent: #{last_parent.last}", "last_sibling: #{last_sibling}"]
 
 	if last_parent.size > 0
-		period["fallsWithin"] = periods[last_parent.last]["@id"]
+		period["resource"]["fallsWithin"] = periods[last_parent.last]["@id"]
 	end
 
 	if !last_sibling.empty?
@@ -105,7 +106,7 @@ result.fetch do |row|
 	# also add reverse property to sibling
     if !last_sibling.empty?
     	sibling = periods[last_sibling]
-		sibling["meetsInTimeWith"] = periods[last_label]["@id"]
+		sibling["resource"]["meetsInTimeWith"] = periods[last_label]["@id"]
 		puts "sibling" + sibling["@id"].to_s
 		api[sibling["@id"]].put(sibling.to_json, :content_type => :json, :accept => :json)
 	end
