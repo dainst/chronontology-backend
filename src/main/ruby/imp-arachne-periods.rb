@@ -79,13 +79,14 @@ result.fetch do |row|
 	label = UnicodeUtils.titlecase label
 	label = label.sub('Ii', 'II').sub('IIi', 'III')
 	
-	period = { "resource" => {
+	period = { 
+		"resource" => {
 			"prefLabel" => {
 				"de" => label
 			},
 			"provenance" => ["Arachne"]
 		}
-  }
+	}
 
 	puts "%-50s %-50s %-50s" % [(" " * level) + label, "parent: #{last_parent.last}", "last_sibling: #{last_sibling}"]
 
@@ -94,7 +95,7 @@ result.fetch do |row|
 	end
 
 	if !last_sibling.empty?
-		period["isMetInTimeBy"] = periods[last_sibling]["@id"]
+		period["resource"]["isMetInTimeBy"] = periods[last_sibling]["@id"]
 	end
 
 	puts period.to_json
@@ -107,7 +108,7 @@ result.fetch do |row|
     if !last_sibling.empty?
     	sibling = periods[last_sibling]
 		sibling["resource"]["meetsInTimeWith"] = periods[last_label]["@id"]
-		puts "sibling" + sibling["@id"].to_s
+		puts "sibling" + sibling["resource"]["@id"].to_s
 		api[sibling["@id"]].put(sibling.to_json, :content_type => :json, :accept => :json)
 	end
 
