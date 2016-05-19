@@ -108,7 +108,7 @@ result.fetch do |row|
     if !last_sibling.empty?
     	sibling = periods[last_sibling]
 		sibling["resource"]["meetsInTimeWith"] = periods[last_label]["@id"]
-		puts "sibling" + sibling["resource"]["@id"].to_s
+		puts "sibling" + sibling["@id"].to_s
 		api[sibling["@id"]].put(sibling.to_json, :content_type => :json, :accept => :json)
 	end
 
