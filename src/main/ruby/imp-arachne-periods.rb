@@ -84,7 +84,7 @@ result.fetch do |row|
 			"prefLabel" => {
 				"de" => label
 			},
-			"provenance" => ["Arachne"]
+			"provenance" => "Arachne"
 		}
 	}
 
