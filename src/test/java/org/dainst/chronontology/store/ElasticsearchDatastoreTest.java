@@ -1,5 +1,6 @@
 package org.dainst.chronontology.store;
 
+import com.squareup.okhttp.OkHttpClient;
 import org.dainst.chronontology.JsonTestUtils;
 import org.dainst.chronontology.it.ESClientTestUtil;
 import org.dainst.chronontology.store.rest.JsonRestClient;
@@ -17,7 +18,7 @@ import static org.testng.Assert.assertEquals;
  */
 public class ElasticsearchDatastoreTest {
 
-    private final JsonRestClient client= new JsonRestClient(ESServerTestUtil.getUrl());
+    private final JsonRestClient client= new JsonRestClient(ESServerTestUtil.getUrl(),new OkHttpClient(),false);
     private final ElasticsearchDatastore store=
             new ElasticsearchDatastore(client,TEST_INDEX);
 

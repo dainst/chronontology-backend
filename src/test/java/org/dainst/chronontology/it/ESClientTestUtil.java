@@ -2,9 +2,7 @@ package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.*;
 import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.dainst.chronontology.store.ESServerTestUtil;
@@ -22,7 +20,7 @@ import static org.dainst.chronontology.TestConstants.*;
  */
 public class ESClientTestUtil {
 
-    private static final JsonRestClient esClient = new JsonRestClient(ESServerTestUtil.getUrl());
+    private static final JsonRestClient esClient = new JsonRestClient(ESServerTestUtil.getUrl(),new OkHttpClient(),false);
 
     public static String getIndexName() {
         return TEST_INDEX;
@@ -37,10 +35,21 @@ public class ESClientTestUtil {
         RequestBody body = RequestBody.create(TestConstants.JSON, "{}");
         Request.Builder b = new Request.Builder()
                 .url(ESServerTestUtil.getUrl()+ "/" + ESClientTestUtil.getIndexName() + "/_refresh").post(body);
+
+        Response response;
+        ResponseBody responseBody = null;
         try {
-            new OkHttpClient().newCall(b.build()).execute();
+            response=new OkHttpClient().newCall(b.build()).execute();
+            responseBody=response.body();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (responseBody!=null)
+                try {
+                    responseBody.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
         }
     }
 

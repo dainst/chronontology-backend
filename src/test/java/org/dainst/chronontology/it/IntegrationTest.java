@@ -1,6 +1,7 @@
 package org.dainst.chronontology.it;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.squareup.okhttp.OkHttpClient;
 import org.apache.commons.io.FileUtils;
 import org.dainst.chronontology.App;
 import org.dainst.chronontology.TestConstants;
@@ -29,7 +30,7 @@ public abstract class IntegrationTest {
     protected static final String TYPE_ROUTE = "/" + TestConstants.TEST_TYPE + "/";
 
     // A client speaking to the rest api of the app under design
-    protected static final JsonRestClient client = new JsonRestClient(TestConstants.SERVER_URL);
+    protected static final JsonRestClient client = new JsonRestClient(TestConstants.SERVER_URL,new OkHttpClient(),false);
 
     // To allow direct data manipulation for testing purposes
     protected static ElasticsearchDatastore connectDatastore = null;

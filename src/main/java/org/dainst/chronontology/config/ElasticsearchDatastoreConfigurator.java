@@ -1,5 +1,6 @@
 package org.dainst.chronontology.config;
 
+import com.squareup.okhttp.OkHttpClient;
 import org.dainst.chronontology.store.ElasticsearchDatastore;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 
@@ -12,7 +13,7 @@ public class ElasticsearchDatastoreConfigurator
     @Override
     public ElasticsearchDatastore configure(ElasticsearchDatastoreConfig config) {
         return new ElasticsearchDatastore(
-                new JsonRestClient(config.getUrl()),
+                new JsonRestClient(config.getUrl(),new OkHttpClient(),true),
                 config.getIndexName());
     }
 }

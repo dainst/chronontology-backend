@@ -28,13 +28,16 @@ public class PostDocumentHandler extends DocumentHandler {
         Document dm= makeDocumentModel(req,res,true);
         if (dm==null) return JsonUtils.json();
 
-        if (!dispatcher.dispatchPost(req.pathInfo(),dm.getId().replace(req.pathInfo(),""),dm.j()))
-            res.status(HTTP_INTERNAL_SERVER_ERROR);
-        else {
-            res.status(HTTP_CREATED);
-        }
+        if (!dispatcher.dispatchPost(req.pathInfo(),dm.getId().replace(req.pathInfo(),""),dm.j())) {
 
-        res.header("location", dm.getId());
-        return dm;
+            res.status(HTTP_INTERNAL_SERVER_ERROR);
+            return JsonUtils.json();
+
+        } else {
+
+            res.status(HTTP_CREATED);
+            res.header("location", dm.getId());
+            return dm;
+        }
     }
 }

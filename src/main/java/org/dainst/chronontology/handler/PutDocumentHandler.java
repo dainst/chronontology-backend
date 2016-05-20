@@ -47,11 +47,13 @@ public class PutDocumentHandler extends DocumentHandler {
             status= HTTP_CREATED;
         }
 
-        if (!dispatcher.dispatchPut(type(req), simpleId(req),dm.j()))
+        if (!dispatcher.dispatchPut(type(req), simpleId(req),dm.j())) {
             res.status(HTTP_INTERNAL_SERVER_ERROR);
-        else
+            return json();
+        }
+        else {
             res.status(status);
-
-        return dm;
+            return dm;
+        }
     }
 }

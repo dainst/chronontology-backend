@@ -41,7 +41,9 @@ public class ElasticsearchDatastore implements Datastore {
      */
     @Override
     public JsonNode get(final String typeName,final String key) {
-        return client.get("/" + indexName+ "/" + typeName + "/" + key).get("_source");
+        JsonNode result= client.get("/" + indexName+ "/" + typeName + "/" + key);
+        if (result==null) return null;
+        return result.get("_source");
     };
 
     @Override
