@@ -5,8 +5,6 @@ require 'rest-client'
 require 'json'
 require "csv"
 require 'optparse'
-# require 'dbi'
-# require "unicode_utils"
 
 ################################
 
@@ -36,9 +34,13 @@ options = {}
 OptionParser.new do |opts|
 	opts.banner = "\nUsage: ruby imp-arachne-periods-neu.rb [-i] FILENAME\n\n"
 	options[:import] = false
+	options[:config] = "config.rb"
 	options[:verbose] = false
-	opts.on('-i', '--[no-]import', "import the data into the database ", "after the conversion from csv to json", "(default is no-import)") do |v|
+	opts.on('-i', '--[no-]import', "import the data into the database", "after the conversion from csv to json", "(default is no-import)") do |v|
 		options[:import] = v
+	end
+	opts.on('-c', '--config FILE', "config file with backend URL,", "username and password", "(default filename is config.rb)") do |v|
+		options[:config] = v
 	end
 	opts.on("-v", "--[no-]verbose", "Run verbosely\n\n") do |v|
 		options[:verbose] = v
@@ -69,7 +71,7 @@ end
 
 ################################
 
-ops = eval(File.open('config.rb') {|f| f.read })
+ops = eval(File.open(options[:config]) {|f| f.read })
 api_user = ops[:api_user]
 api_password = ops[:api_password]
 api_url = ops[:api_url]
@@ -114,9 +116,9 @@ columnPos = {
 # Statistik (und gleichzeitig Datenmodell)
 # todo: Statistik für kontrolliertes Vokabular
 
-namenBlock = { :name => 0, :sprache => 0, :pref => 0 }
+namesBlock = { :name => 0, :language => 0, :pref => 0 }
 
-timeBlock = { :timeOriginal => 0, :from => 0, :to => 0 }
+timeBlock = { :timeOriginal => 0, :source => 0, :from => 0, :to => 0 }
 
 statistics = {
 
@@ -125,7 +127,7 @@ statistics = {
 
 	# names
 	:prefLabel => { :de => 0 },  # deprecated!
-	:namen => [ namenBlock.clone ],
+	:names => [ namesBlock.clone ],
 
 	# types
 	:types => [ 0 ],
@@ -160,7 +162,7 @@ statistics = {
 	
 	# timeOriginal
 	# timeStandardized
-	# :hasTimespan => [ { :timeOriginal => 0, :from => 0, :to => 0 } ],
+	# :hasTimespan => [ { :timeOriginal => 0, :source => 0, :from => 0, :to => 0 } ],
 	:hasTimespan => [ timeBlock.clone ],
 	
 	# ongoing
@@ -317,7 +319,7 @@ akzeptierteZeilen.each do |row|
 			warnings[importID].push("Pflichtfeld Name fehlt")
 		end
 
-		namen = []
+		names = []
 
 		prefVorhanden = {}
 		spracheVorhanden = {}
@@ -343,7 +345,7 @@ akzeptierteZeilen.each do |row|
 				statistics[:prefLabel][:de] += 1
 			end
 
-			# neu: names mit name, sprache, pref
+			# neu: names mit name, language, pref
 
 			# pref, falls:
 			# 1. explizit angegeben
@@ -357,25 +359,21 @@ akzeptierteZeilen.each do |row|
 			end
 			spracheVorhanden[sprachkuerzel] = 1
 
-			namen.push( {
+			names.push( {
 				:name => name,
-				:sprache => sprachkuerzel,
+				:language => sprachkuerzel,
 				:pref => pref
 			} )
 
-			statistics[:namen][i] ||= namenBlock.clone
-			statistics[:namen][i][:name] += 1
-			statistics[:namen][i][:sprache] += 1
-			statistics[:namen][i][:pref] += 1 if pref
+			statistics[:names][i] ||= namesBlock.clone
+			statistics[:names][i][:name] += 1
+			statistics[:names][i][:language] += 1
+			statistics[:names][i][:pref] += 1 if pref
 		end
-		period[:namen] = namen
+		period[:names] = names
 	end
 
 	# Spalte: types
-	# alle Bedeutungen
-	# kulturell
-	# material culture: pottery
-	# * mehrere Types, getrennt durch Komma oder ::
 	# TODO: Whitespace entfernen
 	# TODO: mit Vokab abgleichen
 
@@ -393,9 +391,14 @@ akzeptierteZeilen.each do |row|
 			# Ausnahme (und hack) für Problemzeilen:
 			if ( type.match(/alle Bedeutungen\?\?/) )
 				typesOhneHierarchie.push("Strukturknoten")
-
-			elsif (type.match(/:(.+)/) )
+			elsif ( type.match(/^ *title *$/) )
+				typesOhneHierarchie.push("Strukturknoten")
+				
+			# material culture: pottery
+			elsif (type.match(/: ?(.+)/) )
 				typesOhneHierarchie.push($1)
+			# alle Bedeutungen
+			# kulturell
 			else
 				typesOhneHierarchie.push(type)
 			end
@@ -468,7 +471,7 @@ akzeptierteZeilen.each do |row|
 			gazetteerIDsPlusText.each do |gazetteerIdPlusText|
 				if (gazetteerIdPlusText.match(/^([0-9]+)(.*)$/) )
 					i += 1
-					gazetteerIDs.push("gazetteer:" + $1)
+					gazetteerIDs.push("http://gazetteer.dainst.org/place/" + $1)
 					if ($2.to_s.strip.length > 0)
 						infos[importID].push("Gazetteer-ID Text teilweise ignoriert: "+gazetteerIdPlusText+" --> "+$1 )
 					end
@@ -689,7 +692,7 @@ akzeptierteZeilen.each do |row|
 
 	# Spalte: timeOriginal
 	# Spalte: timeStandardized
-	# --> zwei Spalten in dieselbe Struktur!
+	# --> der Inhalt von zwei Spalten kommt in dieselbe Struktur!
 
 	if (columnPos["timeOriginal"] > -1)
 		timeOriginal = row[columnPos["timeOriginal"]].to_s.strip
@@ -700,6 +703,14 @@ akzeptierteZeilen.each do |row|
 			period[:hasTimespan] ||= []
 			period[:hasTimespan][0] ||= {}
 
+			# ... (source ...)
+			if ( timeOriginal.match(/^(.+) +\(source (.+)\) *$/) )
+				source = $2
+				timeOriginal = $1
+				period[:hasTimespan][0][:source] = source
+				statistics[:hasTimespan][0][:source] += 1
+			end
+
 			period[:hasTimespan][0][:timeOriginal] = timeOriginal
 			statistics[:hasTimespan][0][:timeOriginal] += 1
 			
@@ -709,12 +720,14 @@ akzeptierteZeilen.each do |row|
 
 				timeStandardizedFeld = row[columnPos["timeStandardized"]].to_s.strip
 				if (timeStandardizedFeld.length > 0)
-				
+
 					# [+235; +284]
 					# [+250;+ 300] --> TODO: in der Tabelle korrigieren?
 					# [?;?]
-					# TODO regex lesbarer mache, und nicht-zählende ()
-					if ( timeStandardizedFeld.match(/^ *\[(([+-]? ?[0-9]+)|\?); ?(([+-]? ?[0-9]+)|\?)\] *$/) )
+					# [+170, +192]
+					# [+69,?]
+					# TODO regex lesbarer mache, und nicht-zählende () verwenden
+					if ( timeStandardizedFeld.match(/^ *\[(([+-]? ?[0-9]+)|\?)[;,] ?(([+-]? ?[0-9]+)|\?)\] *$/) )
 						from = $1
 						to = $3
 						period[:hasTimespan][0][:from] = from
