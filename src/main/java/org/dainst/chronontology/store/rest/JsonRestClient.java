@@ -76,7 +76,7 @@ public class JsonRestClient {
             return JsonUtils.json(content);
 
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error("Got an error with "+method+" on " +url+path+". Error message was: "+e.getMessage());
             return null;
 
         } finally {
