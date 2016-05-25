@@ -557,18 +557,18 @@ akzeptierteZeilen.each do |row|
 			# A0021 (comes before)
 			# aat:300107341 (comes before)
 			if ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes before\) *$/) )
-				isMetInTimeBy = $1
-				startsAtTheEndOf = $1
+				meetsInTimeWith = $1
+				endsAtTheStartOf = $1
 			# aat:300107343 (comes after)
 			elsif ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes after\) *$/) )
-				meetsInTimeWith = $1
-				endsAtTheStartOf = $1
+				isMetInTimeBy = $1
+				startsAtTheEndOf = $1
 			# A0077 (comes after) A0089 (comes before)
 			elsif ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes after\) *([a-zA-Z:0-9]+) +\(comes before\) *$/) )
-				isMetInTimeBy = $2
-				startsAtTheEndOf = $2
-				meetsInTimeWith = $1
-				endsAtTheStartOf = $1
+				isMetInTimeBy = $1
+				startsAtTheEndOf = $1
+				meetsInTimeWith = $2
+				endsAtTheStartOf = $2
 			else
 				warnings[importID].push("comes before/after wurde nicht erkannt: "+siblingFeld)
 			end
