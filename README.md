@@ -1,6 +1,6 @@
-# chronontology-connected
+# Jeremy
 
-Chronontology provides access to underlying datastores via its REST api.
+Jeremy provides access to underlying datastores via its REST api.
 Detailed information on the REST api can be found [here](docs/rest-api-reference.md).
 
 ## Building and testing the application
@@ -20,7 +20,7 @@ gradle clean jar
 The binary with dependencies can be found here:
 
 ```
-build/libs/chronontology-connected-0.1.0-SNAPSHOT.jar
+build/libs/jeremy-0.1.0-SNAPSHOT.jar
 ```
 
 ## Using the server
