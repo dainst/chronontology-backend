@@ -294,6 +294,16 @@ CSV.foreach(csvFile) do |row|
 		next
 	end
 
+	# ignoriere Zeilen, deren ID schon vorgekommen ist 
+	# (kann auftreten, wenn mehrere Tabellen hintereinander eingelesen werden)
+	# TODO: anders lösen
+	if ( warnings.key?(row[columnPos["importID"]]) )
+		ignoredRows.push(row)
+		ignoredRowsReason.push("duplicate ID")
+		next
+	end
+
+
 	# ignoriere Problemzeilen
 	# 1. AAT-Zeilen wie "römische Keramikstile"
 	# TODO doch als parent behalten, oder unnötig?
@@ -319,7 +329,8 @@ CSV.foreach(csvFile) do |row|
 end
 
 
-# Spalten, die sich nicht auf andere Einträge beziehen
+# Spalten, die sich nicht auf andere Einträge in chronontology beziehen
+# (inkl. Verweise auf den Gazetteer)
 
 puts "\n# csv --> json, Teil 1\n" if options[:verbose]
 
@@ -430,6 +441,7 @@ akzeptierteZeilen.each do |row|
 			# "kulturell"
 			
 			typeStandardized = type
+
 			
 			# Ausnahme (und hack) für Problemzeilen:
 			if ( type.match(/alle Bedeutungen\?\?/) )
@@ -438,9 +450,16 @@ akzeptierteZeilen.each do |row|
 				typeStandardized = "(list)"
 			end
 			
+			# Hack für geologische Types:
+			# Geological: Eon --> Geological Eon
+			if ( type.match(/Geological:/) )
+				typeStandardized.gsub!(/Geological:/, 'Geological')
+			end
+			
+			
 			# "material culture: pottery"
 			# --> entferne die Hierarchie
-			if (type.match(/: ?(.+)/) )
+			if (typeStandardized.match(/: ?(.+)/) )
 				typeStandardized = $1
 			end
 
@@ -519,7 +538,7 @@ akzeptierteZeilen.each do |row|
 
 			i = -1
 			gazetteerIDsPlusText.each do |gazetteerIdPlusText|
-				if (gazetteerIdPlusText.match(/^([0-9]+)(.*)$/) )
+				if ( gazetteerIdPlusText.match(/^([0-9]+)(.*)$/) )
 					i += 1
 					gazetteerIDs.push("http://gazetteer.dainst.org/place/" + $1)
 					if ($2.to_s.strip.length > 0)
@@ -527,11 +546,17 @@ akzeptierteZeilen.each do |row|
 					end
 					statistics[:spatiallyPartOfRegion][i] ||= 0
 					statistics[:spatiallyPartOfRegion][i] += 1
+
+				# "(erbt)"
+				elsif ( gazetteerIdPlusText.match(/^ *\(erbt\) *$/) )
+					infos[importID].push("Gazetteer-Eintrag wurde ignoriert: "+gazetteerIdPlusText)					
 				else
 					warnings[importID].push("Gazetteer-ID nicht erkannt: "+gazetteerIdPlusText)
 				end
 			end
-			period[:spatiallyPartOfRegion] = gazetteerIDs
+			if (gazetteerIDs.length > 0)
+				period[:spatiallyPartOfRegion] = gazetteerIDs
+			end
 		end
 	end
 
@@ -573,6 +598,101 @@ akzeptierteZeilen.each do |row|
 		if (note3.to_s.strip.length > 0)
 			period[:note3] = note3
 			statistics[:note3] += 1
+		end
+	end
+
+
+	# Spalte: ongoing
+
+	if (columnPos["ongoing"] > -1)	
+		ongoingfeld = row[columnPos["ongoing"]].to_s.strip
+
+		if ( ongoingfeld.length > 0 )
+			if ( ongoingfeld.eql?("ja") )
+				period[:ongoing] = true
+				statistics[:ongoing] += 1
+			else
+				warnings[importID].push("ongoing wurde nicht erkannt: "+ongoingfeld)
+			end
+		end
+	end
+	
+
+	# Spalte: timeOriginal
+	# Spalte: timeStandardized
+	# --> der Inhalt von zwei Spalten kommt in dieselbe Struktur!
+	# TODO: sourceOriginal
+
+	if (columnPos["timeOriginal"] > -1)
+		timeOriginal = row[columnPos["timeOriginal"]].to_s.strip
+		if (timeOriginal.length > 0)
+			
+			# ad-hoc-Initialisierung
+			# TODO: umgehen mit mehr als einer Zeitangabe
+			period[:hasTimespan] ||= []
+			period[:hasTimespan][0] ||= {}
+
+			# ... (source ...)
+			if ( timeOriginal.match(/^(.+) +\(source (.+)\) *$/) )
+				source = $2
+				timeOriginal = $1
+				period[:hasTimespan][0][:sourceOriginal] = source
+				statistics[:hasTimespan][0][:sourceOriginal] += 1
+			end
+
+			period[:hasTimespan][0][:timeOriginal] = timeOriginal
+			statistics[:hasTimespan][0][:timeOriginal] += 1
+			
+			# ohne timeOriginal kein timeStandardized
+			# TODO: das mag sich ändern
+			if (columnPos["timeStandardized"] > -1)
+
+				timeStandardizedFeld = row[columnPos["timeStandardized"]].to_s.strip
+				if (timeStandardizedFeld.length > 0)
+
+					# [+235; +284]
+					# [+250;+ 300] --> TODO: in der Tabelle korrigieren?
+					# [?;?]
+					# [+170, +192]
+					# [+69,?]
+					# TODO regex lesbarer mache, und nicht-zählende () verwenden
+					if ( timeStandardizedFeld.match(/^ *\[(([+-]? ?[0-9]+)|\?)[;,] ?(([+-]? ?[0-9]+)|\?)\] *$/) )
+						from = $1
+						to = $3
+						
+						timespan = period[:hasTimespan][0]
+						timespan[:begin] = {}
+						timespan[:end] = {}
+						
+						timespan[:begin][:at] = from
+						statistics[:hasTimespan][0][:begin][:at] += 1
+						if (! from.eql?("?") ) 
+							timespan[:begin][:atPrecision] = "ca"
+							statistics[:hasTimespan][0][:begin][:atPrecision] += 1
+						end
+						
+						timespan[:end][:at] = to
+						statistics[:hasTimespan][0][:end][:at] += 1
+						if (! to.eql?("?") ) 
+							timespan[:end][:atPrecision] = "ca"
+							statistics[:hasTimespan][0][:end][:atPrecision] += 1
+						end
+
+					# [-1800000; ] mit ongoing = true
+					# ( [?; ] wird absichtlich nicht erkannt; kommt das jemals vor?)
+					elsif ( timeStandardizedFeld.match(/^\[([+-]?[0-9]+)[;,] ?\]$/) and period[:ongoing] )
+						from = $1
+						timespan = period[:hasTimespan][0]
+						timespan[:begin] = {}
+						timespan[:begin][:at] = from
+						timespan[:begin][:atPrecision] = "ca"
+						statistics[:hasTimespan][0][:begin][:at] += 1
+						statistics[:hasTimespan][0][:begin][:atPrecision] += 1
+					else
+						warnings[importID].push("timeStandardized wurde nicht erkannt: "+timeStandardizedFeld)
+					end
+				end
+			end
 		end
 	end
 
@@ -623,7 +743,7 @@ if (options[:import])
 end
 
 
-# Spalten, die sich auf andere Einträge beziehen
+# Spalten, die sich auf andere Einträge in chronontology beziehen
 
 puts "\n# csv --> json, Teil 2\n" if options[:verbose]
 
@@ -781,73 +901,6 @@ akzeptierteZeilen.each do |row|
 		end
 	end
 
-	# Spalte: timeOriginal
-	# Spalte: timeStandardized
-	# --> der Inhalt von zwei Spalten kommt in dieselbe Struktur!
-	# TODO: sourceOriginal
-
-	if (columnPos["timeOriginal"] > -1)
-		timeOriginal = row[columnPos["timeOriginal"]].to_s.strip
-		if (timeOriginal.length > 0)
-			
-			# ad-hoc-Initialisierung
-			# TODO: umgehen mit mehr als einer Zeitangabe
-			period[:hasTimespan] ||= []
-			period[:hasTimespan][0] ||= {}
-
-			# ... (source ...)
-			if ( timeOriginal.match(/^(.+) +\(source (.+)\) *$/) )
-				source = $2
-				timeOriginal = $1
-				period[:hasTimespan][0][:sourceOriginal] = source
-				statistics[:hasTimespan][0][:sourceOriginal] += 1
-			end
-
-			period[:hasTimespan][0][:timeOriginal] = timeOriginal
-			statistics[:hasTimespan][0][:timeOriginal] += 1
-			
-			# ohne timeOriginal kein timeStandardized
-			# TODO: das mag sich ändern
-			if (columnPos["timeStandardized"] > -1)
-
-				timeStandardizedFeld = row[columnPos["timeStandardized"]].to_s.strip
-				if (timeStandardizedFeld.length > 0)
-
-					# [+235; +284]
-					# [+250;+ 300] --> TODO: in der Tabelle korrigieren?
-					# [?;?]
-					# [+170, +192]
-					# [+69,?]
-					# TODO regex lesbarer mache, und nicht-zählende () verwenden
-					if ( timeStandardizedFeld.match(/^ *\[(([+-]? ?[0-9]+)|\?)[;,] ?(([+-]? ?[0-9]+)|\?)\] *$/) )
-						from = $1
-						to = $3
-						
-						timespan = period[:hasTimespan][0]
-						timespan[:begin] = {}
-						timespan[:end] = {}
-						
-						timespan[:begin][:at] = from
-						statistics[:hasTimespan][0][:begin][:at] += 1
-						if (! from.eql?("?") ) 
-							timespan[:begin][:atPrecision] = "ca"
-							statistics[:hasTimespan][0][:begin][:atPrecision] += 1
-						end
-						
-						timespan[:end][:at] = to
-						statistics[:hasTimespan][0][:end][:at] += 1
-						if (! to.eql?("?") ) 
-							timespan[:end][:atPrecision] = "ca"
-							statistics[:hasTimespan][0][:end][:atPrecision] += 1
-						end
-					else
-						warnings[importID].push("timeStandardized wurde nicht erkannt: "+timeStandardizedFeld)
-					end
-				end
-			end
-		end
-	end
-
 	# Spalte: matching
 	# TODO zurzeit noch String, muss aber Liste werden
 
@@ -905,7 +958,7 @@ akzeptierteZeilen.each do |row|
 		counterpart = periods[ counterpartImportID ]
 		if ( counterpart.has_key?(:meetsInTimeWith) )
 			if (! counterpart[:meetsInTimeWith].eql?(chronontologyID) )
-				warnings[counterpartImportID].push("konnte meetsInTimeWith "+chronontologyID+ "nicht ergänzen, nur einmal erlaubt")
+				warnings[counterpartImportID].push("konnte meetsInTimeWith "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
 			end
 		else
 			counterpart[:meetsInTimeWith] = chronontologyID
@@ -918,7 +971,7 @@ akzeptierteZeilen.each do |row|
 		counterpart = periods[ counterpartImportID ]
 		if ( counterpart.has_key?(:isMetInTimeBy) )
 			if (! counterpart[:isMetInTimeBy].eql?(chronontologyID) )
-				warnings[counterpartImportID].push("konnte isMetInTimeBy "+chronontologyID+ "nicht ergänzen, nur einmal erlaubt")
+				warnings[counterpartImportID].push("konnte isMetInTimeBy "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
 			end
 		else
 			counterpart[:isMetInTimeBy] = chronontologyID
@@ -932,7 +985,7 @@ akzeptierteZeilen.each do |row|
 		counterpart = periods[ counterpartImportID ]
 		if ( counterpart.has_key?(:endsAtTheStartOf) )
 			if (! counterpart[:endsAtTheStartOf].eql?(chronontologyID) )
-				warnings[counterpartImportID].push("konnte endsAtTheStartOf "+chronontologyID+ "nicht ergänzen, nur einmal erlaubt")
+				warnings[counterpartImportID].push("konnte endsAtTheStartOf "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
 			end
 		else
 			counterpart[:endsAtTheStartOf] = chronontologyID
@@ -945,7 +998,7 @@ akzeptierteZeilen.each do |row|
 		counterpart = periods[ counterpartImportID ]
 		if ( counterpart.has_key?(:startsAtTheEndOf) )
 			if (! counterpart[:startsAtTheEndOf].eql?(chronontologyID) )
-				warnings[counterpartImportID].push("konnte startsAtTheEndOf "+chronontologyID+ "nicht ergänzen, nur einmal erlaubt")
+				warnings[counterpartImportID].push("konnte startsAtTheEndOf "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
 			end
 		else
 			counterpart[:startsAtTheEndOf] = chronontologyID
@@ -959,7 +1012,7 @@ akzeptierteZeilen.each do |row|
 		counterpart = periods[ counterpartImportID ]
 		if ( counterpart.has_key?(:sameAs) )
 			if (! counterpart[:sameAs].eql?(chronontologyID) )
-				warnings[counterpartImportID].push("konnte sameAs "+chronontologyID+ "nicht ergänzen, nur einmal erlaubt")
+				warnings[counterpartImportID].push("konnte sameAs "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
 			end
 		else
 			counterpart[:sameAs] = chronontologyID
@@ -1021,7 +1074,7 @@ akzeptierteZeilen.each do |row|
 			counterpart = periods[ counterpartImportID ]
 			if ( counterpart.has_key?(:fallsWithin) )
 				if (! counterpart[:fallsWithin].eql?(chronontologyID) )
-					warnings[counterpartImportID].push("konnte fallsWithin "+chronontologyID+ "nicht ergänzen, nur einmal erlaubt")
+					warnings[counterpartImportID].push("konnte fallsWithin "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
 				end
 			else
 				counterpart[:fallsWithin] = chronontologyID
