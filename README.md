@@ -62,7 +62,7 @@ You'll find it [here](src/main/resources/mapping.json).
 To run the application, you need the binary, which can get executed like this:
 
 ```
-java -jar connected-backend-0.1.0-SNAPSHOT.jar
+java -jar jeremy-0.1.0-SNAPSHOT.jar
 ```
 
 Execution of the main method starts an embedded jetty server.
