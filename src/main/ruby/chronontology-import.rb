@@ -3,28 +3,27 @@
 
 require 'rest-client'
 require 'json'
-require "csv"
+require 'csv'
 require 'optparse'
 
 ################################
-
-# Import-Skript für ChronOntology
 #
-# Das Skript erwartet eine csv-Datei, in der 
-# Zeilenumbrüche innerhalb von Zellen durch " :: " ersetzt sind
-# --> csv-korrektur.pl
+# Import-Skript für ChronOntology
 #
 # In der ersten Zeile müssen die Spaltennamen sein, z.B.
 # importID,names,types,provenance,definition,description,gazetteer,
 #   siblings,parents,senses,timeOriginal,timeStandardized,ongoing,matching,
-#   notes,linksOrt,linksZeit,linksSTV,tags,,notes2,,notes3
+#   note,linksOrt,linksZeit,linksSTV,tags,note2,note3
+#
+################################
 
 
+# Zeilenumbrüche innerhalb von Zellen durch lf ersetzen
+# todo: eigentlich gar nicht nötig
 lf = " :: "
 
-# TODO: ist dieses preprocessing überhaupt nötig?
 
-################################
+# Commandline auswerten
 
 # wenn ARGV leer ist, zeige usage summary
 ARGV << '-h' if ARGV.empty?
@@ -69,7 +68,8 @@ else
 	puts "\nTestlauf, kein echter Import!\n"
 end
 
-################################
+
+# Konfiguration des Backends einlesen
 
 ops = eval(File.open(options[:config]) {|f| f.read })
 api_user = ops[:api_user]
@@ -78,9 +78,12 @@ api_url = ops[:api_url]
 
 api = RestClient::Resource.new(api_url, :user => api_user, :password => api_password)
 
-################################
+
+# Positionen der Spalten in der Importtabelle
 
 columnNames = []
+
+# todo: wäre besser nil als -1 ?
 
 columnPos = {
 
@@ -103,22 +106,39 @@ columnPos = {
 	"timeStandardized" => -1,
 	"ongoing" => -1,
 	"matching" => -1,
-	"notes" => -1,
+	"note" => -1,
 	"linksOrt" => -1,
 	"linksZeit" => -1,
 	"linksSTV" => -1,
 	"tags"  => -1,
-	"notes2" => -1,       # Arbeitsnotizen
-	"notes3"  => -1       # Arbeitsnotizen
+	"note2" => -1,       # Arbeitsnotizen
+	"note3"  => -1       # Arbeitsnotizen
 }
 
 
 # Statistik (und gleichzeitig Datenmodell)
 # todo: Statistik für kontrolliertes Vokabular
 
-namesBlock = { :name => 0, :language => 0, :pref => 0 }
+namesBlock = { 
+	:name => 0, 
+	:language => 0, 
+	:pref => 0 
+}
 
-timeBlock = { :timeOriginal => 0, :source => 0, :from => 0, :to => 0 }
+intervalBoundaryBlock = {
+	:notBefore => 0,
+	:notAfter => 0,
+	:at => 0,
+	:atPrecision => 0
+}
+
+intervalBlock = { 
+	:sourceOriginal => 0,  # freetext
+	:sourceURL => 0,
+	:timeOriginal => 0,    # freetext
+	:begin => intervalBoundaryBlock.clone,
+	:end => intervalBoundaryBlock.clone
+}
 
 statistics = {
 
@@ -162,8 +182,7 @@ statistics = {
 	
 	# timeOriginal
 	# timeStandardized
-	# :hasTimespan => [ { :timeOriginal => 0, :source => 0, :from => 0, :to => 0 } ],
-	:hasTimespan => [ timeBlock.clone ],
+	:hasTimespan => [ intervalBlock.clone ],
 	
 	# ongoing
 	:ongoing => 0,
@@ -171,13 +190,21 @@ statistics = {
 	# matching
 	:sameAs => 0,
 
-	# notes
-	# linksOrt
-	# linksZeit
-	# linksSTV
+	# note
+	:note => 0,
+	
+	# linksOrt  TODO
+	# linksZeit TODO
+	# linksSTV  TODO
+	
 	# tags
-	# notes2
-	# notes3
+	:tags => [ 0 ],
+
+	# note2
+	:note2 => 0,  # Arbeitsnotiz
+
+	# note3
+	:note3 => 0,  # Arbeitsnotiz
 	
 	:dummy => 0
 }
@@ -210,62 +237,66 @@ puts "\n# csv einlesen\n" if options[:verbose]
 akzeptierteZeilen = []
 
 
-# TODO: csv-Datei muss als echte UTF-8-Datei eingelesen werden!
+CSV.foreach(csvFile) do |row|
 
-# alleZeilen = CSV.read(csvFile, col_sep: "$", encoding: "UTF-8") 
-# alleZeilen.each do |row|
-# --> funktioniert nicht
-
-# file_content = File.open("test.txt", "r:UTF-8", &:read)
-# --> noch nicht ausprobiert
-
-# CSV.foreach(csvFile) do |row|
+# Alternative, falls es nochmal ein Problem mit UTF-8 gibt:
+# File.open(csvFile, "r:UTF-8") do |table| 
+# 	CSV.parse(table) do |row|
+# 		...
 
 
-File.open(csvFile, "r:UTF-8") do |table| 
-	CSV.parse(table) do |row|
-# --> funktioniert das jetzt?
-
-		# erste Zeile: bestimme die Spaltenreihenfolge
-		if ( columnPos["importID"] == -1 )
-			row.each_with_index do |originalName, i|
-				name = originalName.to_s.strip
-				columnNames[i] = name			
-				if (name.length == 0)
-					ignoredColumns.push(i.to_s)
-					ignoredColumnsReason.push("no column title")
-					next
-				end
-				if (! columnPos.has_key?(name) )
-					ignoredColumns.push(i.to_s+name)
-					ignoredColumnsReason.push("not a recognized column title")				
-					next
-				end
-				if (columnPos[name] > -1)
-					ignoredColumns.push(i.to_s+name)
-					ignoredColumnsReason.push("column title already exists")
-					next
-				end
-				columnPos[name] = i
+	# erste Zeile: bestimme die Spaltenreihenfolge
+	if ( columnPos["importID"] == -1 )
+		row.each_with_index do |originalName, i|
+			name = originalName.to_s.strip
+			columnNames[i] = name			
+			if (name.length == 0)
+				ignoredColumns.push(i.to_s)
+				ignoredColumnsReason.push("no column title")
+				next
 			end
-			next
+			if (! columnPos.has_key?(name) )
+				ignoredColumns.push(i.to_s+name)
+				ignoredColumnsReason.push("not a recognized column title")				
+				next
+			end
+			if (columnPos[name] > -1)
+				ignoredColumns.push(i.to_s+name)
+				ignoredColumnsReason.push("column title already exists")
+				next
+			end
+			columnPos[name] = i
 		end
-
-		# ignoriere alle Zeilen ohne ID
-		if (row[columnPos["importID"]].to_s.strip.length == 0)
-
-			# strukturierende Leerzeilen stillschweigend ignorieren
-			next if ( row.join("").match(/^\s*$/) )
-
-			# ansonsten auch ignorieren, aber nicht stillschweigend
-			ignoredRows.push(row)
-			ignoredRowsReason.push("no ID")
-			next
+		if (columnPos["importID"] == -1)
+			warn('Spalte "importID" fehlt!')
+			exit
 		end
+		if (columnPos["names"] == -1)
+			warn('Spalte "names" fehlt!')
+			exit
+		end
+		if (columnPos["types"] == -1)
+			warn('Spalte "types" fehlt!')
+			exit
+		end
+		next
+	end
 
-		# ignoriere Problemzeilen
-		# 1. AAT-Zeilen wie "römische Keramikstile"
-		# TODO doch als parent behalten, oder unnötig?
+	# ignoriere alle Zeilen ohne ID
+	if (row[columnPos["importID"]].to_s.strip.length == 0)
+
+		# strukturierende Leerzeilen stillschweigend ignorieren
+		next if ( row.join("").match(/^\s*$/) )
+
+		# ansonsten auch ignorieren, aber nicht stillschweigend
+		ignoredRows.push(row)
+		ignoredRowsReason.push("no ID")
+		next
+	end
+
+	# ignoriere Problemzeilen
+	# 1. AAT-Zeilen wie "römische Keramikstile"
+	# TODO doch als parent behalten, oder unnötig?
 # 		if ( row[columnPos["types"]].to_s.strip.match(/alle Bedeutungen\?\?/) )
 # 
 # 			ignoredRows.push(row)
@@ -273,12 +304,18 @@ File.open(csvFile, "r:UTF-8") do |table|
 # 			next
 # 		end
 
-		akzeptierteZeilen.push(row)
-
-		# ruby hat's gern explizit initialisiert
-		warnings[ row[columnPos["importID"]] ] = []
-		infos[ row[columnPos["importID"]] ] = []
+	# ersetze Zeilenumbrüche innerhalb von Zellen
+	rowBearbeitet = []
+	row.each do |cell|
+		rowBearbeitet.push((cell || "").gsub(/\n/, lf))
 	end
+	akzeptierteZeilen.push(rowBearbeitet)
+
+#	akzeptierteZeilen.push(row)
+
+	# ruby hat's gern explizit initialisiert
+	warnings[ row[columnPos["importID"]] ] = []
+	infos[ row[columnPos["importID"]] ] = []
 end
 
 
@@ -385,28 +422,41 @@ akzeptierteZeilen.each do |row|
 		typefeld = row[columnPos["types"]]
 		types = typefeld.gsub(/, ?/, lf).split(lf)
 
-		typesOhneHierarchie = []
+		typesStandardized = []
 		types.each_with_index do |type, i|
 
+			# Normalfall:
+			# "alle Bedeutungen"
+			# "kulturell"
+			
+			typeStandardized = type
+			
 			# Ausnahme (und hack) für Problemzeilen:
 			if ( type.match(/alle Bedeutungen\?\?/) )
-				typesOhneHierarchie.push("Strukturknoten")
+				typeStandardized = "(list)"
 			elsif ( type.match(/^ *title *$/) )
-				typesOhneHierarchie.push("Strukturknoten")
-				
-			# material culture: pottery
-			elsif (type.match(/: ?(.+)/) )
-				typesOhneHierarchie.push($1)
-			# alle Bedeutungen
-			# kulturell
-			else
-				typesOhneHierarchie.push(type)
+				typeStandardized = "(list)"
 			end
+			
+			# "material culture: pottery"
+			# --> entferne die Hierarchie
+			if (type.match(/: ?(.+)/) )
+				typeStandardized = $1
+			end
+
+			# "(material culture:) pottery"
+			# --> ergänze "style"
+			# TODO: in der Tabelle ändern
+			if (typeStandardized.strip.match(/^pottery$/) )
+				typeStandardized = "pottery style"
+			end	
+
+			typesStandardized.push(typeStandardized)
 
 			statistics[:types][i] ||= 0
 			statistics[:types][i] += 1
 		end
-		period[:types] = typesOhneHierarchie
+		period[:types] = typesStandardized
 	end
 
 
@@ -482,6 +532,47 @@ akzeptierteZeilen.each do |row|
 				end
 			end
 			period[:spatiallyPartOfRegion] = gazetteerIDs
+		end
+	end
+
+	
+	# Spalte: tags
+
+	if (columnPos["tags"] > -1)	
+		tagsfeld = row[columnPos["tags"]]
+		tags = tagsfeld.gsub(/, ?/, lf).split(lf)
+
+		tags.each_with_index do |tag, i|
+			period[:tags][i] = tag
+			statistics[:tags][i] ||= 0
+			statistics[:tags][i] += 1
+		end
+	end
+
+	# Spalten: note, note2, note3
+	# note wird in der GUI angezeigt, note2 und note3 sind interne Arbeitsnotizen
+
+	if (columnPos["note"] > -1)
+		note = row[columnPos["note"]]
+		if (note.to_s.strip.length > 0)
+			period[:note] = note
+			statistics[:note] += 1
+		end
+	end
+
+	if (columnPos["note2"] > -1)
+		note2 = row[columnPos["note2"]]
+		if (note2.to_s.strip.length > 0)
+			period[:note2] = note2
+			statistics[:note2] += 1
+		end
+	end
+
+	if (columnPos["note3"] > -1)
+		note3 = row[columnPos["note3"]]
+		if (note3.to_s.strip.length > 0)
+			period[:note3] = note3
+			statistics[:note3] += 1
 		end
 	end
 
@@ -693,6 +784,7 @@ akzeptierteZeilen.each do |row|
 	# Spalte: timeOriginal
 	# Spalte: timeStandardized
 	# --> der Inhalt von zwei Spalten kommt in dieselbe Struktur!
+	# TODO: sourceOriginal
 
 	if (columnPos["timeOriginal"] > -1)
 		timeOriginal = row[columnPos["timeOriginal"]].to_s.strip
@@ -707,8 +799,8 @@ akzeptierteZeilen.each do |row|
 			if ( timeOriginal.match(/^(.+) +\(source (.+)\) *$/) )
 				source = $2
 				timeOriginal = $1
-				period[:hasTimespan][0][:source] = source
-				statistics[:hasTimespan][0][:source] += 1
+				period[:hasTimespan][0][:sourceOriginal] = source
+				statistics[:hasTimespan][0][:sourceOriginal] += 1
 			end
 
 			period[:hasTimespan][0][:timeOriginal] = timeOriginal
@@ -730,10 +822,24 @@ akzeptierteZeilen.each do |row|
 					if ( timeStandardizedFeld.match(/^ *\[(([+-]? ?[0-9]+)|\?)[;,] ?(([+-]? ?[0-9]+)|\?)\] *$/) )
 						from = $1
 						to = $3
-						period[:hasTimespan][0][:from] = from
-						period[:hasTimespan][0][:to] = to
-						statistics[:hasTimespan][0][:from] += 1
-						statistics[:hasTimespan][0][:to] += 1
+						
+						timespan = period[:hasTimespan][0]
+						timespan[:begin] = {}
+						timespan[:end] = {}
+						
+						timespan[:begin][:at] = from
+						statistics[:hasTimespan][0][:begin][:at] += 1
+						if (! from.eql?("?") ) 
+							timespan[:begin][:atPrecision] = "ca"
+							statistics[:hasTimespan][0][:begin][:atPrecision] += 1
+						end
+						
+						timespan[:end][:at] = to
+						statistics[:hasTimespan][0][:end][:at] += 1
+						if (! to.eql?("?") ) 
+							timespan[:end][:atPrecision] = "ca"
+							statistics[:hasTimespan][0][:end][:atPrecision] += 1
+						end
 					else
 						warnings[importID].push("timeStandardized wurde nicht erkannt: "+timeStandardizedFeld)
 					end
