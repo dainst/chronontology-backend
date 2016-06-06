@@ -120,13 +120,13 @@ columnPos = {
 # todo: Statistik für kontrolliertes Vokabular
 
 namesBlock = { 
-	:name => 0, 
-	:language => 0, 
-	:pref => 0 
+	:name => 0,           # freetext 
+	:language => 0,       # Kürzel, Vokabular
+	:pref => 0            # bool
 }
 
 intervalBoundaryBlock = {
-	:notBefore => 0,
+	:notBefore => 0,      # Datum
 	:notAfter => 0,
 	:at => 0,
 	:atPrecision => 0
@@ -136,6 +136,7 @@ intervalBlock = {
 	:sourceOriginal => 0,  # freetext
 	:sourceURL => 0,
 	:timeOriginal => 0,    # freetext
+	:calendar => 0,
 	:begin => intervalBoundaryBlock.clone,
 	:end => intervalBoundaryBlock.clone
 }
@@ -236,8 +237,9 @@ puts "\n# csv einlesen\n" if options[:verbose]
 
 akzeptierteZeilen = []
 
-
+zeile = 0
 CSV.foreach(csvFile) do |row|
+	zeile += 1
 
 # Alternative, falls es nochmal ein Problem mit UTF-8 gibt:
 # File.open(csvFile, "r:UTF-8") do |table| 
@@ -290,7 +292,7 @@ CSV.foreach(csvFile) do |row|
 
 		# ansonsten auch ignorieren, aber nicht stillschweigend
 		ignoredRows.push(row)
-		ignoredRowsReason.push("no ID")
+		ignoredRowsReason.push("no ID; row "+zeile.to_s)
 		next
 	end
 
@@ -299,7 +301,7 @@ CSV.foreach(csvFile) do |row|
 	# TODO: anders lösen
 	if ( warnings.key?(row[columnPos["importID"]]) )
 		ignoredRows.push(row)
-		ignoredRowsReason.push("duplicate ID")
+		ignoredRowsReason.push("duplicate ID; row "+zeile.to_s)
 		next
 	end
 
@@ -445,9 +447,9 @@ akzeptierteZeilen.each do |row|
 			
 			# Ausnahme (und hack) für Problemzeilen:
 			if ( type.match(/alle Bedeutungen\?\?/) )
-				typeStandardized = "(list)"
+				typeStandardized = "list"
 			elsif ( type.match(/^ *title *$/) )
-				typeStandardized = "(list)"
+				typeStandardized = "list"
 			end
 			
 			# Hack für geologische Types:
@@ -655,10 +657,17 @@ akzeptierteZeilen.each do |row|
 					# [?;?]
 					# [+170, +192]
 					# [+69,?]
-					# TODO regex lesbarer mache, und nicht-zählende () verwenden
-					if ( timeStandardizedFeld.match(/^ *\[(([+-]? ?[0-9]+)|\?)[;,] ?(([+-]? ?[0-9]+)|\?)\] *$/) )
+					# TODO regex lesbarer machen
+					if ( timeStandardizedFeld.match(/^ *\[((?:[+-]? ?[0-9]+)|\?|unknown)[;,] ?((?:[+-]? ?[0-9]+)|\?|unknown)\] *$/) )
 						from = $1
-						to = $3
+						to = $2
+#						puts timeStandardizedFeld+" <"+from+"> <"+to+">"
+						if ( from.to_s.match(/^\+/) )
+							from = from.to_s.gsub(/^\+/, '')
+						end
+						if ( to.to_s.match(/^\+/) )
+							to = to.to_s.gsub(/^\+/, '')
+						end
 						
 						timespan = period[:hasTimespan][0]
 						timespan[:begin] = {}
@@ -666,14 +675,14 @@ akzeptierteZeilen.each do |row|
 						
 						timespan[:begin][:at] = from
 						statistics[:hasTimespan][0][:begin][:at] += 1
-						if (! from.eql?("?") ) 
+						if ( (! from.eql?("?")) && (! from.eql?("unknown")) ) 
 							timespan[:begin][:atPrecision] = "ca"
 							statistics[:hasTimespan][0][:begin][:atPrecision] += 1
 						end
 						
 						timespan[:end][:at] = to
 						statistics[:hasTimespan][0][:end][:at] += 1
-						if (! to.eql?("?") ) 
+						if ( (! to.eql?("?")) && (! to.eql?("unknown")) )
 							timespan[:end][:atPrecision] = "ca"
 							statistics[:hasTimespan][0][:end][:atPrecision] += 1
 						end
@@ -681,7 +690,10 @@ akzeptierteZeilen.each do |row|
 					# [-1800000; ] mit ongoing = true
 					# ( [?; ] wird absichtlich nicht erkannt; kommt das jemals vor?)
 					elsif ( timeStandardizedFeld.match(/^\[([+-]?[0-9]+)[;,] ?\]$/) and period[:ongoing] )
-						from = $1
+						from = $1 
+						if ( from.to_s.match(/^\+/) )
+							from = from.to_s.gsub(/^\+/, '')
+						end
 						timespan = period[:hasTimespan][0]
 						timespan[:begin] = {}
 						timespan[:begin][:at] = from
@@ -697,11 +709,7 @@ akzeptierteZeilen.each do |row|
 	end
 
 
-# 	if (options[:verbose])
-# 		puts "\n"
-# 		puts importID
-# 		puts addWrapper(period).to_json
-# 	end
+	# ersten Teil abschließen
 
 	periods[importID] = period
 
