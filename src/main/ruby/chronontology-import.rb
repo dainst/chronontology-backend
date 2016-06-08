@@ -947,20 +947,19 @@ akzeptierteZeilen.each do |row|
 		end
 	end
 	
-	complement.call(:isMetInTimeBy, :meetsInTimeWith)	
-	complement.call(:meetsInTimeWith, :isMetInTimeBy)	
+	complement.call(:isMetInTimeBy, :meetsInTimeWith)
+	complement.call(:meetsInTimeWith, :isMetInTimeBy)
 
-	complement.call(:startsAtTheEndOf, :endsAtTheStartOf)	
-	complement.call(:endsAtTheStartOf, :startsAtTheEndOf)	
+	complement.call(:startsAtTheEndOf, :endsAtTheStartOf)
+	complement.call(:endsAtTheStartOf, :startsAtTheEndOf)
 
-	complement.call(:sameAs, :sameAs)	
+	complement.call(:sameAs, :sameAs)       # sameAs ist symmetrisch
 	
-	complement.call(:isSenseOf, :hasSense)	
-	complement.call(:hasSense, :isSenseOf)	# macht zurzeit noch nichts
+	complement.call(:isSenseOf, :hasSense)
+	complement.call(:hasSense, :isSenseOf)  # macht zurzeit noch nichts
 
-	complement.call(:isPartOf, :hasPart)	
-	complement.call(:hasPart, :isPartOf)	
-
+	complement.call(:isPartOf, :hasPart)
+	complement.call(:hasPart, :isPartOf)
 end
 
 
@@ -979,18 +978,16 @@ akzeptierteZeilen.each do |row|
 	# TODO prüfen, ob Allen relation schon vorhanden ist
 	# TODO Allen relation auch eigenständig eintragen
 
-	if ( period.has_key?(:isPartOf) )
-		period[:occursDuring] = period[:isPartOf].clone
-		statistics[:occursDuring] = statistics[:isPartOf].clone
-		infos[importID].push("ein oder mehrere abgeleitete occursDuring ergänzt")
+	reasoning = lambda do |known, inferred|
+		if ( period.has_key?(known) )
+			period[inferred] = period[known].clone
+			statistics[inferred] = statistics[known].clone
+			infos[importID].push("ein oder mehrere abgeleitete #{inferred} ergänzt")
+		end		
 	end
-	if ( period.has_key?(:hasPart) )
-		period[:includes] = period[:hasPart].clone
-		statistics[:includes] = statistics[:hasPart].clone
-		infos[importID].push("ein oder mehrere abgeleitete includes ergänzt")
-	end
-
-
+	
+	reasoning.call(:isPartOf, :occursDuring)
+	reasoning.call(:hasPart, :includes)
 end
 
 
