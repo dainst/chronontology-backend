@@ -120,10 +120,17 @@ columnPos = {
 # todo: Statistik für kontrolliertes Vokabular
 
 namesLanguageList = [
-	:ar,
-	:de,
-	:en
+	:ara,
+	:deu,
+	:eng
 ]
+
+languageList2to3 = {
+	:ar => :ara,
+	:de => :deu,
+	:en => :eng
+}
+
 
 intervalBoundaryBlock = {
 	:notBefore => 0,      # Datum
@@ -380,6 +387,9 @@ akzeptierteZeilen.each do |row|
 			end
 			name = $1
 			sprachkuerzel = $2.downcase.to_sym
+			if ( languageList2to3.include? sprachkuerzel )
+				sprachkuerzel = languageList2to3[sprachkuerzel]
+			end
 
 			# alt: prefLabel, altLabel, quick'n'dirty, kommt sowieso weg
 			# ignoriert sprachkuerzel, und erzeugt keine AltLabel
@@ -552,7 +562,7 @@ akzeptierteZeilen.each do |row|
 					warnings[importID].push("Gazetteer-ID nicht erkannt: "+gazetteerIdPlusText)
 				end
 			end
-			if (gazetteerIDs.length > 0)
+			if (gazetteerIDs.count > 0)
 				period[:spatiallyPartOfRegion] = gazetteerIDs
 			end
 		end
@@ -890,7 +900,7 @@ akzeptierteZeilen.each do |row|
 					end
 				end
 			end
-			if (hasPartIDs.length > 0)
+			if (hasPartIDs.count > 0)
 				hasPartIDs.each do |hasPart|
 					if (concordance2Chron.has_key?(hasPart))
 						period[:hasPart] ||= []
@@ -924,12 +934,12 @@ akzeptierteZeilen.each do |row|
 				warnings[importID].push("sense wurde nicht erkannt: "+sensesFeld)
 			end
 
-			if (isSenseOfIDs.length > 0)
+			if (isSenseOfIDs.count > 0)
 				isSenseOfIDs.each do |isSenseOf|
 					if (concordance2Chron.has_key?(isSenseOf))
 						period[:isSenseOf] ||= []
 						period[:isSenseOf].push(concordance2Chron[isSenseOf])
-						i = period[:isSenseOf].length - 1
+						i = period[:isSenseOf].count - 1
 						statistics[:isSenseOf][i] ||= 0
 						statistics[:isSenseOf][i] += 1
 					else
@@ -1000,7 +1010,7 @@ akzeptierteZeilen.each do |row|
 					counterpart[:meetsInTimeWith].push(chronontologyID)
 					infos[counterpartImportID].push("meetsInTimeWith "+chronontologyID+" ergänzt")
 
-					i = counterpart[:meetsInTimeWith].length - 1
+					i = counterpart[:meetsInTimeWith].count - 1
 					statistics[:meetsInTimeWith][i] ||= 0
 					statistics[:meetsInTimeWith][i] += 1
 				end
@@ -1021,7 +1031,7 @@ akzeptierteZeilen.each do |row|
 					counterpart[:isMetInTimeBy].push(chronontologyID)
 					infos[counterpartImportID].push("isMetInTimeBy "+chronontologyID+" ergänzt")
 
-					i = counterpart[:isMetInTimeBy].length - 1
+					i = counterpart[:isMetInTimeBy].count - 1
 					statistics[:isMetInTimeBy][i] ||= 0
 					statistics[:isMetInTimeBy][i] += 1
 				end
@@ -1043,7 +1053,7 @@ akzeptierteZeilen.each do |row|
 					counterpart[:endsAtTheStartOf].push(chronontologyID)
 					infos[counterpartImportID].push("endsAtTheStartOf "+chronontologyID+" ergänzt")
 
-					i = counterpart[:endsAtTheStartOf].length - 1
+					i = counterpart[:endsAtTheStartOf].count - 1
 					statistics[:endsAtTheStartOf][i] ||= 0
 					statistics[:endsAtTheStartOf][i] += 1
 				end
@@ -1064,7 +1074,7 @@ akzeptierteZeilen.each do |row|
 					counterpart[:startsAtTheEndOf].push(chronontologyID)
 					infos[counterpartImportID].push("startsAtTheEndOf "+chronontologyID+" ergänzt")
 
-					i = counterpart[:startsAtTheEndOf].length - 1
+					i = counterpart[:startsAtTheEndOf].count - 1
 					statistics[:startsAtTheEndOf][i] ||= 0
 					statistics[:startsAtTheEndOf][i] += 1
 				end
@@ -1087,7 +1097,7 @@ akzeptierteZeilen.each do |row|
 					counterpart[:sameAs].push(chronontologyID)
 					infos[counterpartImportID].push("sameAs "+chronontologyID+" ergänzt")
 
-					i = counterpart[:sameAs].length - 1
+					i = counterpart[:sameAs].count - 1
 					statistics[:sameAs][i] ||= 0
 					statistics[:sameAs][i] += 1
 				end
@@ -1109,7 +1119,7 @@ akzeptierteZeilen.each do |row|
 					counterpart[:hasSense].push(chronontologyID)
 					infos[counterpartImportID].push("hasSense "+chronontologyID+" ergänzt")
 
-					i = counterpart[:hasSense].length - 1
+					i = counterpart[:hasSense].count - 1
 					statistics[:hasSense][i] ||= 0
 					statistics[:hasSense][i] += 1
 				end
@@ -1131,7 +1141,7 @@ akzeptierteZeilen.each do |row|
 					counterpart[:hasPart].push(chronontologyID)
 					infos[counterpartImportID].push("hasPart "+chronontologyID+" ergänzt")
 
-					i = counterpart[:hasPart].length - 1
+					i = counterpart[:hasPart].count - 1
 					statistics[:hasPart][i] ||= 0
 					statistics[:hasPart][i] += 1
 				end
@@ -1153,7 +1163,7 @@ akzeptierteZeilen.each do |row|
 					counterpart[:isPartOf].push(chronontologyID)
 					infos[counterpartImportID].push("isPartOf "+chronontologyID+" ergänzt")
 
-					i = counterpart[:isPartOf].length - 1
+					i = counterpart[:isPartOf].count - 1
 					statistics[:isPartOf][i] ||= 0
 					statistics[:isPartOf][i] += 1
 				end
