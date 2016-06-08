@@ -119,11 +119,11 @@ columnPos = {
 # Statistik (und gleichzeitig Datenmodell)
 # todo: Statistik für kontrolliertes Vokabular
 
-namesBlock = { 
-	:name => 0,           # freetext 
-	:language => 0,       # Kürzel, Vokabular
-	:pref => 0            # bool
-}
+namesAllowedLanguages = [
+	:ar,
+	:de,
+	:en
+]
 
 intervalBoundaryBlock = {
 	:notBefore => 0,      # Datum
@@ -148,7 +148,7 @@ statistics = {
 
 	# names
 	:prefLabel => { :de => 0 },  # deprecated!
-	:names => [ namesBlock.clone ],
+	:names => Hash[ namesAllowedLanguages.map {|language| [ language, [ 0 ] ]}],
 
 	# types
 	:types => [ 0 ],
@@ -369,23 +369,17 @@ akzeptierteZeilen.each do |row|
 			warnings[importID].push("Pflichtfeld Name fehlt")
 		end
 
-		names = []
-
+		names = {}
 		prefVorhanden = {}
-		spracheVorhanden = {}
 
 		einzelneNamen = row[columnPos["names"]].split(lf)
 		einzelneNamen.each do |nameMitSprache|
-			if (nameMitSprache.match(/@([a-z]+) +\(pref.\)/) )
-				prefVorhanden[ $1 ] = true
-			end
-		end
-		einzelneNamen.each_with_index do |nameMitSprache, i|
 			if ( !nameMitSprache.match(/^(.+?)@([a-z]+)/) )
 				warnings[importID].push("kann Namen nicht erkennen: "+nameMitSprache)
+				next
 			end
 			name = $1
-			sprachkuerzel = $2
+			sprachkuerzel = $2.downcase.to_sym
 
 			# alt: prefLabel, altLabel, quick'n'dirty, kommt sowieso weg
 			# ignoriert sprachkuerzel, und erzeugt keine AltLabel
@@ -395,33 +389,35 @@ akzeptierteZeilen.each do |row|
 				statistics[:prefLabel][:de] += 1
 			end
 
-			# neu: names mit name, language, pref
+			# neu: names mit name, language
+			# erster Eintrag in jeder Sprache ist preferred:
+			#   explizite preferred names kommen an den Anfang der Liste
 
-			# pref, falls:
-			# 1. explizit angegeben
-			# 2. keine pref für diese Sprache angegeben,
-			#    und erster (oder einziger) Name in dieser Sprache
-			pref = false
-			if ( nameMitSprache.match(/\(pref.\)/) )
-				pref = true
-			elsif ( !prefVorhanden.has_key?(sprachkuerzel) && !spracheVorhanden.has_key?(sprachkuerzel) )
-				pref = true
+			if (! namesAllowedLanguages.include? sprachkuerzel )
+				warnings[importID].push("Sprachkürzel nicht erkannt: "+nameMitSprache)
+				next
 			end
-			spracheVorhanden[sprachkuerzel] = 1
 
-			names.push( {
-				:name => name,
-				:language => sprachkuerzel,
-				:pref => pref
-			} )
+			names[sprachkuerzel] ||= []		
+			if ( nameMitSprache.match(/\(pref.\)/) )
+				if ( prefVorhanden[sprachkuerzel] )
+					warnings[importID].push("mehrfaches pref in einer Sprache: "+nameMitSprache)
+					names[sprachkuerzel].push(name)
+				else
+					names[sprachkuerzel].unshift(name)
+					prefVorhanden[sprachkuerzel] = true
+				end
+			else
+				names[sprachkuerzel].push(name)
+			end
 
-			statistics[:names][i] ||= namesBlock.clone
-			statistics[:names][i][:name] += 1
-			statistics[:names][i][:language] += 1
-			statistics[:names][i][:pref] += 1 if pref
+			position = names[sprachkuerzel].length - 1
+			statistics[:names][sprachkuerzel][position] ||= 0
+			statistics[:names][sprachkuerzel][position] += 1
 		end
 		period[:names] = names
 	end
+
 
 	# Spalte: types
 	# TODO: Whitespace entfernen
