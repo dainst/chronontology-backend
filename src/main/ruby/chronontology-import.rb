@@ -120,16 +120,16 @@ columnPos = {
 # todo: Statistik für kontrolliertes Vokabular
 
 namesLanguageList = [
-	:ara,
-	:deu,
-	:eng
+	:ar,
+	:de,
+	:en
 ]
 
-languageList2to3 = {
-	:ar => :ara,
-	:de => :deu,
-	:en => :eng
-}
+# languageList2to3 = {
+# 	:ar => :ara,
+# 	:de => :deu,
+# 	:en => :eng
+# }
 
 
 intervalBoundaryBlock = {
@@ -387,9 +387,9 @@ akzeptierteZeilen.each do |row|
 			end
 			name = $1
 			sprachkuerzel = $2.downcase.to_sym
-			if ( languageList2to3.include? sprachkuerzel )
-				sprachkuerzel = languageList2to3[sprachkuerzel]
-			end
+#			if ( languageList2to3.include? sprachkuerzel )
+#				sprachkuerzel = languageList2to3[sprachkuerzel]
+#			end
 
 			# alt: prefLabel, altLabel, quick'n'dirty, kommt sowieso weg
 			# ignoriert sprachkuerzel, und erzeugt keine AltLabel
