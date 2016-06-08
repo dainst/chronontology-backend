@@ -119,7 +119,7 @@ columnPos = {
 # Statistik (und gleichzeitig Datenmodell)
 # todo: Statistik für kontrolliertes Vokabular
 
-namesAllowedLanguages = [
+namesLanguageList = [
 	:ar,
 	:de,
 	:en
@@ -148,7 +148,7 @@ statistics = {
 
 	# names
 	:prefLabel => { :de => 0 },  # deprecated!
-	:names => Hash[ namesAllowedLanguages.map {|language| [ language, [ 0 ] ]}],
+	:names => Hash[ namesLanguageList.map {|language| [ language, [ 0 ] ]}],
 
 	# types
 	:types => [ 0 ],
@@ -165,22 +165,22 @@ statistics = {
 	# gazetteer
 	:spatiallyPartOfRegion => [ 0 ],
 	:hasCoreArea => [ 0 ],
-	:namedAfter => 0,
+	:namedAfter => [ 0 ],
 
 	# siblings
-	:isMetInTimeBy => 0,    # Allen relation; nicht mehr der default für "kommt nach"
-	:meetsInTimeWith => 0,  # Allen relation; nicht mehr der default für "kommt vor"
-	:startsAtTheEndOf => 0, # fuzzy "kommt nach"
-	:endsAtTheStartOf => 0, # fuzzy "kommt vor"
+	:isMetInTimeBy => [ 0 ],    # Allen relation; nicht mehr der default für "kommt nach"
+	:meetsInTimeWith => [ 0 ],  # Allen relation; nicht mehr der default für "kommt vor"
+	:startsAtTheEndOf => [ 0 ], # fuzzy "kommt nach"
+	:endsAtTheStartOf => [ 0 ], # fuzzy "kommt vor"
 
 	# parents
-	:partOf => 0,           # by definition
+	:isPartOf => [ 0 ],           # by definition
 	:hasPart => [ 0 ],      # by definition
-	:occursDuring => 0,     # Allen relation
+	:occursDuring => [ 0 ],     # Allen relation
 	:includes => [ 0 ],     # Allen relation
 
 	# senses
-	:isSenseOf => 0,
+	:isSenseOf => [ 0 ],
 	:hasSense => [ 0 ],
 	
 	# timeOriginal
@@ -191,7 +191,7 @@ statistics = {
 	:ongoing => 0,
 	
 	# matching
-	:sameAs => 0,
+	:sameAs => [ 0 ],
 
 	# note
 	:note => 0,
@@ -207,9 +207,7 @@ statistics = {
 	:note2 => 0,  # Arbeitsnotiz
 
 	# note3
-	:note3 => 0,  # Arbeitsnotiz
-	
-	:dummy => 0
+	:note3 => 0  # Arbeitsnotiz
 }
 
 
@@ -395,7 +393,7 @@ akzeptierteZeilen.each do |row|
 			# erster Eintrag in jeder Sprache ist preferred:
 			#   explizite preferred names kommen an den Anfang der Liste
 
-			if (! namesAllowedLanguages.include? sprachkuerzel )
+			if (! namesLanguageList.include? sprachkuerzel )
 				warnings[importID].push("Sprachkürzel nicht erkannt: "+nameMitSprache)
 				next
 			end
@@ -763,68 +761,89 @@ akzeptierteZeilen.each do |row|
 	# TODO: bisher alles keine Listen; muss man ändern, wenn es Beispiele gibt 
 
 	if (columnPos["siblings"] > -1)
-		siblingFeld = row[columnPos["siblings"]]
-		isMetInTimeBy = ""
-		meetsInTimeWith = ""
-		startsAtTheEndOf = ""
-		endsAtTheStartOf = ""
+		siblingFeld = row[columnPos["siblings"]].to_s.strip
+
+		isMetInTimeByIDs = []
+		meetsInTimeWithIDs = []
+		startsAtTheEndOfIDs = []
+		endsAtTheStartOfIDs = []
 	
-		if (siblingFeld.to_s.strip.length > 0)
+		if (siblingFeld.length > 0)
 		
 			# A0021 (comes before)
 			# aat:300107341 (comes before)
 			if ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes before\) *$/) )
-				meetsInTimeWith = $1
-				endsAtTheStartOf = $1
+				meetsInTimeWithIDs.push($1)
+				endsAtTheStartOfIDs.push($1)
 			# aat:300107343 (comes after)
 			elsif ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes after\) *$/) )
-				isMetInTimeBy = $1
-				startsAtTheEndOf = $1
+				isMetInTimeByIDs.push($1)
+				startsAtTheEndOfIDs.push($1)
 			# A0077 (comes after) A0089 (comes before)
 			elsif ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes after\) *([a-zA-Z:0-9]+) +\(comes before\) *$/) )
-				isMetInTimeBy = $1
-				startsAtTheEndOf = $1
-				meetsInTimeWith = $2
-				endsAtTheStartOf = $2
+				isMetInTimeByIDs.push($1)
+				startsAtTheEndOfIDs.push($1)
+				meetsInTimeWithIDs.push($2)
+				endsAtTheStartOfIDs.push($2)
 			else
 				warnings[importID].push("comes before/after wurde nicht erkannt: "+siblingFeld)
 			end
 
 			# Allen-Relationen
 		
-			if (isMetInTimeBy.to_s.strip.length > 0)
-				if (concordance2Chron.has_key?(isMetInTimeBy))
-					period[:isMetInTimeBy] = concordance2Chron[isMetInTimeBy]
-					statistics[:isMetInTimeBy] += 1
-				else
-					warnings[importID].push("Verweis auf nicht vorhandene ID isMetInTimeBy "+isMetInTimeBy)
+			if (isMetInTimeByIDs.count > 0)
+				isMetInTimeByIDs.each do |isMetInTimeBy|
+					if (concordance2Chron.has_key?(isMetInTimeBy))
+						period[:isMetInTimeBy] ||= []
+						period[:isMetInTimeBy].push(concordance2Chron[isMetInTimeBy])
+						i = period[:isMetInTimeBy].count -1
+						statistics[:isMetInTimeBy][i] ||= 0
+						statistics[:isMetInTimeBy][i] += 1
+					else
+						warnings[importID].push("Verweis auf nicht vorhandene ID isMetInTimeBy "+isMetInTimeBy)
+					end
 				end
 			end
-			if (meetsInTimeWith.to_s.strip.length > 0)
-				if (concordance2Chron.has_key?(meetsInTimeWith))
-					period[:meetsInTimeWith] = concordance2Chron[meetsInTimeWith]
-					statistics[:meetsInTimeWith] += 1
-				else
-					warnings[importID].push("Verweis auf nicht vorhandene ID meetsInTimeWith "+meetsInTimeWith)
+			if (meetsInTimeWithIDs.count > 0)
+				meetsInTimeWithIDs.each do |meetsInTimeWith|
+					if (concordance2Chron.has_key?(meetsInTimeWith))
+						period[:meetsInTimeWith] ||= []
+						period[:meetsInTimeWith].push(concordance2Chron[meetsInTimeWith])
+						i = period[:meetsInTimeWith].count -1
+						statistics[:meetsInTimeWith][i] ||= 0
+						statistics[:meetsInTimeWith][i] += 1
+					else
+						warnings[importID].push("Verweis auf nicht vorhandene ID meetsInTimeWith "+meetsInTimeWith)
+					end
 				end
 			end
 		
 			# fuzzy Relationen
 		
-			if (startsAtTheEndOf.to_s.strip.length > 0)
-				if (concordance2Chron.has_key?(startsAtTheEndOf))
-					period[:startsAtTheEndOf] = concordance2Chron[startsAtTheEndOf]
-					statistics[:startsAtTheEndOf] += 1
-				else
-					warnings[importID].push("Verweis auf nicht vorhandene ID startsAtTheEndOf "+startsAtTheEndOf)
+			if (startsAtTheEndOfIDs.count > 0)
+				startsAtTheEndOfIDs.each do |startsAtTheEndOf|
+					if (concordance2Chron.has_key?(startsAtTheEndOf))
+						period[:startsAtTheEndOf] ||= []
+						period[:startsAtTheEndOf].push(concordance2Chron[startsAtTheEndOf])
+						i = period[:startsAtTheEndOf].count -1
+						statistics[:startsAtTheEndOf][i] ||= 0
+						statistics[:startsAtTheEndOf][i] += 1
+					else
+						warnings[importID].push("Verweis auf nicht vorhandene ID startsAtTheEndOf "+startsAtTheEndOf)
+					end
 				end
 			end
-			if (endsAtTheStartOf.to_s.strip.length > 0)
-				if (concordance2Chron.has_key?(endsAtTheStartOf))
-					period[:endsAtTheStartOf] = concordance2Chron[endsAtTheStartOf]
-					statistics[:endsAtTheStartOf] += 1
-				else
-					warnings[importID].push("Verweis auf nicht vorhandene ID endsAtTheStartOf "+endsAtTheStartOf)
+			if (endsAtTheStartOfIDs.count > 0)
+				endsAtTheStartOfIDs.each do |endsAtTheStartOf|
+					if (concordance2Chron.has_key?(endsAtTheStartOf))
+						period[:endsAtTheStartOf] ||= []
+						period[:endsAtTheStartOf].push(concordance2Chron[endsAtTheStartOf])
+						i = period[:endsAtTheStartOf].count -1
+						statistics[:endsAtTheStartOf][i] ||= 0
+						statistics[:endsAtTheStartOf][i] += 1
+					else
+						warnings[importID].push("Verweis auf nicht vorhandene ID endsAtTheStartOf "+endsAtTheStartOf)
+					end
 				end
 			end
 		end
@@ -834,48 +853,54 @@ akzeptierteZeilen.each do |row|
 	# Spalte: parents
 	# probehalber werden, abweichend vom Gazetteer, auch die Kinder explizit aufgelistet
 	# (nicht so lange Listen wie im Gazetteer, und mehrere Hierarchien)
-	# TODO: auch partOf sollte eine Liste sein, sobald es ein reales Beispiel gibt 
-	#       (aber dann muss man auch das Fontend anpassen!)
 
 	if (columnPos["parents"] > -1)
-		partOfFeld = row[columnPos["parents"]]
-		partOf = ""
-		hasPart = ""
+		parentsFeld = row[columnPos["parents"]].to_s.strip
 
-		if (partOfFeld.to_s.strip.length > 0)
+		isPartOfIDs = []
+		hasPartIDs = []
+
+		if (parentsFeld.length > 0)
 
 			# G0005 --> ist enthalten
-			if ( partOfFeld.match(/^ *([a-zA-Z:0-9]+) *$/) )
-				partOf = $1
+			if ( parentsFeld.match(/^ *([a-zA-Z:0-9]+) *$/) )
+				isPartOfIDs.push($1)
 			# A0081 (is part of)
 			# aat:300020533 (is part of) --> ist enthalten
-			elsif ( partOfFeld.match(/^ *([a-zA-Z:0-9]+) *\(is part of\) *$/) )
-				partOf = $1
+			elsif ( parentsFeld.match(/^ *([a-zA-Z:0-9]+) *\(is part of\) *$/) )
+				isPartOfIDs.push($1)
 			# aat:300020666; aat:300020541 (is part of) --> enthält, ist enthalten
-			elsif ( partOfFeld.match(/^ *([a-zA-Z:0-9]+) *; *([a-zA-Z:0-9]+) *\(is part of\) *$/) )
-				hasPart = $1
-				partOf = $2
+			elsif ( parentsFeld.match(/^ *([a-zA-Z:0-9]+) *; *([a-zA-Z:0-9]+) *\(is part of\) *$/) )
+				hasPartIDs.push($1)
+				isPartOfIDs.push($2)
 			else
-				warnings[importID].push("partOf/hasPart wurde nicht erkannt: "+partOfFeld)
+				warnings[importID].push("isPartOf/hasPart wurde nicht erkannt: "+parentsFeld)
 			end
 
-			if (partOf.to_s.strip.length > 0)
-				if (concordance2Chron.has_key?(partOf))
-					period[:partOf] = concordance2Chron[partOf]
-					statistics[:partOf] += 1
-				else
-					warnings[importID].push("Verweis auf nicht vorhandene ID partOf "+partOf)
+			if (isPartOfIDs.count > 0)
+				isPartOfIDs.each do |isPartOf|
+					if (concordance2Chron.has_key?(isPartOf))
+						period[:isPartOf] ||= []
+						period[:isPartOf].push(concordance2Chron[isPartOf])
+						i = period[:isPartOf].count -1
+						statistics[:isPartOf][i] ||= 0
+						statistics[:isPartOf][i] += 1
+					else
+						warnings[importID].push("Verweis auf nicht vorhandene ID isPartOf "+isPartOf)
+					end
 				end
 			end
-
-			if (hasPart.to_s.strip.length > 0)
-				if (concordance2Chron.has_key?(hasPart))
-					# hier ist klar, dass period[:hasPart] noch nicht existiert;
-					# erst bei den ergänzten Verknüpfungen muss man das prüfen
-					period[:hasPart] = [ concordance2Chron[hasPart] ]
-					statistics[:hasPart][0] += 1
-				else
-					warnings[importID].push("Verweis auf nicht vorhandene ID hasPart "+hasPart)
+			if (hasPartIDs.length > 0)
+				hasPartIDs.each do |hasPart|
+					if (concordance2Chron.has_key?(hasPart))
+						period[:hasPart] ||= []
+						period[:hasPart].push(concordance2Chron[hasPart])
+						i = period[:hasPart].count -1
+						statistics[:hasPart][i] ||= 0
+						statistics[:hasPart][i] += 1
+					else
+						warnings[importID].push("Verweis auf nicht vorhandene ID hasPart "+hasPart)
+					end
 				end
 			end
 		end
@@ -883,24 +908,33 @@ akzeptierteZeilen.each do |row|
 
 
 	# Spalte: senses
+	# beachte: isSenseOf ist eine Liste, aber das Skript geht vorerst trotzdem 
+	#   von einem einzelnen Wert in der Importtabelle aus
 
 	if (columnPos["senses"] > -1)
-		sensesFeld = row[columnPos["senses"]]
-		if (sensesFeld.to_s.strip.length > 0)
+		sensesFeld = row[columnPos["senses"]].to_s.strip
+		if (sensesFeld.length > 0)
 		
-			# A0105, in sense of
+			isSenseOfIDs = []
+
+			# "A0105, in sense of"
 			if ( sensesFeld.match(/^ *([a-zA-Z:0-9]+), in sense of *$/) )
-				isSenseOf = $1
+				isSenseOfIDs.push($1)
 			else
 				warnings[importID].push("sense wurde nicht erkannt: "+sensesFeld)
 			end
 
-			if (isSenseOf.to_s.strip.length > 0)
-				if (concordance2Chron.has_key?(isSenseOf))
-					period[:isSenseOf] = concordance2Chron[isSenseOf]
-					statistics[:isSenseOf] += 1
-				else
-					warnings[importID].push("Verweis auf nicht vorhandene ID isSenseOf "+isSenseOf)
+			if (isSenseOfIDs.length > 0)
+				isSenseOfIDs.each do |isSenseOf|
+					if (concordance2Chron.has_key?(isSenseOf))
+						period[:isSenseOf] ||= []
+						period[:isSenseOf].push(concordance2Chron[isSenseOf])
+						i = period[:isSenseOf].length - 1
+						statistics[:isSenseOf][i] ||= 0
+						statistics[:isSenseOf][i] += 1
+					else
+						warnings[importID].push("Verweis auf nicht vorhandene ID isSenseOf "+isSenseOf)
+					end
 				end
 			end
 		end
@@ -908,11 +942,14 @@ akzeptierteZeilen.each do |row|
 
 
 	# Spalte: matching
-	# TODO zurzeit noch String, muss aber Liste werden
+	# beachte: sameAs ist eine Liste, aber das Skript geht vorerst trotzdem 
+	#   von einem einzelnen Wert in der Importtabelle aus
 
 	if (columnPos["matching"] > -1)
 		matchingFeld = row[columnPos["matching"]].to_s.strip
 		if (matchingFeld.length > 0)
+		
+			matchingIDs = []
 		
 			# sameAs G0008 --> Standardform
 			if ( matchingFeld.match(/^ *sameAs +([a-zA-Z:0-9]+) *$/) )
@@ -929,8 +966,10 @@ akzeptierteZeilen.each do |row|
 
 			if (sameAs.to_s.strip.length > 0)
 				if (concordance2Chron.has_key?(sameAs))
-					period[:sameAs] = concordance2Chron[sameAs]
-					statistics[:sameAs] += 1
+					period[:sameAs] ||= []
+					period[:sameAs].push(concordance2Chron[sameAs])
+					statistics[:sameAs][0] ||= 0
+					statistics[:sameAs][0] += 1
 				else
 					warnings[importID].push("Verweis auf nicht vorhandene ID sameAs "+sameAs)
 				end
@@ -950,153 +989,188 @@ akzeptierteZeilen.each do |row|
 	importID = row[columnPos["importID"]]
 	chronontologyID = concordance2Chron[importID]
 	period = periods[importID]
-
-	# vier Fälle: String oder Liste  -->  String oder Liste
-
-	# 1. String --> String
-	#    isMetInTimeBy <-> meetsInTimeWith
-	#    startsAtTheEndOf <-> endsAtTheStartOf
-	#    sameAs --> sameAs (symmetrisch!)
 	
 	if ( period.has_key?(:isMetInTimeBy) )
-		counterpartImportID = concordance2Import[ period[:isMetInTimeBy] ]
-		counterpart = periods[ counterpartImportID ]
-		if ( counterpart.has_key?(:meetsInTimeWith) )
-			if (! counterpart[:meetsInTimeWith].eql?(chronontologyID) )
-				warnings[counterpartImportID].push("konnte meetsInTimeWith "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
+		period[:isMetInTimeBy].each do |isMetInTimeBy|
+			counterpartImportID = concordance2Import[ isMetInTimeBy ]
+			counterpart = periods[ counterpartImportID ]
+
+			if ( counterpart.has_key?(:meetsInTimeWith) )
+				if (! counterpart[:meetsInTimeWith].include?( chronontologyID ) )
+					counterpart[:meetsInTimeWith].push(chronontologyID)
+					infos[counterpartImportID].push("meetsInTimeWith "+chronontologyID+" ergänzt")
+
+					i = counterpart[:meetsInTimeWith].length - 1
+					statistics[:meetsInTimeWith][i] ||= 0
+					statistics[:meetsInTimeWith][i] += 1
+				end
+			else
+				counterpart[:meetsInTimeWith] = [ chronontologyID ]
+				infos[counterpartImportID].push("meetsInTimeWith "+chronontologyID+" ergänzt")
+				statistics[:meetsInTimeWith][0] += 1
 			end
-		else
-			counterpart[:meetsInTimeWith] = chronontologyID
-			infos[counterpartImportID].push("meetsInTimeWith "+chronontologyID+" ergänzt")
-			statistics[:meetsInTimeWith] += 1
 		end
 	end
 	if ( period.has_key?(:meetsInTimeWith) )
-		counterpartImportID = concordance2Import[ period[:meetsInTimeWith] ]
-		counterpart = periods[ counterpartImportID ]
-		if ( counterpart.has_key?(:isMetInTimeBy) )
-			if (! counterpart[:isMetInTimeBy].eql?(chronontologyID) )
-				warnings[counterpartImportID].push("konnte isMetInTimeBy "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
+		period[:meetsInTimeWith].each do |meetsInTimeWith|
+			counterpartImportID = concordance2Import[ meetsInTimeWith ]
+			counterpart = periods[ counterpartImportID ]
+
+			if ( counterpart.has_key?(:isMetInTimeBy) )
+				if (! counterpart[:isMetInTimeBy].include?( chronontologyID ) )
+					counterpart[:isMetInTimeBy].push(chronontologyID)
+					infos[counterpartImportID].push("isMetInTimeBy "+chronontologyID+" ergänzt")
+
+					i = counterpart[:isMetInTimeBy].length - 1
+					statistics[:isMetInTimeBy][i] ||= 0
+					statistics[:isMetInTimeBy][i] += 1
+				end
+			else
+				counterpart[:isMetInTimeBy] = [ chronontologyID ]
+				infos[counterpartImportID].push("isMetInTimeBy "+chronontologyID+" ergänzt")
+				statistics[:isMetInTimeBy][0] += 1
 			end
-		else
-			counterpart[:isMetInTimeBy] = chronontologyID
-			infos[counterpartImportID].push("isMetInTimeBy "+chronontologyID+" ergänzt")
-			statistics[:isMetInTimeBy] += 1
 		end
 	end
-	
+
 	if ( period.has_key?(:startsAtTheEndOf) )
-		counterpartImportID = concordance2Import[ period[:startsAtTheEndOf] ]
-		counterpart = periods[ counterpartImportID ]
-		if ( counterpart.has_key?(:endsAtTheStartOf) )
-			if (! counterpart[:endsAtTheStartOf].eql?(chronontologyID) )
-				warnings[counterpartImportID].push("konnte endsAtTheStartOf "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
+		period[:startsAtTheEndOf].each do |startsAtTheEndOf|
+			counterpartImportID = concordance2Import[ startsAtTheEndOf ]
+			counterpart = periods[ counterpartImportID ]
+
+			if ( counterpart.has_key?(:endsAtTheStartOf) )
+				if (! counterpart[:endsAtTheStartOf].include?( chronontologyID ) )
+					counterpart[:endsAtTheStartOf].push(chronontologyID)
+					infos[counterpartImportID].push("endsAtTheStartOf "+chronontologyID+" ergänzt")
+
+					i = counterpart[:endsAtTheStartOf].length - 1
+					statistics[:endsAtTheStartOf][i] ||= 0
+					statistics[:endsAtTheStartOf][i] += 1
+				end
+			else
+				counterpart[:endsAtTheStartOf] = [ chronontologyID ]
+				infos[counterpartImportID].push("endsAtTheStartOf "+chronontologyID+" ergänzt")
+				statistics[:endsAtTheStartOf][0] += 1
 			end
-		else
-			counterpart[:endsAtTheStartOf] = chronontologyID
-			infos[counterpartImportID].push("endsAtTheStartOf "+chronontologyID+" ergänzt")
-			statistics[:endsAtTheStartOf] += 1
 		end
-	end	
+	end
 	if ( period.has_key?(:endsAtTheStartOf) )
-		counterpartImportID = concordance2Import[ period[:endsAtTheStartOf] ]
-		counterpart = periods[ counterpartImportID ]
-		if ( counterpart.has_key?(:startsAtTheEndOf) )
-			if (! counterpart[:startsAtTheEndOf].eql?(chronontologyID) )
-				warnings[counterpartImportID].push("konnte startsAtTheEndOf "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
+		period[:endsAtTheStartOf].each do |endsAtTheStartOf|
+			counterpartImportID = concordance2Import[ endsAtTheStartOf ]
+			counterpart = periods[ counterpartImportID ]
+
+			if ( counterpart.has_key?(:startsAtTheEndOf) )
+				if (! counterpart[:startsAtTheEndOf].include?( chronontologyID ) )
+					counterpart[:startsAtTheEndOf].push(chronontologyID)
+					infos[counterpartImportID].push("startsAtTheEndOf "+chronontologyID+" ergänzt")
+
+					i = counterpart[:startsAtTheEndOf].length - 1
+					statistics[:startsAtTheEndOf][i] ||= 0
+					statistics[:startsAtTheEndOf][i] += 1
+				end
+			else
+				counterpart[:startsAtTheEndOf] = [ chronontologyID ]
+				infos[counterpartImportID].push("startsAtTheEndOf "+chronontologyID+" ergänzt")
+				statistics[:startsAtTheEndOf][0] += 1
 			end
-		else
-			counterpart[:startsAtTheEndOf] = chronontologyID
-			infos[counterpartImportID].push("startsAtTheEndOf "+chronontologyID+" ergänzt")
-			statistics[:startsAtTheEndOf] += 1
 		end
 	end
 	
 	if ( period.has_key?(:sameAs) )
-		counterpartImportID = concordance2Import[ period[:sameAs] ]
-		counterpart = periods[ counterpartImportID ]
-		if ( counterpart.has_key?(:sameAs) )
-			if (! counterpart[:sameAs].eql?(chronontologyID) )
-				warnings[counterpartImportID].push("konnte sameAs "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
+		period[:sameAs].each do |sameAs|
+			counterpartImportID = concordance2Import[ sameAs ]
+			counterpart = periods[ counterpartImportID ]
+
+			# (ab hier das inverse Verb, aber sameAs ist symmetrisch)
+			if ( counterpart.has_key?(:sameAs) )
+				if (! counterpart[:sameAs].include?( chronontologyID ) )
+					counterpart[:sameAs].push(chronontologyID)
+					infos[counterpartImportID].push("sameAs "+chronontologyID+" ergänzt")
+
+					i = counterpart[:sameAs].length - 1
+					statistics[:sameAs][i] ||= 0
+					statistics[:sameAs][i] += 1
+				end
+			else
+				counterpart[:sameAs] = [ chronontologyID ]
+				infos[counterpartImportID].push("sameAs "+chronontologyID+" ergänzt")
+				statistics[:sameAs][0] += 1
 			end
-		else
-			counterpart[:sameAs] = chronontologyID
-			infos[counterpartImportID].push("sameAs "+chronontologyID+" ergänzt")
-			statistics[:sameAs] += 1
-		end
-	end
-	
-	# 2. String --> Liste
-	#    partOf --> hasPart
-	#    isSenseOf --> hasSense
-
-	if ( period.has_key?(:partOf) )
-		counterpartImportID = concordance2Import[ period[:partOf] ]
-		counterpart = periods[ counterpartImportID ]
-
-		if ( counterpart.has_key?(:hasPart) )
-			if (! counterpart[:hasPart].include?( chronontologyID ) )
-				counterpart[:hasPart].push(chronontologyID)
-				infos[counterpartImportID].push("hasPart "+chronontologyID+" ergänzt")
-
-				i = counterpart[:hasPart].length - 1
-				statistics[:hasPart][i] ||= 0
-				statistics[:hasPart][i] += 1
-			end
-		else
-			counterpart[:hasPart] = [ chronontologyID ]
-			infos[counterpartImportID].push("hasPart "+chronontologyID+" ergänzt")
-			statistics[:hasPart][0] += 1
 		end
 	end
 
 	if ( period.has_key?(:isSenseOf) )
-		counterpartImportID = concordance2Import[ period[:isSenseOf] ]
-		counterpart = periods[ counterpartImportID ]
+		period[:isSenseOf].each do |isSenseOf|
+			counterpartImportID = concordance2Import[ isSenseOf ]
+			counterpart = periods[ counterpartImportID ]
 
-		if ( counterpart.has_key?(:hasSense) )
-			if (! counterpart[:hasSense].include?( chronontologyID ) )
-				counterpart[:hasSense].push(chronontologyID)
+			if ( counterpart.has_key?(:hasSense) )
+				if (! counterpart[:hasSense].include?( chronontologyID ) )
+					counterpart[:hasSense].push(chronontologyID)
+					infos[counterpartImportID].push("hasSense "+chronontologyID+" ergänzt")
+
+					i = counterpart[:hasSense].length - 1
+					statistics[:hasSense][i] ||= 0
+					statistics[:hasSense][i] += 1
+				end
+			else
+				counterpart[:hasSense] = [ chronontologyID ]
 				infos[counterpartImportID].push("hasSense "+chronontologyID+" ergänzt")
-
-				i = counterpart[:hasSense].length - 1
-				statistics[:hasSense][i] ||= 0
-				statistics[:hasSense][i] += 1
+				statistics[:hasSense][0] += 1
 			end
-		else
-			counterpart[:hasSense] = [ chronontologyID ]
-			infos[counterpartImportID].push("hasSense "+chronontologyID+" ergänzt")
-			statistics[:hasSense][0] += 1
 		end
 	end
 
-	# 3. Liste --> String
-	#    hasPart --> partOf
-	
+	if ( period.has_key?(:isPartOf) )
+		period[:isPartOf].each do |isPartOf|
+			counterpartImportID = concordance2Import[ isPartOf ]
+			counterpart = periods[ counterpartImportID ]
+
+			if ( counterpart.has_key?(:hasPart) )
+				if (! counterpart[:hasPart].include?( chronontologyID ) )
+					counterpart[:hasPart].push(chronontologyID)
+					infos[counterpartImportID].push("hasPart "+chronontologyID+" ergänzt")
+
+					i = counterpart[:hasPart].length - 1
+					statistics[:hasPart][i] ||= 0
+					statistics[:hasPart][i] += 1
+				end
+			else
+				counterpart[:hasPart] = [ chronontologyID ]
+				infos[counterpartImportID].push("hasPart "+chronontologyID+" ergänzt")
+				statistics[:hasPart][0] += 1
+			end
+		end
+	end
+
 	if ( period.has_key?(:hasPart) )
 		period[:hasPart].each do |hasPart|
 			counterpartImportID = concordance2Import[ hasPart ]
 			counterpart = periods[ counterpartImportID ]
-			if ( counterpart.has_key?(:partOf) )
-				if (! counterpart[:partOf].eql?(chronontologyID) )
-					warnings[counterpartImportID].push("konnte partOf "+chronontologyID+ " nicht ergänzen, nur einmal erlaubt")
+
+			if ( counterpart.has_key?(:isPartOf) )
+				if (! counterpart[:isPartOf].include?( chronontologyID ) )
+					counterpart[:isPartOf].push(chronontologyID)
+					infos[counterpartImportID].push("isPartOf "+chronontologyID+" ergänzt")
+
+					i = counterpart[:isPartOf].length - 1
+					statistics[:isPartOf][i] ||= 0
+					statistics[:isPartOf][i] += 1
 				end
 			else
-				counterpart[:partOf] = chronontologyID
-				infos[counterpartImportID].push("partOf "+chronontologyID+" ergänzt")
-				statistics[:partOf] += 1
+				counterpart[:isPartOf] = [ chronontologyID ]
+				infos[counterpartImportID].push("isPartOf "+chronontologyID+" ergänzt")
+				statistics[:isPartOf][0] += 1
 			end
 		end
 	end
-
-	# 4. Liste --> Liste
-	#    ...
 
 end
 
 
 # Reasoning: abgeleitete Allen relations eintragen
-# TODO sobald das System das selbst kann, kann es hier weg
+# TODO sobald das System das selbst kann, kann es hier weg?
+# TODO: sameAs ist transitiv, es müssten also evtl. noch mehr sameAs ergänzt werden
 
 puts "\n# abgeleitete Allen relations ergänzen\n" if options[:verbose]
 
@@ -1109,21 +1183,17 @@ akzeptierteZeilen.each do |row|
 	# TODO prüfen, ob Allen relation schon vorhanden ist
 	# TODO Allen relation auch eigenständig eintragen
 
-	# einzeln 
-	
-	if ( period.has_key?(:partOf) )
-		period[:occursDuring] = period[:partOf]
-		statistics[:occursDuring] += 1
-		infos[importID].push("abgeleitetes occursDuring ergänzt")
+	if ( period.has_key?(:isPartOf) )
+		period[:occursDuring] = period[:isPartOf].clone
+		statistics[:occursDuring] = statistics[:isPartOf].clone
+		infos[importID].push("ein oder mehrere abgeleitete occursDuring ergänzt")
 	end
-
-	# Liste 
-
 	if ( period.has_key?(:hasPart) )
 		period[:includes] = period[:hasPart].clone
 		statistics[:includes] = statistics[:hasPart].clone
 		infos[importID].push("ein oder mehrere abgeleitete includes ergänzt")
 	end
+
 
 end
 
