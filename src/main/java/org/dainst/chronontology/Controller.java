@@ -11,6 +11,8 @@ import org.dainst.chronontology.handler.model.RightsValidator;
 import spark.Request;
 import spark.Response;
 
+import java.util.Arrays;
+
 
 /**
  * @author Daniel M. de Oliveira
@@ -120,6 +122,8 @@ public class Controller {
         this.postDocumentHandler = new PostDocumentHandler(dispatcher,rightsValidator);
         this.putDocumentHandler = new PutDocumentHandler(dispatcher,rightsValidator);
         this.getDocumentHandler = new GetDocumentHandler(dispatcher,rightsValidator);
+
+        logger.info("initializing endpoints for types: " + Arrays.toString(typeNames));
 
         for (String typeName:typeNames)
             setUpTypeRoutes(typeName);

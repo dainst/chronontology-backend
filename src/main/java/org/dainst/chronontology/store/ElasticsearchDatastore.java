@@ -113,8 +113,9 @@ public class ElasticsearchDatastore implements Datastore {
                 URLDecoder.decode((queryString!=null) ? queryString : "" ));
         if (includes!=null) requestBody= incorporateIncludes(requestBody,includes);
 
-        return makeResultsFrom(searchHits(
-                client.post("/" + indexName + "/" + type + "/_search", requestBody)));
+        final JsonNode response = client.post("/" + indexName + "/" + type + "/_search", requestBody);
+
+        return makeResultsFrom(searchHits(response), response.get("hits").get("total").asInt());
     }
 
     private ArrayNode searchHits(JsonNode response) {
@@ -127,10 +128,10 @@ public class ElasticsearchDatastore implements Datastore {
         return searchHits;
     }
 
-    private Results makeResultsFrom(final ArrayNode searchHits) {
+    private Results makeResultsFrom(final ArrayNode searchHits, int total) {
         if (searchHits==null) return null;
 
-        Results results = new Results("results");
+        Results results = new Results("results", total);
         for (JsonNode o:searchHits) {
             results.add(o.get("_source"));
         }
