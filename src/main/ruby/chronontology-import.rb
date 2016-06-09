@@ -116,21 +116,61 @@ columnPos = {
 }
 
 
-# Statistik (und gleichzeitig Datenmodell)
-# todo: Statistik für kontrolliertes Vokabular
+# kontrolliertes Vokabular
 
 namesLanguageList = [
-	:ar,
-	:de,
-	:en
+
+	# moderne Sprachen
+	:ar,  # ara Arabisch
+	:de,  # deu Deutsch
+	:el,  # ell Griechisch
+	:en,  # eng Englisch
+	:es,  # spa Spanisch
+	:eu,  # eus Baskisch
+	:fr,  # fra Französisch
+	:it,  # ita Italienisch
+	:nl,  # nld Niederländisch
+	:pl,  # pol Polnisch
+	:pt,  # por Portugiesisch
+	:ru,  # rus Russisch
+	:sq,  # sqi Albanisch
+	:sr,  # srp Serbisch
+	:tk,  # tuk Türkisch
+	:vi,  # vie Vietnamesisch
+	:zh,  # zho Chinesisch
+
+	# nicht mehr (weithin) gesprochene Sprachen
+	:la,  # lat Latein
+	:egy, # Ägyptisch
+	:grc, # Altgriechisch
+	:xmr  # Meroitisch
 ]
 
-# languageList2to3 = {
-# 	:ar => :ara,
-# 	:de => :deu,
-# 	:en => :eng
-# }
+# Umwandlung ISO 639-1 --> ISO 639-3
+# (die technischen Voraussetzungen für ISO 639-3 sind allerdings noch nicht da)
+languageList2to3 = {
+	:ar => :ara,  # Arabisch
+	:de => :deu,  # Deutsch
+	:el => :ell,  # Griechisch
+	:en => :eng,  # Englisch
+	:es => :spa,  # Spanisch
+	:eu => :eus,  # Baskisch
+	:fr => :fra,  # Französisch
+	:it => :ita,  # Italienisch
+	:nl => :nld,  # Niederländisch
+	:pl => :pol,  # Polnisch
+	:pt => :por,  # Portugiesisch
+	:ru => :rus,  # Russisch
+	:sq => :sqi,  # Albanisch
+	:sr => :srp,  # Serbisch
+	:tk => :tuk,  # Türkisch
+	:vi => :vie,  # Vietnamesisch
+	:zh => :zho,  # Chinesisch
 
+	:la => :lat   # lat Latein
+}
+
+# Statistik (und gleichzeitig Datenmodell)
 
 intervalBoundaryBlock = {
 	:notBefore => 0,      # Datum
@@ -181,10 +221,10 @@ statistics = {
 	:endsAtTheStartOf => [ 0 ], # fuzzy "kommt vor"
 
 	# parents
-	:isPartOf => [ 0 ],           # by definition
-	:hasPart => [ 0 ],      # by definition
+	:isPartOf => [ 0 ],         # by definition
+	:hasPart => [ 0 ],          # by definition
 	:occursDuring => [ 0 ],     # Allen relation
-	:includes => [ 0 ],     # Allen relation
+	:includes => [ 0 ],         # Allen relation
 
 	# senses
 	:isSenseOf => [ 0 ],
