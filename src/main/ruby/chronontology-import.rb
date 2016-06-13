@@ -47,7 +47,7 @@ OptionParser.new do |opts|
 end.parse!
 
 # wenn zwar ein Parameter, aber kein Dateiname angegeben wurde
-if (ARGV.empty?) 
+if (ARGV.empty?)
 	warn "\nNo filename specified. Use -h to show usage summary.\n\n"
 	exit
 end
@@ -57,7 +57,7 @@ csvFile = ARGV.shift
 
 # wenn nach dem Dateinamen noch weitere Angaben kommen
 # TODO: Liste von Dateinamen erlauben?
-if (!ARGV.empty?) 
+if (!ARGV.empty?)
 	warn "\nMore than one input file is currently not supported. Use -h to show usage summary.\n\n"
 	exit
 end
@@ -179,7 +179,7 @@ intervalBoundaryBlock = {
 	:atPrecision => 0
 }
 
-intervalBlock = { 
+intervalBlock = {
 	:sourceOriginal => 0,  # freetext
 	:sourceURL => 0,
 	:timeOriginal => 0,    # freetext
@@ -188,6 +188,8 @@ intervalBlock = {
 	:end => intervalBoundaryBlock.clone
 }
 
+array2hash = lambda { |relations| Hash[ relations.map {|relation| [ relation, [ 0 ] ]}] }
+addRelations = lambda { |existing, add| existing.merge!(array2hash.call(add)) }
 
 statistics = {
 
@@ -198,7 +200,7 @@ statistics = {
 
 	# names
 	:prefLabel => { :de => 0 },  # deprecated!
-	:names => Hash[ namesLanguageList.map {|language| [ language, [ 0 ] ]}],
+	:names => array2hash.call(namesLanguageList),
 
 	# types
 	:types => [ 0 ],
@@ -235,6 +237,8 @@ statistics = {
 	# Teil 2: Relations mit anderen chronontology-Datensätzen
 
 	# siblings
+	:comesBefore => [ 0 ],
+	:comesAfter => [ 0 ],
 
 	# parents
 	:isPartOf => [ 0 ],         # by definition
@@ -249,53 +253,40 @@ statistics = {
 	# linksSTV  TODO
 	
 	# matching
-	:sameAs => [ 0 ],
-	
-	# Allen relations              Bedeutung bei  o <relation> x
-	:includes => [ 0 ],            # o⊗⊗oo
-	:occursDuring => [ 0 ],
-	:meetsInTimeWith => [ 0 ],     # oooxxx    nicht mehr der default für "kommt vor"
-	:isMetInTimeBy => [ 0 ],       #           nicht mehr der default für "kommt nach"
-	:occursBefore => [ 0 ],        # ooo  xxx
-	:occursAfter => [ 0 ],
-	:isEqualInTimeTo => [ 0 ],     # ⊗⊗⊗
-	:starts => [ 0 ],              # ⊗⊗xxx
-	:isStartedBy => [ 0 ],
-	:finishes => [ 0 ],            # xxx⊗⊗
-	:isFinishedBy => [ 0 ],
-	:overlapsInTimeWith => [ 0 ],  # oo⊗⊗xx
-	:isOverlappedInTimeBy => [ 0 ],
-
-	# fuzzy intervals
-	:startsAtTheEndOf => [ 0 ], # fuzzy "kommt nach"
-	:endsAtTheStartOf => [ 0 ], # fuzzy "kommt vor"
-		
-	
-	# Teil 3: Derived relations
-	
-	:derived => {
-	
-		# Allen relations
-		:includes => [ 0 ],
-		:occursDuring => [ 0 ],
-		:meetsInTimeWith => [ 0 ],
-		:isMetInTimeBy => [ 0 ],
-		:occursBefore => [ 0 ],
-		:occursAfter => [ 0 ],
-		:isEqualInTimeTo => [ 0 ],
-		:starts => [ 0 ],
-		:isStartedBy => [ 0 ],
-		:finishes => [ 0 ],
-		:isFinishedBy => [ 0 ],
-		:overlapsInTimeWith => [ 0 ],
-		:isOverlappedInTimeBy => [ 0 ],
-
-		# fuzzy intervals
-		:startsAtTheEndOf => [ 0 ],
-		:endsAtTheStartOf => [ 0 ]
-	}
+	:sameAs => [ 0 ]
 }
 
+# Teil 3: Allen relations und fuzzy intervals
+	
+allenRelations = [        # Bedeutung bei  o <relation> x
+	:includes,            # o⊗⊗oo
+	:occursDuring,
+	:meetsInTimeWith,     # oooxxx    nicht mehr der default für "kommt vor"
+	:isMetInTimeBy,       #           nicht mehr der default für "kommt nach"
+	:occursBefore,        # ooo  xxx
+	:occursAfter,
+	:isEqualInTimeTo,     # ⊗⊗⊗
+	:starts,              # ⊗⊗xxx
+	:isStartedBy,
+	:finishes,            # xxx⊗⊗
+	:isFinishedBy,
+	:overlapsInTimeWith,  # oo⊗⊗xx
+	:isOverlappedInTimeBy
+]
+
+fuzzyIntervals = [
+	:startsAtTheEndOf, # fuzzy "kommt nach"
+	:endsAtTheStartOf  # fuzzy "kommt vor"
+]
+
+addRelations.call(statistics, allenRelations)
+addRelations.call(statistics, fuzzyIntervals)
+
+statistics[:derived] = {}
+addRelations.call(statistics[:derived], allenRelations)
+addRelations.call(statistics[:derived], fuzzyIntervals)
+
+###
 
 periods = {}
 concordance2Chron = {}
@@ -328,7 +319,7 @@ CSV.foreach(csvFile) do |row|
 	zeile += 1
 
 # Alternative, falls es nochmal ein Problem mit UTF-8 gibt:
-# File.open(csvFile, "r:UTF-8") do |table| 
+# File.open(csvFile, "r:UTF-8") do |table|
 # 	CSV.parse(table) do |row|
 # 		...
 
@@ -337,7 +328,7 @@ CSV.foreach(csvFile) do |row|
 	if ( columnPos["importID"] == -1 )
 		row.each_with_index do |originalName, i|
 			name = originalName.to_s.strip
-			columnNames[i] = name			
+			columnNames[i] = name
 			if (name.length == 0)
 				ignoredColumns.push(i.to_s)
 				ignoredColumnsReason.push("no column title")
@@ -345,7 +336,7 @@ CSV.foreach(csvFile) do |row|
 			end
 			if (! columnPos.has_key?(name) )
 				ignoredColumns.push(i.to_s+name)
-				ignoredColumnsReason.push("not a recognized column title")				
+				ignoredColumnsReason.push("not a recognized column title")
 				next
 			end
 			if (columnPos[name] > -1)
@@ -382,7 +373,7 @@ CSV.foreach(csvFile) do |row|
 		next
 	end
 
-	# ignoriere Zeilen, deren ID schon vorgekommen ist 
+	# ignoriere Zeilen, deren ID schon vorgekommen ist
 	# (kann auftreten, wenn mehrere Tabellen hintereinander eingelesen werden)
 	# TODO: anders lösen
 	if ( warnings.key?(row[columnPos["importID"]]) )
@@ -396,7 +387,7 @@ CSV.foreach(csvFile) do |row|
 	# 1. AAT-Zeilen wie "römische Keramikstile"
 	# TODO doch als parent behalten, oder unnötig?
 # 		if ( row[columnPos["types"]].to_s.strip.match(/alle Bedeutungen\?\?/) )
-# 
+#
 # 			ignoredRows.push(row)
 # 			ignoredRowsReason.push("superfluous AAT node")
 # 			next
@@ -487,7 +478,7 @@ akzeptierteZeilen.each do |row|
 				next
 			end
 
-			names[sprachkuerzel] ||= []		
+			names[sprachkuerzel] ||= []
 			if ( nameMitSprache.match(/\(pref.\)/) )
 				if ( prefVorhanden[sprachkuerzel] )
 					warnings[importID].push("mehrfaches pref in einer Sprache: "+nameMitSprache)
@@ -555,7 +546,7 @@ akzeptierteZeilen.each do |row|
 			# TODO: in der Tabelle ändern
 			if (typeStandardized.strip.match(/^pottery$/) )
 				typeStandardized = "pottery style"
-			end	
+			end
 
 			typesStandardized.push(typeStandardized)
 
@@ -637,7 +628,7 @@ akzeptierteZeilen.each do |row|
 
 				# "(erbt)"
 				elsif ( gazetteerIdPlusText.match(/^ *\(erbt\) *$/) )
-					infos[importID].push("Gazetteer-Eintrag wurde ignoriert: "+gazetteerIdPlusText)					
+					infos[importID].push("Gazetteer-Eintrag wurde ignoriert: "+gazetteerIdPlusText)
 				else
 					warnings[importID].push("Gazetteer-ID nicht erkannt: "+gazetteerIdPlusText)
 				end
@@ -651,7 +642,7 @@ akzeptierteZeilen.each do |row|
 	
 	# Spalte: tags
 
-	if (columnPos["tags"] > -1)	
+	if (columnPos["tags"] > -1)
 		tagsfeld = row[columnPos["tags"]]
 		tags = tagsfeld.gsub(/, ?/, lf).split(lf)
 
@@ -692,7 +683,7 @@ akzeptierteZeilen.each do |row|
 
 	# Spalte: ongoing
 
-	if (columnPos["ongoing"] > -1)	
+	if (columnPos["ongoing"] > -1)
 		ongoingfeld = row[columnPos["ongoing"]].to_s.strip
 
 		if ( ongoingfeld.length > 0 )
@@ -761,7 +752,7 @@ akzeptierteZeilen.each do |row|
 						
 						timespan[:begin][:at] = from
 						statistics[:hasTimespan][0][:begin][:at] += 1
-						if ( (! from.eql?("?")) && (! from.eql?("unknown")) ) 
+						if ( (! from.eql?("?")) && (! from.eql?("unknown")) )
 							timespan[:begin][:atPrecision] = "ca"
 							statistics[:hasTimespan][0][:begin][:atPrecision] += 1
 						end
@@ -776,7 +767,7 @@ akzeptierteZeilen.each do |row|
 					# [-1800000; ] mit ongoing = true
 					# ( [?; ] wird absichtlich nicht erkannt; kommt das jemals vor?)
 					elsif ( timeStandardizedFeld.match(/^\[([+-]?[0-9]+)[;,] ?\]$/) and period[:ongoing] )
-						from = $1 
+						from = $1
 						if ( from.to_s.match(/^\+/) )
 							from = from.to_s.gsub(/^\+/, '')
 						end
@@ -860,50 +851,38 @@ akzeptierteZeilen.each do |row|
 					warnings[importID].push("Verweis auf nicht vorhandene ID "+symbol.to_s+" "+property)
 				end
 			end
-		end			
+		end
 	end
 	
 
 	# Spalte: siblings
-	# TODO: bisher alles keine Listen; muss man ändern, wenn es Beispiele gibt 
+	# TODO: bisher alles keine Listen; muss man ändern, wenn es Beispiele gibt
 
 	if (columnPos["siblings"] > -1)
 		siblingFeld = row[columnPos["siblings"]].to_s.strip
 
-		isMetInTimeByIDs = []
-		meetsInTimeWithIDs = []
-		startsAtTheEndOfIDs = []
-		endsAtTheStartOfIDs = []
+		comesBeforeIDs = []
+		comesAfterIDs = []
 	
 		if (siblingFeld.length > 0)
 		
 			# A0021 (comes before)
 			# aat:300107341 (comes before)
 			if ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes before\) *$/) )
-				meetsInTimeWithIDs.push($1)
-				endsAtTheStartOfIDs.push($1)
+				comesBeforeIDs.push($1)
 			# aat:300107343 (comes after)
 			elsif ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes after\) *$/) )
-				isMetInTimeByIDs.push($1)
-				startsAtTheEndOfIDs.push($1)
+				comesAfterIDs.push($1)
 			# A0077 (comes after) A0089 (comes before)
 			elsif ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes after\) *([a-zA-Z:0-9]+) +\(comes before\) *$/) )
-				isMetInTimeByIDs.push($1)
-				startsAtTheEndOfIDs.push($1)
-				meetsInTimeWithIDs.push($2)
-				endsAtTheStartOfIDs.push($2)
+				comesAfterIDs.push($1)
+				comesBeforeIDs.push($2)
 			else
 				warnings[importID].push("comes before/after wurde nicht erkannt: "+siblingFeld)
 			end
 
-
-			# Allen-Relationen			
-			addIDs.call(isMetInTimeByIDs, :isMetInTimeBy)
-			addIDs.call(meetsInTimeWithIDs, :meetsInTimeWith)
-				
-			# fuzzy Relationen
-			addIDs.call(startsAtTheEndOfIDs, :startsAtTheEndOf)
-			addIDs.call(endsAtTheStartOfIDs, :endsAtTheStartOf)
+			addIDs.call(comesBeforeIDs, :comesBefore)
+			addIDs.call(comesAfterIDs, :comesAfter)
 		end
 	end
 
@@ -942,7 +921,7 @@ akzeptierteZeilen.each do |row|
 
 
 	# Spalte: senses
-	# beachte: isSenseOf ist eine Liste, aber das Skript geht vorerst trotzdem 
+	# beachte: isSenseOf ist eine Liste, aber das Skript geht vorerst trotzdem
 	#   von einem einzelnen Wert in der Importtabelle aus
 
 	if (columnPos["senses"] > -1)
@@ -964,7 +943,7 @@ akzeptierteZeilen.each do |row|
 
 
 	# Spalte: matching
-	# beachte: sameAs ist eine Liste, aber das Skript geht vorerst trotzdem 
+	# beachte: sameAs ist eine Liste, aber das Skript geht vorerst trotzdem
 	#   von einem einzelnen Wert in der Importtabelle aus
 
 	if (columnPos["matching"] > -1)
@@ -1003,7 +982,7 @@ akzeptierteZeilen.each do |row|
 	chronontologyID = concordance2Chron[importID]
 	period = periods[importID]
 	
-	complement = lambda do |normal, inverse|	
+	complement = lambda do |normal, inverse|
 		if ( period.has_key?(normal) )
 			period[normal].each do |normal|
 				counterpartImportID = concordance2Import[ normal ]
@@ -1026,10 +1005,12 @@ akzeptierteZeilen.each do |row|
 			end
 		end
 	end
-	
-	complement.call(:isMetInTimeBy, :meetsInTimeWith)
-	complement.call(:meetsInTimeWith, :isMetInTimeBy)
 
+	complement.call(:comesBefore, :comesAfter)
+	complement.call(:comesAfter, :comesBefore)
+	
+	complement.call(:isMetInTimeBy, :meetsInTimeWith)  # machen zurzeit noch nichts
+	complement.call(:meetsInTimeWith, :isMetInTimeBy)
 	complement.call(:startsAtTheEndOf, :endsAtTheStartOf)
 	complement.call(:endsAtTheStartOf, :startsAtTheEndOf)
 
@@ -1059,7 +1040,7 @@ akzeptierteZeilen.each do |row|
 
 	reasoning = lambda do |knownRelation, inferredRelation|
 
-		if ( period.has_key?(knownRelation) )		
+		if ( period.has_key?(knownRelation) )
 			period[knownRelation].each do |knownRelationID|
 				if (!period.has_key?(inferredRelation) || !period[inferredRelation].include?(knownRelationID))
 					
@@ -1074,7 +1055,7 @@ akzeptierteZeilen.each do |row|
 						statistics[:derived][inferredRelation][position] += 1
 
 						# diese Info ist überflüssig: bereits im "period.derived" enthalten
-#						infos[importID].push("abgeleitete Relation #{inferredRelation} #{knownRelationID} ergänzt")
+						# infos[importID].push("abgeleitete Relation #{inferredRelation} #{knownRelationID} ergänzt")
 					end
 				end
 			end
@@ -1083,6 +1064,11 @@ akzeptierteZeilen.each do |row|
 	
 	reasoning.call(:isPartOf, :occursDuring)
 	reasoning.call(:hasPart, :includes)
+	
+	reasoning.call(:comesBefore, :meetsInTimeWith)
+	reasoning.call(:comesBefore, :endsAtTheStartOf)
+	reasoning.call(:comesAfter, :isMetInTimeBy)
+	reasoning.call(:comesAfter, :startsAtTheEndOf)
 end
 
 
@@ -1172,7 +1158,7 @@ akzeptierteZeilen.each do |row|
 end
 
 
-# TODO: Skript anpassen, dass es auch mit Verweisen auf bereits vorhandene 
+# TODO: Skript anpassen, dass es auch mit Verweisen auf bereits vorhandene
 #       Periods umgehen kann
 
 # TODO: "preferred" Einträge in den Datenfeldern, z.B. "comes before ..., comes after: ...
