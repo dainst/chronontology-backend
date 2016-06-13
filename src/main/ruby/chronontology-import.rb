@@ -188,7 +188,10 @@ intervalBlock = {
 	:end => intervalBoundaryBlock.clone
 }
 
+
 statistics = {
+
+	# Teil 1: interne Felder (und Gazetteer-Links)
 
 	# importID
 	:externalId => 0,
@@ -209,52 +212,88 @@ statistics = {
 	# description
 	:description => 0,
 
-	# gazetteer
-	:spatiallyPartOfRegion => [ 0 ],
-	:hasCoreArea => [ 0 ],
-	:namedAfter => [ 0 ],
-
-	# siblings
-	:isMetInTimeBy => [ 0 ],    # Allen relation; nicht mehr der default für "kommt nach"
-	:meetsInTimeWith => [ 0 ],  # Allen relation; nicht mehr der default für "kommt vor"
-	:startsAtTheEndOf => [ 0 ], # fuzzy "kommt nach"
-	:endsAtTheStartOf => [ 0 ], # fuzzy "kommt vor"
-
-	# parents
-	:isPartOf => [ 0 ],         # by definition
-	:hasPart => [ 0 ],          # by definition
-	:occursDuring => [ 0 ],     # Allen relation
-	:includes => [ 0 ],         # Allen relation
-
-	# senses
-	:isSenseOf => [ 0 ],
-	:hasSense => [ 0 ],
-	
-	# timeOriginal
-	# timeStandardized
+	# timeOriginal, timeStandardized
 	:hasTimespan => [ intervalBlock.clone ],
 	
 	# ongoing
 	:ongoing => 0,
 	
-	# matching
-	:sameAs => [ 0 ],
+	# tags
+	:tags => [ 0 ],
 
-	# note
+	# note, note2, note3
 	:note => 0,
+	:note2 => 0,  # interne Arbeitsnotiz
+	:note3 => 0,  # interne Arbeitsnotiz
+
+	# gazetteer
+	:spatiallyPartOfRegion => [ 0 ],
+	:hasCoreArea => [ 0 ],
+	:namedAfter => [ 0 ],
+
+
+	# Teil 2: Relations mit anderen chronontology-Datensätzen
+
+	# siblings
+
+	# parents
+	:isPartOf => [ 0 ],         # by definition
+	:hasPart => [ 0 ],          # by definition
+
+	# senses
+	:isSenseOf => [ 0 ],
+	:hasSense => [ 0 ],
 	
 	# linksOrt  TODO
 	# linksZeit TODO
 	# linksSTV  TODO
 	
-	# tags
-	:tags => [ 0 ],
+	# matching
+	:sameAs => [ 0 ],
+	
+	# Allen relations              Bedeutung bei  o <relation> x
+	:includes => [ 0 ],            # o⊗⊗oo
+	:occursDuring => [ 0 ],
+	:meetsInTimeWith => [ 0 ],     # oooxxx    nicht mehr der default für "kommt vor"
+	:isMetInTimeBy => [ 0 ],       #           nicht mehr der default für "kommt nach"
+	:occursBefore => [ 0 ],        # ooo  xxx
+	:occursAfter => [ 0 ],
+	:isEqualInTimeTo => [ 0 ],     # ⊗⊗⊗
+	:starts => [ 0 ],              # ⊗⊗xxx
+	:isStartedBy => [ 0 ],
+	:finishes => [ 0 ],            # xxx⊗⊗
+	:isFinishedBy => [ 0 ],
+	:overlapsInTimeWith => [ 0 ],  # oo⊗⊗xx
+	:isOverlappedInTimeBy => [ 0 ],
 
-	# note2
-	:note2 => 0,  # Arbeitsnotiz
+	# fuzzy intervals
+	:startsAtTheEndOf => [ 0 ], # fuzzy "kommt nach"
+	:endsAtTheStartOf => [ 0 ], # fuzzy "kommt vor"
+		
+	
+	# Teil 3: Derived relations
+	
+	:derived => {
+	
+		# Allen relations
+		:includes => [ 0 ],
+		:occursDuring => [ 0 ],
+		:meetsInTimeWith => [ 0 ],
+		:isMetInTimeBy => [ 0 ],
+		:occursBefore => [ 0 ],
+		:occursAfter => [ 0 ],
+		:isEqualInTimeTo => [ 0 ],
+		:starts => [ 0 ],
+		:isStartedBy => [ 0 ],
+		:finishes => [ 0 ],
+		:isFinishedBy => [ 0 ],
+		:overlapsInTimeWith => [ 0 ],
+		:isOverlappedInTimeBy => [ 0 ],
 
-	# note3
-	:note3 => 0  # Arbeitsnotiz
+		# fuzzy intervals
+		:startsAtTheEndOf => [ 0 ],
+		:endsAtTheStartOf => [ 0 ]
+	}
 }
 
 
@@ -576,6 +615,7 @@ akzeptierteZeilen.each do |row|
 	# part of :: 2181124 (Mittelmeerraum), :: 2043065 (Vorderasien), :: 2044223 (Europe)
 	# 2181124, 2043065, 2044223
 	# TODO: Kerngebiet, namedAfter
+	# TODO: es wird nicht geprüft, ob die Gazetteer-IDs existieren
 
 	if (columnPos["gazetteer"] > -1)
 		gazetteerfeld = row[columnPos["gazetteer"]]
@@ -1007,7 +1047,7 @@ end
 # TODO sobald das System das selbst kann, kann es hier weg?
 # TODO: sameAs ist transitiv, es müssten also evtl. noch mehr sameAs ergänzt werden
 
-puts "\n# abgeleitete Allen relations ergänzen\n" if options[:verbose]
+puts "\n# abgeleitete Relations ergänzen\n" if options[:verbose]
 
 akzeptierteZeilen.each do |row|
 
@@ -1015,15 +1055,30 @@ akzeptierteZeilen.each do |row|
 	period = periods[importID]
 
 	# beachte: zurzeit gibt es occursDuring/includes nur als abgeleitete Relationen
-	# TODO prüfen, ob Allen relation schon vorhanden ist
 	# TODO Allen relation auch eigenständig eintragen
 
-	reasoning = lambda do |known, inferred|
-		if ( period.has_key?(known) )
-			period[inferred] = period[known].clone
-			statistics[inferred] = statistics[known].clone
-			infos[importID].push("ein oder mehrere abgeleitete #{inferred} ergänzt")
-		end		
+	reasoning = lambda do |knownRelation, inferredRelation|
+
+		if ( period.has_key?(knownRelation) )		
+			period[knownRelation].each do |knownRelationID|
+				if (!period.has_key?(inferredRelation) || !period[inferredRelation].include?(knownRelationID))
+					
+					period[:derived] ||= {}
+					if ( !period[:derived].has_key?(inferredRelation) || !period[:derived][inferredRelation].include?(knownRelationID))
+						
+						period[:derived][inferredRelation] ||= []
+						period[:derived][inferredRelation].push(knownRelationID)
+
+						position = period[:derived][inferredRelation].length - 1
+						statistics[:derived][inferredRelation][position] ||= 0
+						statistics[:derived][inferredRelation][position] += 1
+
+						# diese Info ist überflüssig: bereits im "period.derived" enthalten
+#						infos[importID].push("abgeleitete Relation #{inferredRelation} #{knownRelationID} ergänzt")
+					end
+				end
+			end
+		end
 	end
 	
 	reasoning.call(:isPartOf, :occursDuring)
@@ -1063,7 +1118,7 @@ if (options[:verbose])
 
 	# Statistik
 	puts "\nStatistik:\n"
-	puts JSON.pretty_generate(statistics)
+	puts JSON.pretty_generate(statistics).gsub(/([,\[])\n +(\d+)/, '\1 \2').gsub(/\n +\]/, ' ]')
 
 	# ignorierte Spalten
 	puts "\n"
