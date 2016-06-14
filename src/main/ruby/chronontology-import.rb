@@ -237,8 +237,8 @@ statistics = {
 	# Teil 2: Relations mit anderen chronontology-Datensätzen
 
 	# siblings
-	:comesBefore => [ 0 ],
-	:comesAfter => [ 0 ],
+	:isFollowedBy => [ 0 ],
+	:follows => [ 0 ],
 
 	# parents
 	:isPartOf => [ 0 ],         # by definition
@@ -257,8 +257,9 @@ statistics = {
 }
 
 # Teil 3: Allen relations und fuzzy intervals
-	
-allenRelations = [        # Bedeutung bei  o <relation> x
+
+allenRelations = [        # beachte: immer Aussagen über die Projektion des STV auf die timeline!
+	                      # Bedeutung bei  o <relation> x
 	:includes,            # o⊗⊗oo
 	:occursDuring,
 	:meetsInTimeWith,     # oooxxx    nicht mehr der default für "kommt vor"
@@ -856,33 +857,32 @@ akzeptierteZeilen.each do |row|
 	
 
 	# Spalte: siblings
-	# TODO: bisher alles keine Listen; muss man ändern, wenn es Beispiele gibt
 
 	if (columnPos["siblings"] > -1)
 		siblingFeld = row[columnPos["siblings"]].to_s.strip
 
-		comesBeforeIDs = []
-		comesAfterIDs = []
+		isFollowedByIDs = []
+		followsIDs = []
 	
 		if (siblingFeld.length > 0)
 		
 			# A0021 (comes before)
 			# aat:300107341 (comes before)
 			if ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes before\) *$/) )
-				comesBeforeIDs.push($1)
+				isFollowedByIDs.push($1)
 			# aat:300107343 (comes after)
 			elsif ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes after\) *$/) )
-				comesAfterIDs.push($1)
+				followsIDs.push($1)
 			# A0077 (comes after) A0089 (comes before)
 			elsif ( siblingFeld.match(/^ *([a-zA-Z:0-9]+) +\(comes after\) *([a-zA-Z:0-9]+) +\(comes before\) *$/) )
-				comesAfterIDs.push($1)
-				comesBeforeIDs.push($2)
+				followsIDs.push($1)
+				isFollowedByIDs.push($2)
 			else
 				warnings[importID].push("comes before/after wurde nicht erkannt: "+siblingFeld)
 			end
 
-			addIDs.call(comesBeforeIDs, :comesBefore)
-			addIDs.call(comesAfterIDs, :comesAfter)
+			addIDs.call(isFollowedByIDs, :isFollowedBy)
+			addIDs.call(followsIDs, :follows)
 		end
 	end
 
@@ -1006,8 +1006,8 @@ akzeptierteZeilen.each do |row|
 		end
 	end
 
-	complement.call(:comesBefore, :comesAfter)
-	complement.call(:comesAfter, :comesBefore)
+	complement.call(:isFollowedBy, :follows)
+	complement.call(:follows, :isFollowedBy)
 	
 	complement.call(:isMetInTimeBy, :meetsInTimeWith)  # machen zurzeit noch nichts
 	complement.call(:meetsInTimeWith, :isMetInTimeBy)
@@ -1038,6 +1038,10 @@ akzeptierteZeilen.each do |row|
 	# beachte: zurzeit gibt es occursDuring/includes nur als abgeleitete Relationen
 	# TODO Allen relation auch eigenständig eintragen
 
+	# übergangsweise werden die abgeleiteten Aussagen vom Frontend ignoriert.
+	# Die Timeline arbeitet mit hasPart/isPartOf, follows/isfollowedBy und den 
+	# expliziten Zeitangaben.
+	
 	reasoning = lambda do |knownRelation, inferredRelation|
 
 		if ( period.has_key?(knownRelation) )
@@ -1061,14 +1065,14 @@ akzeptierteZeilen.each do |row|
 			end
 		end
 	end
-	
+
 	reasoning.call(:isPartOf, :occursDuring)
 	reasoning.call(:hasPart, :includes)
 	
-	reasoning.call(:comesBefore, :meetsInTimeWith)
-	reasoning.call(:comesBefore, :endsAtTheStartOf)
-	reasoning.call(:comesAfter, :isMetInTimeBy)
-	reasoning.call(:comesAfter, :startsAtTheEndOf)
+	reasoning.call(:isFollowedBy, :meetsInTimeWith)
+	reasoning.call(:isFollowedBy, :endsAtTheStartOf)
+	reasoning.call(:follows, :isMetInTimeBy)
+	reasoning.call(:follows, :startsAtTheEndOf)
 end
 
 
