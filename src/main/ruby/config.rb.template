@@ -1,5 +1,5 @@
 {
     :api_user   => '',
     :api_password   => '',
-    :api_url => '' // For example 0.0.0.0:4567 for local connect backend
+    :api_url => '' # For example 0.0.0.0:4567 for local connect backend
 }
