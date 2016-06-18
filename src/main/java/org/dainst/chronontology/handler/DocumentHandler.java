@@ -75,7 +75,7 @@ public abstract class DocumentHandler implements Handler {
         byte[] r = new byte[9];
         new Random().nextBytes(r);
         String s = Base64.encodeBase64String(r);
-        return s.replaceAll("/", "_");
+        return s.replaceAll("/", "_").replaceAll("+", "-");
     }
 
     private String determineFreeId(Request req) {
