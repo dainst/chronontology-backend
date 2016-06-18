@@ -1,7 +1,7 @@
 package org.dainst.chronontology.handler;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
 import org.dainst.chronontology.handler.model.Document;
 import org.dainst.chronontology.handler.model.RightsValidator;
@@ -72,10 +72,7 @@ public abstract class DocumentHandler implements Handler {
     }
 
     private static String generateId() {
-        byte[] r = new byte[9];
-        new Random().nextBytes(r);
-        String s = Base64.encodeBase64String(r);
-        return s.replaceAll("/", "_").replaceAll("+", "-");
+        return RandomStringUtils.randomAlphanumeric(12);
     }
 
     private String determineFreeId(Request req) {
