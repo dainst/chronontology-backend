@@ -66,13 +66,21 @@ public class ElasticsearchDatastore implements Datastore {
     /**
      * Performs a search for documents in one of the types of an elasticsearch index.
      *
-     * TODO: datasets dokumentieren
+     * The provided query object determines the query string, size and from values
+     * and the datasets that are used for filtering the result.
+     *
+     * The given query string supports full lucene query syntax.
+     *
+     * Only results that belong to one of the given datasets are returned.
+     * If no datasets are given, every matching resource regardless of its dataset
+     * will be returned.
      *
      * @param type search will be only performed on documents of the given <code>type</code>.
      * @param query a query object consisting of query string and other parameters
-     * @return a JsonNode with a top level field named results which
+     * @return a JsonNode with two top level fields. "results"
      *   is an array containing objects representing the search hits.
-     *   The results array can be empty if there where no results.
+     *   "total" gives the total number of hits in the datastore.
+     *   The results array can be empty if there were no results.
      *   When errors occur, null gets returned.
      */
     public Results search(

@@ -12,6 +12,7 @@ import java.io.IOException;
 
 /**
  * @author Daniel M. de Oliveira
+ * @author Sebastian Cuy
  */
 public class SearchDocumentHandler extends DocumentHandler {
 

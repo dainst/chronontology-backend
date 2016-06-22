@@ -16,6 +16,7 @@ import static org.testng.Assert.assertEquals;
 
 /**
  * @author Daniel M. de Oliveira
+ * @author Sebastian Cuy
  */
 public class ElasticsearchDatastoreTest {
 
