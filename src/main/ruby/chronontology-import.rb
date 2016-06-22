@@ -316,96 +316,96 @@ puts "\n# csv einlesen\n" if options[:verbose]
 akzeptierteZeilen = []
 
 zeile = 0
-CSV.foreach(csvFile) do |row|
-	zeile += 1
 
 # Alternative, falls es nochmal ein Problem mit UTF-8 gibt:
-# File.open(csvFile, "r:UTF-8") do |table|
-# 	CSV.parse(table) do |row|
-# 		...
+File.open(csvFile, "r:UTF-8") do |table|
+ 	CSV.parse(table) do |row|
+
+ 	    zeile += 1
+
+        # erste Zeile: bestimme die Spaltenreihenfolge
+        if ( columnPos["importID"] == -1 )
+            row.each_with_index do |originalName, i|
+                name = originalName.to_s.strip
+                columnNames[i] = name
+                if (name.length == 0)
+                    ignoredColumns.push(i.to_s)
+                    ignoredColumnsReason.push("no column title")
+                    next
+                end
+                if (! columnPos.has_key?(name) )
+                    ignoredColumns.push(i.to_s+name)
+                    ignoredColumnsReason.push("not a recognized column title")
+                    next
+                end
+                if (columnPos[name] > -1)
+                    ignoredColumns.push(i.to_s+name)
+                    ignoredColumnsReason.push("column title already exists")
+                    next
+                end
+                columnPos[name] = i
+            end
+            if (columnPos["importID"] == -1)
+                warn('Spalte "importID" fehlt!')
+                exit
+            end
+            if (columnPos["names"] == -1)
+                warn('Spalte "names" fehlt!')
+                exit
+            end
+            if (columnPos["types"] == -1)
+                warn('Spalte "types" fehlt!')
+                exit
+            end
+            next
+        end
+
+        # ignoriere alle Zeilen ohne ID
+        if (row[columnPos["importID"]].to_s.strip.length == 0)
+
+            # strukturierende Leerzeilen stillschweigend ignorieren
+            next if ( row.join("").match(/^\s*$/) )
+
+            # ansonsten auch ignorieren, aber nicht stillschweigend
+            ignoredRows.push(row)
+            ignoredRowsReason.push("no ID; row "+zeile.to_s)
+            next
+        end
+
+        # ignoriere Zeilen, deren ID schon vorgekommen ist
+        # (kann auftreten, wenn mehrere Tabellen hintereinander eingelesen werden)
+        # TODO: anders lösen
+        if ( warnings.key?(row[columnPos["importID"]]) )
+            ignoredRows.push(row)
+            ignoredRowsReason.push("duplicate ID; row "+zeile.to_s)
+            next
+        end
 
 
-	# erste Zeile: bestimme die Spaltenreihenfolge
-	if ( columnPos["importID"] == -1 )
-		row.each_with_index do |originalName, i|
-			name = originalName.to_s.strip
-			columnNames[i] = name
-			if (name.length == 0)
-				ignoredColumns.push(i.to_s)
-				ignoredColumnsReason.push("no column title")
-				next
-			end
-			if (! columnPos.has_key?(name) )
-				ignoredColumns.push(i.to_s+name)
-				ignoredColumnsReason.push("not a recognized column title")
-				next
-			end
-			if (columnPos[name] > -1)
-				ignoredColumns.push(i.to_s+name)
-				ignoredColumnsReason.push("column title already exists")
-				next
-			end
-			columnPos[name] = i
-		end
-		if (columnPos["importID"] == -1)
-			warn('Spalte "importID" fehlt!')
-			exit
-		end
-		if (columnPos["names"] == -1)
-			warn('Spalte "names" fehlt!')
-			exit
-		end
-		if (columnPos["types"] == -1)
-			warn('Spalte "types" fehlt!')
-			exit
-		end
-		next
-	end
+        # ignoriere Problemzeilen
+        # 1. AAT-Zeilen wie "römische Keramikstile"
+        # TODO doch als parent behalten, oder unnötig?
+    # 		if ( row[columnPos["types"]].to_s.strip.match(/alle Bedeutungen\?\?/) )
+    #
+    # 			ignoredRows.push(row)
+    # 			ignoredRowsReason.push("superfluous AAT node")
+    # 			next
+    # 		end
 
-	# ignoriere alle Zeilen ohne ID
-	if (row[columnPos["importID"]].to_s.strip.length == 0)
+        # ersetze Zeilenumbrüche innerhalb von Zellen
+        rowBearbeitet = []
+        row.each do |cell|
+            rowBearbeitet.push((cell || "").gsub(/\n/, lf))
+        end
+        akzeptierteZeilen.push(rowBearbeitet)
 
-		# strukturierende Leerzeilen stillschweigend ignorieren
-		next if ( row.join("").match(/^\s*$/) )
+    #	akzeptierteZeilen.push(row)
 
-		# ansonsten auch ignorieren, aber nicht stillschweigend
-		ignoredRows.push(row)
-		ignoredRowsReason.push("no ID; row "+zeile.to_s)
-		next
-	end
+        # ruby hat's gern explizit initialisiert
+        warnings[ row[columnPos["importID"]] ] = []
+        infos[ row[columnPos["importID"]] ] = []
+    end
 
-	# ignoriere Zeilen, deren ID schon vorgekommen ist
-	# (kann auftreten, wenn mehrere Tabellen hintereinander eingelesen werden)
-	# TODO: anders lösen
-	if ( warnings.key?(row[columnPos["importID"]]) )
-		ignoredRows.push(row)
-		ignoredRowsReason.push("duplicate ID; row "+zeile.to_s)
-		next
-	end
-
-
-	# ignoriere Problemzeilen
-	# 1. AAT-Zeilen wie "römische Keramikstile"
-	# TODO doch als parent behalten, oder unnötig?
-# 		if ( row[columnPos["types"]].to_s.strip.match(/alle Bedeutungen\?\?/) )
-#
-# 			ignoredRows.push(row)
-# 			ignoredRowsReason.push("superfluous AAT node")
-# 			next
-# 		end
-
-	# ersetze Zeilenumbrüche innerhalb von Zellen
-	rowBearbeitet = []
-	row.each do |cell|
-		rowBearbeitet.push((cell || "").gsub(/\n/, lf))
-	end
-	akzeptierteZeilen.push(rowBearbeitet)
-
-#	akzeptierteZeilen.push(row)
-
-	# ruby hat's gern explizit initialisiert
-	warnings[ row[columnPos["importID"]] ] = []
-	infos[ row[columnPos["importID"]] ] = []
 end
 
 
