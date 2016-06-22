@@ -256,14 +256,14 @@ additional fields added by the iDAI.connect component.
 404 if the document or the specified version of a document was not found.
 ```
 
-## GET /:type/:queryParams
+## GET /:type?:queryParams
 
 Performs a search over all documents of the :type.
  
 The simplest version, which returns all documents, looks like this
 
 ```
-GET /typename/
+GET /typename
 ```
 
 However due to potentially large result sets, one can and should narrow
@@ -271,43 +271,44 @@ down the search with the use of :queryParams.
 
 The **size** and **from** query params
 are used to only show a result set of size ***size***, starting with the document with the
-id ***from*** of an ordered result set. These params can be used solo or together, but you'll
+offset ***from*** of the ordered result set. These params can be used solo or together, but you'll
 probably find it most useful when used together, for example for paginating through a result 
 set. Here are some valid examples of its usage:
 
 
 ```
-GET /typename/?size=10&offset=10
-GET /typename/?from=0&size=10
-GET /typename/?from=10&size=10
-GET /typename/?from=10
-GET /typename/?size=3
+GET /typename?size=10&offset=10
+GET /typename?from=0&size=10
+GET /typename?from=10&size=10
+GET /typename?from=10
+GET /typename?size=3
 ```
 
 The first example will return the 10 results starting from the 10th result.
 
 Another means of narrowing down the result set is by use of **query terms**.
-These are related to the elasticsearch uri search usage. Here are some examples:
+The provided features and the syntax of the query language depends on the datastore implementation.
+The elasticsearch datastore supports [the query string mini language](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax)
+
+Here are some examples:
 
 ```
-GET /typename/?a
+GET /typename/?q=a
 ```
 
 will match documents that have "a" as a value of some of their fields.
 
 ```
-GET /typename/?user:karl
+GET /typename/?q=user:karl
 ```
 
 will match documents who have some "user" field where there is a "karl" value.
 
-Queries of the second type can be chained like
-
 ```
-GET /typename/?user:karl&a:b
+GET /typename/?q=user:karl+a:b
 ```
 
-This will combine the search by using a logical "or". It matches documents who
+will combine the search by using a logical "or". It matches documents which
 have either a "user" field with the value "karl" or an "a" field with the value "b" (or both).
 
 A search can combine both ***query terms*** and ***size*** params.
@@ -315,7 +316,7 @@ For example
 
 
 ```
-GET /typename/?user:karl&a:b&size=1&from=2
+GET /typename/?q=user:karl+a:b&size=1&from=2
 ```
 
 Please **note** no matter what search params you use, a user will always only see 
@@ -327,7 +328,9 @@ search results for datasets he is allowed to see. For more information on datase
 
 The response body is a json object with a top level array 
 field named "results" which
-contains the json for the search hits. 
+contains the json for the search hits and an attribute "total"
+that gives the total number of resources in the datastore that
+match the query and that the user is allowed to access.
 
 ```
 {
@@ -368,7 +371,8 @@ contains the json for the search hits.
             ...
         },
         ...
-    ]
+    ],
+    "total": 23
 }
 ```
 
