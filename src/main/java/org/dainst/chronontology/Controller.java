@@ -32,26 +32,40 @@ public class Controller {
     private void setUpTypeRoutes(
             final String typeName
     ) {
+
         get( "/", (req,res) -> {
             setHeader(res);
             return serverStatusHandler.handle(req,res);
+        });
+
+        get( "/" + typeName, (req,res) -> {
+            setHeader(res);
+            return searchDocumentHandler.handle(req,res);
         });
         get( "/" + typeName + "/", (req,res) -> {
             setHeader(res);
             return searchDocumentHandler.handle(req,res);
         });
+
         get( "/" + typeName + "/" + ID, (req,res) -> {
             setHeader(req,res);
             return getDocumentHandler.handle(req,res);
+        });
+
+        post("/" + typeName, (req, res) ->  {
+            setHeader(res);
+            return postDocumentHandler.handle(req,res);
         });
         post("/" + typeName + "/", (req, res) ->  {
             setHeader(res);
             return postDocumentHandler.handle(req,res);
         });
+
         put( "/" + typeName + "/" + ID, (req, res) -> {
             setHeader(req,res);
             return putDocumentHandler.handle(req,res);
         });
+
     }
 
     private void setHeader(Response res) {
