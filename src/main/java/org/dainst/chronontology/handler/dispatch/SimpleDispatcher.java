@@ -5,6 +5,7 @@ package org.dainst.chronontology.handler.dispatch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.handler.ServerStatusHandler;
+import org.dainst.chronontology.handler.model.Query;
 import org.dainst.chronontology.handler.model.Results;
 import org.dainst.chronontology.store.ElasticsearchDatastore;
 
@@ -53,8 +54,8 @@ public class SimpleDispatcher extends Dispatcher {
     }
 
     @Override
-    public Results dispatchSearch(final String bucket, final String query, final List<String> excludes) {
-        return datastore.search( bucket, query, excludes );
+    public Results dispatchSearch(final String bucket, final Query query) {
+        return datastore.search(bucket, query);
     }
 }
 

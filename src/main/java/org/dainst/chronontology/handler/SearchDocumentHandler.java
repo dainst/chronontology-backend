@@ -2,14 +2,13 @@ package org.dainst.chronontology.handler;
 
 import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
-import org.dainst.chronontology.handler.model.RightsValidator;
+import org.dainst.chronontology.handler.model.Query;
 import org.dainst.chronontology.handler.model.Results;
+import org.dainst.chronontology.handler.model.RightsValidator;
 import spark.Request;
 import spark.Response;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Daniel M. de Oliveira
@@ -25,14 +24,15 @@ public class SearchDocumentHandler extends DocumentHandler {
             final Request req,
             final Response res) throws IOException {
 
-        List<String> includes= new ArrayList<String>();
-        for (String include:rightsValidator.readableDatasets(req.attribute("user"))) {
-            includes.add("dataset:"+include);
-        }
-        if (req.attribute("user").equals(Constants.USER_NAME_ADMIN))
-            includes=null;
+        final Query query = Query.fromParams(req.queryMap().toMap());
 
-        Results results= dispatcher.dispatchSearch(req.pathInfo(),req.queryString(),includes);
+        if (!req.attribute("user").equals(Constants.USER_NAME_ADMIN)) {
+            for (String include:rightsValidator.readableDatasets(req.attribute("user"))) {
+                query.addDataset(include);
+            }
+        }
+
+        Results results = dispatcher.dispatchSearch(req.pathInfo(), query);
         return results;
     }
 }

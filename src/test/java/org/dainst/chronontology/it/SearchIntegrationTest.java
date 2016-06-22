@@ -35,11 +35,11 @@ public class SearchIntegrationTest extends IntegrationTest {
         ESClientTestUtil.createEsTypeAndMapping();
         refreshES();
 
-        List<String> ids= postSampleData(null,"/type/1","/type/2");
+        List<String> ids = postSampleData(null,"/type/1","/type/2");
         ids.remove(1);
 
         assertResultsAreFound(
-                client.get(TYPE_ROUTE + "?"+Document.RESOURCE+":%22%2Ftype%2F1%22")
+                client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":%22%2Ftype%2F1%22")
                 ,ids);
     }
 
@@ -50,7 +50,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         ids.remove(0);
 
         assertResultsAreFound(
-                client.get(TYPE_ROUTE + "?=def")
+                client.get(TYPE_ROUTE + "?q=def")
                 ,ids);
     }
 
@@ -60,7 +60,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         List<String> ids= postSampleData(null,"b","b");
 
         assertResultsAreFound(
-                client.get(TYPE_ROUTE + "?"+ Document.RESOURCE+":b")
+                client.get(TYPE_ROUTE + "?q="+ Document.RESOURCE+":b")
                 ,ids);
     }
 
@@ -82,7 +82,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         ids.remove(0);
 
         assertResultsAreFound(
-                client.get(TYPE_ROUTE + "?"+Document.RESOURCE+":a&size=1")
+                client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=1")
                 ,ids);
     }
 
@@ -128,7 +128,7 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         client.authenticate(null,null);
 
-        assertResultsAreFound(client.get(TYPE_ROUTE + "?"+Document.RESOURCE+":a&size=3"),ids);
+        assertResultsAreFound(client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=3"),ids);
     }
 
     @Test
@@ -140,15 +140,15 @@ public class SearchIntegrationTest extends IntegrationTest {
         client.authenticate(null,null);
 
         assertEquals(
-            ((ArrayNode) client.get(TYPE_ROUTE + "?"+Document.RESOURCE+":a&size=3&from=1")
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=3&from=1")
                     .get("results")).size()
             ,2);
         assertEquals(
-            ((ArrayNode) client.get(TYPE_ROUTE + "?"+Document.RESOURCE+":a&size=1&from=1")
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&size=1&from=1")
                     .get("results")).size()
             ,1);
         assertEquals(
-            ((ArrayNode) client.get(TYPE_ROUTE + "?"+Document.RESOURCE+":a&from=2")
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q="+Document.RESOURCE+":a&from=2")
                     .get("results")).size()
             ,1);
     }

@@ -2,6 +2,7 @@ package org.dainst.chronontology.store;
 
 import com.squareup.okhttp.OkHttpClient;
 import org.dainst.chronontology.JsonTestUtils;
+import org.dainst.chronontology.handler.model.Query;
 import org.dainst.chronontology.it.ESClientTestUtil;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.testng.annotations.*;
@@ -18,8 +19,8 @@ import static org.testng.Assert.assertEquals;
  */
 public class ElasticsearchDatastoreTest {
 
-    private final JsonRestClient client= new JsonRestClient(ESServerTestUtil.getUrl(),new OkHttpClient(),false);
-    private final ElasticsearchDatastore store=
+    private final JsonRestClient client = new JsonRestClient(ESServerTestUtil.getUrl(), new OkHttpClient(), false);
+    private final ElasticsearchDatastore store =
             new ElasticsearchDatastore(client,TEST_INDEX);
 
     @BeforeClass
@@ -54,53 +55,79 @@ public class ElasticsearchDatastoreTest {
 
     @Test
     public void findDocsWhereDatasetIsNone() {
+        Query query = new Query("", 0, 10);
+        query.addDataset("none");
         JsonTestUtils.assertResultsAreFound(
-                store.search(TEST_TYPE,"", Arrays.asList(new String[]{"dataset:none"})).j(),
+                store.search(TEST_TYPE, query).j(),
                 Arrays.asList("1","3","5"));
     }
 
     @Test
     public void findDocsMatchingTermWithFromAndSizeAndDatasetNone() {
+
+        Query query = new Query("a", 0, 1);
+        query.addDataset("none");
         JsonTestUtils.assertResultsAreFound(
-                store.search(TEST_TYPE, "a?from=0&size=1", Arrays.asList(new String[]{"dataset:none"})).j(),
+                store.search(TEST_TYPE, query).j(),
                 Arrays.asList("1"));
+
+        query = new Query("a", 1, 1);
+        query.addDataset("none");
         JsonTestUtils.assertResultsAreFound(
-                store.search(TEST_TYPE, "a?from=1&size=1", Arrays.asList(new String[]{"dataset:none"})).j(),
+                store.search(TEST_TYPE, query).j(),
                 Arrays.asList("3"));
+
+        query = new Query("a", 1, 2);
+        query.addDataset("none");
         JsonTestUtils.assertResultsAreFound(
-                store.search(TEST_TYPE,"a?from=1&size=2", Arrays.asList(new String[]{"dataset:none"})).j(),
+                store.search(TEST_TYPE, query).j(),
                 Arrays.asList("3","5"));
+
     }
 
     @Test
     public void findAllDocsWithDifferentDatasets() {
+        Query query = new Query("", 0, 10);
+        query.addDataset("none");
+        query.addDataset("dataset1");
         JsonTestUtils.assertResultsAreFound(
-                store.search(TEST_TYPE,"", Arrays.asList(new String[]{"dataset:none","dataset:dataset1"})).j(),
+                store.search(TEST_TYPE, query).j(),
                 Arrays.asList("1","2","3","4","5"));
     }
 
     @Test
     public void findAllDocsWithDifferentDatasetsAndSizeAndFrom() {
+
+        Query query = new Query("", 1, 2);
+        query.addDataset("none");
+        query.addDataset("dataset1");
         JsonTestUtils.assertResultsAreFound(
-                store.search(TEST_TYPE,"a?from=1&size=2", Arrays.asList(new String[]{"dataset:none","dataset:dataset1"})).j(),
+                store.search(TEST_TYPE, query).j(),
                 Arrays.asList("2","3"));
+
     }
 
     @Test
     public void findInAllPossibleDatasets() {
+        Query query = new Query("a", 0, 10);
         JsonTestUtils.assertResultsAreFound(
-                store.search(TEST_TYPE,"a", null).j(),
+                store.search(TEST_TYPE, query).j(),
                 Arrays.asList("1","2","3","4","5"));
     }
 
     @Test
     public void findWithSizeAndFromWithoutOtherSearchTerms() {
+
+        Query query = new Query("", 0, 1);
         JsonTestUtils.assertResultsAreFound(
-                store.search(TEST_TYPE,"size=1", Arrays.asList(new String[]{"dataset:none"})).j(),
+                store.search(TEST_TYPE, query).j(),
                 Arrays.asList("1"));
+
+        query = new Query("", 2, 1);
         JsonTestUtils.assertResultsAreFound(
-                store.search(TEST_TYPE,"size=1&from=2", Arrays.asList(new String[]{"dataset:none"})).j(),
-                Arrays.asList("5"));
+                store.search(TEST_TYPE, query).j(),
+                Arrays.asList("3"));
+
     }
 
     @Test

@@ -2,6 +2,7 @@ package org.dainst.chronontology.handler.dispatch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.handler.ServerStatusHandler;
+import org.dainst.chronontology.handler.model.Query;
 import org.dainst.chronontology.handler.model.Results;
 import org.dainst.chronontology.store.Datastore;
 import org.dainst.chronontology.store.ElasticsearchDatastore;
@@ -57,26 +58,26 @@ public class ConnectDispatcher extends Dispatcher {
             final Boolean direct,
             final Integer version) {
 
-        if (version!=null)
-            return mainDatastore.get(bucket,key,version);
+        if (version != null)
+            return mainDatastore.get(bucket, key, version);
 
-        JsonNode result= direct
-                ? mainDatastore.get(bucket,key)
-                : connectDatastore.get(bucket,key);
+        JsonNode result = direct
+                ? mainDatastore.get(bucket, key)
+                : connectDatastore.get(bucket, key);
         return result;
     }
 
     @Override
-    public Results dispatchSearch(final String bucket, final String query, final List<String> excludes) {
-        return connectDatastore.search( bucket, query, excludes );
+    public Results dispatchSearch(final String bucket, final Query query) {
+        return connectDatastore.search(bucket, query);
     }
 
 
 
     public Datastore[] getDatatores() {
-        Datastore[] datastores= new Datastore[2];
-        datastores[0]= connectDatastore;
-        datastores[1]= mainDatastore;
+        Datastore[] datastores = new Datastore[2];
+        datastores[0] = connectDatastore;
+        datastores[1] = mainDatastore;
         return datastores;
     }
 }

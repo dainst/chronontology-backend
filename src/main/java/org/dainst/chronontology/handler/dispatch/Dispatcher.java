@@ -2,6 +2,7 @@ package org.dainst.chronontology.handler.dispatch;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.handler.ServerStatusHandler;
+import org.dainst.chronontology.handler.model.Query;
 import org.dainst.chronontology.handler.model.Results;
 import spark.Request;
 
@@ -18,9 +19,16 @@ import java.util.List;
 public abstract class Dispatcher {
 
     abstract public JsonNode dispatchGet(String bucket, String key);
+
     abstract public boolean dispatchPost(final String bucket, final String key, final JsonNode value);
+
     abstract public boolean dispatchPut(final String bucket, final String key, final JsonNode value);
-    abstract public JsonNode dispatchGet(final String bucket, final String key, final Boolean direct,final Integer version);
-    abstract public Results dispatchSearch(String bucket,final String query,final List<String> excludes);
+
+    abstract public JsonNode dispatchGet(final String bucket, final String key, final Boolean direct,
+                                         final Integer version);
+
+    abstract public Results dispatchSearch(String bucket, final Query query);
+
     abstract public void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException;
+
 }
