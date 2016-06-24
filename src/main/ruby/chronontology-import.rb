@@ -18,11 +18,6 @@ require 'optparse'
 ################################
 
 
-# Zeilenumbrüche innerhalb von Zellen durch lf ersetzen
-# todo: eigentlich gar nicht nötig
-lf = " :: "
-
-
 # Commandline auswerten
 
 # wenn ARGV leer ist, zeige usage summary
@@ -311,13 +306,14 @@ end
 
 # gehe die CSV-Zeilen durch
 
+lf = "\n" # Zeilenumbrüche innerhalb von Zellen 
+
 puts "\n# csv einlesen\n" if options[:verbose]
 
 akzeptierteZeilen = []
 
 zeile = 0
 
-# Alternative, falls es nochmal ein Problem mit UTF-8 gibt:
 File.open(csvFile, "r:UTF-8") do |table|
  	CSV.parse(table) do |row|
 
@@ -395,7 +391,7 @@ File.open(csvFile, "r:UTF-8") do |table|
         # ersetze Zeilenumbrüche innerhalb von Zellen
         rowBearbeitet = []
         row.each do |cell|
-            rowBearbeitet.push((cell || "").gsub(/\n/, lf))
+            rowBearbeitet.push(cell || "")
         end
         akzeptierteZeilen.push(rowBearbeitet)
 
