@@ -713,11 +713,18 @@ akzeptierteZeilen.each do |row|
 			period[:hasTimespan][0] ||= {}
 
 			# ... (source ...)
-			if ( timeOriginal.match(/^(.+) +\(source (.+)\) *$/) )
+			if ( timeOriginal.match(/^(.+) +\(source:? (.+)\) *$/) )
 				source = $2
 				timeOriginal = $1
-				period[:hasTimespan][0][:sourceOriginal] = source
-				statistics[:hasTimespan][0][:sourceOriginal] += 1
+				if ( source.match(/zenon:(\d+)/))
+					sourceZenonId = $1
+					sourceZenonURL = "http://zenon.dainst.org/Record/"+sourceZenonId
+					period[:hasTimespan][0][:sourceURL] = sourceZenonURL
+					statistics[:hasTimespan][0][:sourceURL] += 1							
+				else
+					period[:hasTimespan][0][:sourceOriginal] = source
+					statistics[:hasTimespan][0][:sourceOriginal] += 1		
+				end
 			end
 
 			period[:hasTimespan][0][:timeOriginal] = timeOriginal
