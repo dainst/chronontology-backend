@@ -454,6 +454,8 @@ akzeptierteZeilen.each do |row|
 			end
 			name = $1
 			sprachkuerzel = $2.downcase.to_sym
+
+# Vorbereitung auf ISO 639-3:
 #			if ( languageList2to3.include? sprachkuerzel )
 #				sprachkuerzel = languageList2to3[sprachkuerzel]
 #			end
@@ -1090,6 +1092,9 @@ if (options[:import])
 		importID = row[columnPos["importID"]]
 		chronontologyID = concordance2Chron[importID]
 		period = periods[importID]
+
+		# trage die @id übergangsweise nochmal zusätzlich ein
+		period["@id"] = chronontologyID
 
 		api[chronontologyID].put(addWrapper(period).to_json, :content_type => :json, :accept => :json)
 
