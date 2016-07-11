@@ -9,18 +9,21 @@ management](dataset-management.md) with the connected backend.
 ## POST /:type/
 
 Post json to store a a document of type :type.
-The request body must be valid JSON and should contain
-at least a **resource** field. For example
+The request body must be valid JSON. It can be empty
 
+```
+{}
+```
+
+which is sufficient for creating the document. 
+To store client data within the document, there is the **resource** field,
+which itself can be empty or host any further user defined fields. Examples:
+ 
 ```
 {
-  "resource" : "c" 
+  "resource" : {}
 }
-```
 
-or 
-
-```
 {
   "resource" : {
     "a" : "b"
@@ -28,8 +31,20 @@ or
 }
 ```
 
-The ***resource*** field is meant to contain the 
-resources content as specified by a client.
+**Note** that there is the special field **@id** whithin the resource field which
+should not be used by clients during post because the system will place a generated id
+here which would overwrite the value set by the client.
+
+Thus do not use:
+
+```
+{
+  "resource" : {
+    "@id" : ...
+  } 
+}
+```
+
  
 **Note** that, with the exception of the ***resource*** and ***dataset*** fields,
 
@@ -47,7 +62,7 @@ as in
 
 (see for [dataset management](dataset-management.md)),
 
-connected-backend not only ignores all other fields of the incoming JSON, 
+jeremy not only ignores all other fields of the top level of the incoming JSON, 
 but also removes them before storing the documents. 
 
 ### Response body
@@ -59,10 +74,10 @@ and will look something like this:
 ```
 {
    "resource": {
+       "@id": "/typename/T7UlxIk8miMQ",
        "a" : "b"
    },
    "dataset" : "none",
-   "@id": "/typename/T7UlxIk8miMQ",
    "version": 1,
    "created": {
        "user": "karl",
@@ -85,9 +100,9 @@ In case of status 400 errors the response body is an empty JSON.
 
 ### Response header
 
-The location response header will contain the @id of 
+The location response header will contain the `@id` of 
 the created element, if successful. It is the same
-as the @id field of the response body. It will be a string like
+as the `@id field of the response body. It will be a string like
 
 ```
 /typename/T7UlxIk8miMQ
@@ -119,12 +134,17 @@ be valid JSON, for example:
 }
 ```
 
+**Note** that as with POST, using the `@id` field should be avoided
+since the `@id` gets set automatically by the system.
+
 ### Response body
 
 ```
 {
-    "resource": { "a" : "b" },
-    "@id": "/typename/T7UlxIk8miMQ",
+    "resource": { 
+        "@id": "/typename/T7UlxIk8miMQ",
+        "a" : "b" 
+    },
     "version": 2,
     "dataset" : "none",
     "created": {
@@ -227,10 +247,10 @@ gets ignored if ***version*** is used.
 ```
 {
     "resource": {
+        "@id": "/typename/T7UlxIk8miMQ",
         "a" : "b"
     },        
     "dataset" : "none",
-    "@id": "/typename/T7UlxIk8miMQ",
     "version": 1,
     "created": {
         "user": "karl",
@@ -337,9 +357,9 @@ match the query and that the user is allowed to access.
     "results": [
         {
             "resource": {
+                "@id": "/typename/T7UlxIk8miMQ",
                 "a" : "b"
             },
-            "@id": "/typename/T7UlxIk8miMQ",
             "version": 2,
             "dataset" : "none",
             "created": {
@@ -359,9 +379,9 @@ match the query and that the user is allowed to access.
         },
         {
             "resource": {
+                "@id": "/typename/MG6UPjCMKmk",
                 "a" : "d"
             },
-            "@id": "/typename/MG6UPjCMKmk",
             "dataset" : "dataset1",
             "version": 1,
             ...

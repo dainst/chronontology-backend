@@ -26,7 +26,7 @@ public class Document {
     public static final String DATASET = "dataset";
 
     private static final String[] supportedProperties = new String[] {
-        VERSION,MODIFIED,CREATED,DATASET,ID, RESOURCE
+        VERSION,MODIFIED,CREATED,DATASET, RESOURCE
     };
 
     private final ObjectNode node;
@@ -58,9 +58,10 @@ public class Document {
      */
     public static Document from(final JsonNode oldDoc) {
         if (oldDoc==null) return null;
-        if (oldDoc.get(ID)==null) {
-            throw new IllegalArgumentException(ID + Constants.MSG_NOT_NULL);
-        }
+        if (oldDoc.get(RESOURCE)==null)
+            throw new IllegalArgumentException(RESOURCE + Constants.MSG_NOT_NULL);
+        if (oldDoc.get(RESOURCE).get(ID)==null)
+            throw new IllegalArgumentException(RESOURCE+"."+ID + Constants.MSG_NOT_NULL);
 
         return new Document(
             oldDoc
@@ -80,7 +81,7 @@ public class Document {
     }
 
     private void initNode(String id,String userName) {
-        setNodeId(id);
+        setUpResource(id);
         initVersion();
         initCreatedAndModifiedDates(userName);
         filterUnwanted();
@@ -140,8 +141,14 @@ public class Document {
         return node.toString();
     }
 
-    private void setNodeId(String id) {
-        node.put(ID, id);
+    private void setUpResource(String id) {
+        JsonNode resource= node.get(RESOURCE);
+        if (resource==null) {
+            ObjectNode created= new ObjectMapper().createObjectNode();
+            node.put(RESOURCE,created);
+            resource= node.get(RESOURCE);
+        }
+        ((ObjectNode)resource).put(ID, id);
     }
 
     private void setVersion(JsonNode oldNode) {
@@ -166,7 +173,7 @@ public class Document {
     }
 
     public String getId() {
-        return toString(node.get(ID));
+        return toString(node.get(RESOURCE).get(ID));
     }
 
     /**

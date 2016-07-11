@@ -170,7 +170,7 @@ public class DatasetsIntegrationTest extends IntegrationTest {
     @Test
     public void searchAndFilterOne() throws JsonProcessingException {
 
-        JsonNode a= JsonUtils.json("{ \""+ Document.RESOURCE +"\" : \"b\" }");
+        JsonNode a= JsonUtils.json("{ \""+ Document.RESOURCE +"\" : {} }");
 
         client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
         client.post(TYPE_ROUTE, dataset("1"));

@@ -2,6 +2,7 @@ package org.dainst.chronontology;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dainst.chronontology.handler.model.Document;
 import org.dainst.chronontology.handler.model.Results;
@@ -44,9 +45,10 @@ public class JsonTestUtils {
     public static JsonNode sampleDocument(final String sampleFieldValue, String id, String dataset) {
         JsonNode json= null;
         json = JsonUtils.json();
-        ((ObjectNode)json).put(Document.RESOURCE,sampleFieldValue);
+        ((ObjectNode)json).put(Document.RESOURCE,new ObjectMapper().createObjectNode());
+        ((ObjectNode)json.get(Document.RESOURCE)).put("sampleField",sampleFieldValue);
         if (id!=null)
-            ((ObjectNode)json).put(Document.ID,id);
+            ((ObjectNode)json.get(Document.RESOURCE)).put(Document.ID,id);
         if (dataset!=null)
             ((ObjectNode)json).put(Document.DATASET,dataset);
         return json;
@@ -83,7 +85,7 @@ public class JsonTestUtils {
 
         Results expected= new Results("results");
         for (String id:ids) {
-            expected.add(json("{\""+Document.ID+"\" : \""+id+"\"}"));
+            expected.add(json("{\"resource\":{\""+Document.ID+"\" : \""+id+"\"}}"));
         }
 
         try {

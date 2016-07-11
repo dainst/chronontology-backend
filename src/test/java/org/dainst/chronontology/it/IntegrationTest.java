@@ -6,6 +6,7 @@ import org.apache.commons.io.FileUtils;
 import org.dainst.chronontology.App;
 import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.config.*;
+import org.dainst.chronontology.handler.model.Document;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.dainst.chronontology.handler.dispatch.ConnectDispatcher;
 import org.dainst.chronontology.store.ElasticsearchDatastore;
@@ -105,6 +106,6 @@ public abstract class IntegrationTest {
 
 
     protected String idOf(final JsonNode n) {
-        return (String) n.get("@id").textValue();
+        return (String) n.get(Document.RESOURCE).get("@id").textValue();
     }
 }

@@ -13,6 +13,8 @@ import java.io.IOException;
 import static org.dainst.chronontology.JsonTestUtils.jsonAssertEquals;
 import static org.dainst.chronontology.util.JsonUtils.*;
 import static org.testng.Assert.assertEquals;
+import static org.testng.AssertJUnit.assertNotNull;
+import static org.testng.AssertJUnit.assertNull;
 
 /**
  * @author Daniel M. de Oliveira
@@ -41,6 +43,13 @@ public class DocumentTest {
         ((ObjectNode)example).put(Document.VERSION,version);
         return example;
     }
+
+    @Test
+    public void setResourceId() {
+        Document doc= new Document("1",json(), ADMIN);
+        assertEquals(doc.j().get(Document.RESOURCE).get(Document.ID).toString(),"\"1\"");
+    }
+
 
     @Test
     public void createdDateStaysSame() throws IOException, InterruptedException {
@@ -73,20 +82,18 @@ public class DocumentTest {
     @Test
     public void filterUnsupported() {
         JsonNode n= JsonUtils.json();
-        ((ObjectNode)n).put("a","a"); // unwanted
-        ((ObjectNode)n).put(Document.RESOURCE,"b");
+        ((ObjectNode)n).put("a","a");   // unwanted
+        ((ObjectNode)n).put("@id","1"); // unwanted
+        ((ObjectNode)n).put(Document.RESOURCE,json());
         ((ObjectNode)n).put(Document.DATASET,"c");
-
-        JsonNode exp= JsonUtils.json();
-        ((ObjectNode)exp).put(Document.RESOURCE,"b");
-        ((ObjectNode)exp).put(Document.DATASET,"c");
 
         Document dm=
                 new Document("1",n, ADMIN);
 
-        assertEquals(dm.j().get(Document.RESOURCE).toString().replace("\"",""),"b");
-        assertEquals(dm.j().get(Document.DATASET).toString().replace("\"",""),"c");
-        assertEquals(dm.j().get("a"),null);
+        assertNotNull(dm.j().get(Document.RESOURCE));
+        assertNotNull(dm.j().get(Document.DATASET));
+        assertNull(dm.j().get("a"));
+        assertNull(dm.j().get("@id"));
     }
 
 
@@ -141,7 +148,7 @@ public class DocumentTest {
     @Test
     public void createFromOld() {
         JsonNode n= json();
-        ((ObjectNode)n).put(Document.ID,"1");
+        ((ObjectNode)n).put(Document.RESOURCE,json("{\"@id\":\"1\"}"));
         ((ObjectNode)n).put(Document.CREATED,json("{\"date\":\"today\"}"));
 
         Document dm= Document.from(n);
@@ -157,7 +164,7 @@ public class DocumentTest {
     @Test
     public void getDataset() {
         JsonNode n= json();
-        ((ObjectNode)n).put(Document.ID,"1");
+        ((ObjectNode)n).put(Document.RESOURCE,json("{\"@id\":\"1\"}"));
         ((ObjectNode)n).put(Document.DATASET,"1");
 
         Document dm= Document.from(n);
@@ -167,7 +174,7 @@ public class DocumentTest {
     @Test
     public void noDataset() {
         JsonNode n= json();
-        ((ObjectNode)n).put(Document.ID,"1");
+        ((ObjectNode)n).put(Document.RESOURCE,json("{\"@id\":\"1\"}"));
 
         Document dm= Document.from(n);
         assertEquals(dm.getDataset(),null);
