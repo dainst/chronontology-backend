@@ -3,7 +3,6 @@ package org.dainst.chronontology.handler.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.dainst.chronontology.handler.model.Document;
 import org.dainst.chronontology.util.JsonUtils;
 import org.json.JSONException;
 import org.testng.annotations.Test;
@@ -11,7 +10,7 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static org.dainst.chronontology.JsonTestUtils.jsonAssertEquals;
-import static org.dainst.chronontology.util.JsonUtils.*;
+import static org.dainst.chronontology.util.JsonUtils.json;
 import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertNotNull;
 import static org.testng.AssertJUnit.assertNull;
@@ -83,7 +82,7 @@ public class DocumentTest {
     public void filterUnsupported() {
         JsonNode n= JsonUtils.json();
         ((ObjectNode)n).put("a","a");   // unwanted
-        ((ObjectNode)n).put("@id","1"); // unwanted
+        ((ObjectNode)n).put(Document.ID,"1"); // unwanted
         ((ObjectNode)n).put(Document.RESOURCE,json());
         ((ObjectNode)n).put(Document.DATASET,"c");
 
@@ -93,7 +92,7 @@ public class DocumentTest {
         assertNotNull(dm.j().get(Document.RESOURCE));
         assertNotNull(dm.j().get(Document.DATASET));
         assertNull(dm.j().get("a"));
-        assertNull(dm.j().get("@id"));
+        assertNull(dm.j().get(Document.ID));
     }
 
 
@@ -148,7 +147,7 @@ public class DocumentTest {
     @Test
     public void createFromOld() {
         JsonNode n= json();
-        ((ObjectNode)n).put(Document.RESOURCE,json("{\"@id\":\"1\"}"));
+        ((ObjectNode)n).put(Document.RESOURCE,json("{\"id\":\"1\"}"));
         ((ObjectNode)n).put(Document.CREATED,json("{\"date\":\"today\"}"));
 
         Document dm= Document.from(n);
@@ -164,7 +163,7 @@ public class DocumentTest {
     @Test
     public void getDataset() {
         JsonNode n= json();
-        ((ObjectNode)n).put(Document.RESOURCE,json("{\"@id\":\"1\"}"));
+        ((ObjectNode)n).put(Document.RESOURCE,json("{\"id\":\"1\"}"));
         ((ObjectNode)n).put(Document.DATASET,"1");
 
         Document dm= Document.from(n);
@@ -174,7 +173,7 @@ public class DocumentTest {
     @Test
     public void noDataset() {
         JsonNode n= json();
-        ((ObjectNode)n).put(Document.RESOURCE,json("{\"@id\":\"1\"}"));
+        ((ObjectNode)n).put(Document.RESOURCE,json("{\"id\":\"1\"}"));
 
         Document dm= Document.from(n);
         assertEquals(dm.getDataset(),null);

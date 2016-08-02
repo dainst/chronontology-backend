@@ -31,7 +31,7 @@ which itself can be empty or host any further user defined fields. Examples:
 }
 ```
 
-**Note** that there is the special field **@id** whithin the resource field which
+**Note** that there is the special field **id** whithin the resource field which
 should not be used by clients during post because the system will place a generated id
 here which would overwrite the value set by the client.
 
@@ -40,7 +40,7 @@ Thus do not use:
 ```
 {
   "resource" : {
-    "@id" : ...
+    "id" : ...
   } 
 }
 ```
@@ -74,7 +74,7 @@ and will look something like this:
 ```
 {
    "resource": {
-       "@id": "/typename/T7UlxIk8miMQ",
+       "id": "/typename/T7UlxIk8miMQ",
        "a" : "b"
    },
    "dataset" : "none",
@@ -100,9 +100,9 @@ In case of status 400 errors the response body is an empty JSON.
 
 ### Response header
 
-The location response header will contain the `@id` of 
+The location response header will contain the `id` of 
 the created element, if successful. It is the same
-as the `@id field of the response body. It will be a string like
+as the `id field of the response body. It will be a string like
 
 ```
 /typename/T7UlxIk8miMQ
@@ -134,15 +134,15 @@ be valid JSON, for example:
 }
 ```
 
-**Note** that as with POST, using the `@id` field should be avoided
-since the `@id` gets set automatically by the system.
+**Note** that as with POST, using the `id` field should be avoided
+since the `id` gets set automatically by the system.
 
 ### Response body
 
 ```
 {
     "resource": { 
-        "@id": "/typename/T7UlxIk8miMQ",
+        "id": "/typename/T7UlxIk8miMQ",
         "a" : "b" 
     },
     "version": 2,
@@ -247,7 +247,7 @@ gets ignored if ***version*** is used.
 ```
 {
     "resource": {
-        "@id": "/typename/T7UlxIk8miMQ",
+        "id": "/typename/T7UlxIk8miMQ",
         "a" : "b"
     },        
     "dataset" : "none",
@@ -357,7 +357,7 @@ match the query and that the user is allowed to access.
     "results": [
         {
             "resource": {
-                "@id": "/typename/T7UlxIk8miMQ",
+                "id": "/typename/T7UlxIk8miMQ",
                 "a" : "b"
             },
             "version": 2,
@@ -379,7 +379,7 @@ match the query and that the user is allowed to access.
         },
         {
             "resource": {
-                "@id": "/typename/MG6UPjCMKmk",
+                "id": "/typename/MG6UPjCMKmk",
                 "a" : "d"
             },
             "dataset" : "dataset1",

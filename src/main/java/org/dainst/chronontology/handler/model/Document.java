@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * @author Daniel M. de Oliveira
+ * @author Daniel de Oliveira
  */
 public class Document {
 
@@ -22,7 +22,7 @@ public class Document {
     public static final String RESOURCE = "resource";
     public static final String MODIFIED = "modified";
     public static final String CREATED = "created";
-    public static final String ID = "@id";
+    public static final String ID = "id";
     public static final String DATASET = "dataset";
 
     private static final String[] supportedProperties = new String[] {

@@ -106,6 +106,6 @@ public abstract class IntegrationTest {
 
 
     protected String idOf(final JsonNode n) {
-        return (String) n.get(Document.RESOURCE).get("@id").textValue();
+        return (String) n.get(Document.RESOURCE).get("id").textValue();
     }
 }
