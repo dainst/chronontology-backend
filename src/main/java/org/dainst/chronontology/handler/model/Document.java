@@ -24,6 +24,7 @@ public class Document {
     public static final String CREATED = "created";
     public static final String ID = "id";
     public static final String DATASET = "dataset";
+    public static final String NONE = "none";
 
     private static final String[] supportedProperties = new String[] {
         VERSION,MODIFIED,CREATED,DATASET, RESOURCE
@@ -85,8 +86,8 @@ public class Document {
         initVersion();
         initCreatedAndModifiedDates(userName);
         filterUnwanted();
-        if (node.get("dataset")==null)
-            ((ObjectNode)node).put("dataset","none");
+        if (node.get(DATASET)==null)
+            ((ObjectNode)node).put(DATASET,NONE);
     }
 
     /**
@@ -180,7 +181,7 @@ public class Document {
      * @return null if the document belongs to no dataset.
      */
     public String getDataset() {
-        if (node.get(DATASET)==null||node.get(DATASET).toString().replace("\"","").equals("none")) return null;
+        if (node.get(DATASET)==null||node.get(DATASET).toString().replace("\"","").equals(NONE)) return null;
         return toString(node.get(DATASET));
     }
 }
