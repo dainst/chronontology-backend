@@ -5,13 +5,14 @@ import com.squareup.okhttp.OkHttpClient;
 import org.apache.commons.io.FileUtils;
 import org.dainst.chronontology.App;
 import org.dainst.chronontology.TestConstants;
-import org.dainst.chronontology.config.*;
-import org.dainst.chronontology.handler.model.Document;
-import org.dainst.chronontology.store.rest.JsonRestClient;
+import org.dainst.chronontology.config.AppConfig;
+import org.dainst.chronontology.config.AppConfigurator;
 import org.dainst.chronontology.handler.dispatch.ConnectDispatcher;
-import org.dainst.chronontology.store.ElasticsearchDatastore;
+import org.dainst.chronontology.handler.model.Document;
 import org.dainst.chronontology.store.ESServerTestUtil;
+import org.dainst.chronontology.store.ElasticsearchDatastore;
 import org.dainst.chronontology.store.FilesystemDatastore;
+import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
@@ -106,6 +107,9 @@ public abstract class IntegrationTest {
 
 
     protected String idOf(final JsonNode n) {
-        return (String) n.get(Document.RESOURCE).get("id").textValue();
+        if (n==null) return null;
+        if (n.get(Document.RESOURCE)==null) return null;
+        if (n.get(Document.RESOURCE).get(Document.ID)==null) return null;
+        return (String) n.get(Document.RESOURCE).get(Document.ID).textValue();
     }
 }

@@ -23,6 +23,7 @@ public class Document {
     public static final String MODIFIED = "modified";
     public static final String CREATED = "created";
     public static final String ID = "id";
+    public static final String TYPE = "type";
     public static final String DATASET = "dataset";
     public static final String NONE = "none";
 
@@ -33,17 +34,19 @@ public class Document {
     private final ObjectNode node;
 
     /**
-     * @param userName
-     * @param node
      * @param id
+     * @param type
+     * @param node
+     * @param userName
      */
     public Document(
             final String id,
+            final String type,
             final JsonNode node,
             final String userName) {
 
         this.node = (ObjectNode) node;
-        initNode(id,userName);
+        initNode(id,type,userName);
     }
 
     private Document(
@@ -63,6 +66,8 @@ public class Document {
             throw new IllegalArgumentException(RESOURCE + Constants.MSG_NOT_NULL);
         if (oldDoc.get(RESOURCE).get(ID)==null)
             throw new IllegalArgumentException(RESOURCE+"."+ID + Constants.MSG_NOT_NULL);
+        if (oldDoc.get(RESOURCE).get(TYPE)==null)
+            throw new IllegalArgumentException(RESOURCE+"."+TYPE + Constants.MSG_NOT_NULL);
 
         return new Document(
             oldDoc
@@ -81,8 +86,8 @@ public class Document {
             node.remove(fk);
     }
 
-    private void initNode(String id,String userName) {
-        setUpResource(id);
+    private void initNode(String id,String type,String userName) {
+        setUpResource(id,type);
         initVersion();
         initCreatedAndModifiedDates(userName);
         filterUnwanted();
@@ -106,6 +111,7 @@ public class Document {
 
         mergeModifiedDates(oldNode);
         overwriteCreatedDate(oldNode);
+        overwriteTypeAndId(oldNode);
         setVersion(oldNode);
         return this;
     }
@@ -142,7 +148,7 @@ public class Document {
         return node.toString();
     }
 
-    private void setUpResource(String id) {
+    private void setUpResource(String id,String type) {
         JsonNode resource= node.get(RESOURCE);
         if (resource==null) {
             ObjectNode created= new ObjectMapper().createObjectNode();
@@ -150,6 +156,7 @@ public class Document {
             resource= node.get(RESOURCE);
         }
         ((ObjectNode)resource).put(ID, id);
+        ((ObjectNode)resource).put(TYPE, type);
     }
 
     private void setVersion(JsonNode oldNode) {
@@ -159,8 +166,12 @@ public class Document {
     }
 
     private void overwriteCreatedDate(JsonNode oldNode) {
-        JsonNode dateCreated = oldNode.get(CREATED);
-        node.put(CREATED, dateCreated);
+        node.put(CREATED, oldNode.get(CREATED));
+    }
+
+    private void overwriteTypeAndId(JsonNode oldNode) {
+        ((ObjectNode)node.get(RESOURCE)).put(ID, oldNode.get(RESOURCE).get(ID));
+        ((ObjectNode)node.get(RESOURCE)).put(TYPE, oldNode.get(RESOURCE).get(TYPE));
     }
 
     private void mergeModifiedDates(JsonNode oldNode) {
@@ -175,6 +186,10 @@ public class Document {
 
     public String getId() {
         return toString(node.get(RESOURCE).get(ID));
+    }
+
+    public String getType() {
+        return toString(node.get(RESOURCE).get(TYPE));
     }
 
     /**

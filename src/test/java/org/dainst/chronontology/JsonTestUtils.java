@@ -1,6 +1,5 @@
 package org.dainst.chronontology;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -13,14 +12,13 @@ import org.skyscreamer.jsonassert.JSONCompare;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.skyscreamer.jsonassert.JSONCompareResult;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.dainst.chronontology.util.JsonUtils.json;
 import static org.testng.Assert.fail;
 
 /**
- * @author Daniel M. de Oliveira
+ * @author Daniel de Oliveira
  */
 public class JsonTestUtils {
 
@@ -47,8 +45,10 @@ public class JsonTestUtils {
         json = JsonUtils.json();
         ((ObjectNode)json).put(Document.RESOURCE,new ObjectMapper().createObjectNode());
         ((ObjectNode)json.get(Document.RESOURCE)).put("sampleField",sampleFieldValue);
-        if (id!=null)
+        if (id!=null) {
             ((ObjectNode)json.get(Document.RESOURCE)).put(Document.ID,id);
+            ((ObjectNode)json.get(Document.RESOURCE)).put(Document.TYPE,TestConstants.TEST_TYPE);
+        }
         if (dataset!=null)
             ((ObjectNode)json).put(Document.DATASET,dataset);
         return json;

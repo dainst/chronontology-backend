@@ -12,7 +12,7 @@ import static org.dainst.chronontology.it.ResponseUtil.*;
 import static org.testng.Assert.assertEquals;
 
 /**
- * @author Daniel M. de Oliveira
+ * @author Daniel de Oliveira
  */
 public class StatusCodesIntegrationTest extends IntegrationTest {
 
@@ -53,7 +53,7 @@ public class StatusCodesIntegrationTest extends IntegrationTest {
     public void documentFound() throws IOException {
         String id= idOf(client.post(TYPE_ROUTE,json()));
         assertEquals(
-            getResponse(id, "GET").code(),
+            getResponse(TYPE_ROUTE+id, "GET").code(),
             HTTP_OK
         );
     }
@@ -79,7 +79,7 @@ public class StatusCodesIntegrationTest extends IntegrationTest {
 
         String id= idOf(client.post(TYPE_ROUTE,json()));
         assertEquals(
-                getResponse(id, "PUT", "{").code(),
+                getResponse(TYPE_ROUTE+id, "PUT", "{").code(),
                 HTTP_BAD_REQUEST
         );
     }
@@ -89,7 +89,7 @@ public class StatusCodesIntegrationTest extends IntegrationTest {
 
         String id= idOf(client.post(TYPE_ROUTE,json()));
         assertEquals(
-                getResponse(id, "PUT", json()).code(),
+                getResponse(TYPE_ROUTE+id, "PUT", json()).code(),
                 HTTP_OK
         );
     }

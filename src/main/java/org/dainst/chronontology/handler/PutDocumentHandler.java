@@ -28,7 +28,6 @@ public class PutDocumentHandler extends DocumentHandler {
         Document dm= makeDocumentModel(req,res,false);
         if (dm==null) return json();
 
-
         int status;
         Document oldDm = Document.from(
                 dispatcher.dispatchGet(type(req), simpleId(req)));

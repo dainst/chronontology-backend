@@ -84,7 +84,7 @@ public class DatasetsIntegrationTest extends IntegrationTest {
         String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
 
         assertEquals(
-                getResponse(id, "PUT", JsonUtils.json(),TestConstants.USER_NAME_2,TestConstants.PASS_WORD).code(),
+                getResponse(TYPE_ROUTE+id, "PUT", JsonUtils.json(),TestConstants.USER_NAME_2,TestConstants.PASS_WORD).code(),
                 Constants.HTTP_FORBIDDEN
         );
     }
@@ -96,7 +96,7 @@ public class DatasetsIntegrationTest extends IntegrationTest {
         String id= idOf(client.post(TYPE_ROUTE, dataset("2")));
 
         assertEquals(
-                getResponse(id, "PUT", dataset("1"),TestConstants.USER_NAME_1,TestConstants.PASS_WORD).code(),
+                getResponse(TYPE_ROUTE+id, "PUT", dataset("1"),TestConstants.USER_NAME_1,TestConstants.PASS_WORD).code(),
                 Constants.HTTP_FORBIDDEN
         );
     }
@@ -108,7 +108,7 @@ public class DatasetsIntegrationTest extends IntegrationTest {
         String id= idOf(client.post(TYPE_ROUTE, dataset("2")));
 
         assertEquals(
-                getResponse(id, "PUT", dataset("1"),TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD).code(),
+                getResponse(TYPE_ROUTE+id, "PUT", dataset("1"),TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD).code(),
                 Constants.HTTP_OK
         );
     }
@@ -120,7 +120,7 @@ public class DatasetsIntegrationTest extends IntegrationTest {
         String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
 
         assertEquals(
-                getResponse(id, "GET", dataset("1"),TestConstants.USER_NAME_2,TestConstants.PASS_WORD).code(),
+                getResponse(TYPE_ROUTE+id, "GET", dataset("1"),TestConstants.USER_NAME_2,TestConstants.PASS_WORD).code(),
                 Constants.HTTP_FORBIDDEN
         );
     }
@@ -132,7 +132,7 @@ public class DatasetsIntegrationTest extends IntegrationTest {
         String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
 
         assertEquals(
-                getResponse(id, "GET", dataset("1"),TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD).code(),
+                getResponse(TYPE_ROUTE+id, "GET", dataset("1"),TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD).code(),
                 Constants.HTTP_OK
         );
     }
@@ -145,7 +145,7 @@ public class DatasetsIntegrationTest extends IntegrationTest {
         String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
 
         assertEquals(
-                getResponse(id, "GET", dataset("1"),
+                getResponse(TYPE_ROUTE+id, "GET", dataset("1"),
                         TestConstants.USER_NAME_3, // reader for dataset1
                         TestConstants.PASS_WORD).code(),
                 Constants.HTTP_OK
@@ -159,7 +159,7 @@ public class DatasetsIntegrationTest extends IntegrationTest {
         String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
 
         assertEquals(
-                getResponse(id, "GET", dataset("1"),
+                getResponse(TYPE_ROUTE+id, "GET", dataset("1"),
                         TestConstants.USER_NAME_1, // editor for dataset1
                         TestConstants.PASS_WORD).code(),
                 Constants.HTTP_OK
@@ -226,7 +226,7 @@ public class DatasetsIntegrationTest extends IntegrationTest {
         String id= idOf(client.post(TYPE_ROUTE, dataset("1")));
 
         assertEquals(
-                getResponse(id, "GET", dataset("1"),
+                getResponse(TYPE_ROUTE+id, "GET", dataset("1"),
                         null, // no authentication
                         null).code(),
                 Constants.HTTP_FORBIDDEN

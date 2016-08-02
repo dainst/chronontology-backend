@@ -31,10 +31,11 @@ which itself can be empty or host any further user defined fields. Examples:
 }
 ```
 
-**Note** that there is the special field **id** whithin the resource field which
-should not be used by clients during post because the system will place a generated id
-here which would overwrite the value set by the client.
-
+**Note** that there are some reserved terms. In order to avoid confusion,
+they should not be used by clients directly since the system writes 
+them automatically. At the moment these are `id` and `type`. 
+The user might set them, but they will get overwritten in any case.
+ 
 Thus do not use:
 
 ```
@@ -74,7 +75,8 @@ and will look something like this:
 ```
 {
    "resource": {
-       "id": "/typename/T7UlxIk8miMQ",
+       "id": "T7UlxIk8miMQ",
+       "type" : "typename",
        "a" : "b"
    },
    "dataset" : "none",
@@ -142,7 +144,8 @@ since the `id` gets set automatically by the system.
 ```
 {
     "resource": { 
-        "id": "/typename/T7UlxIk8miMQ",
+        "id": "T7UlxIk8miMQ",
+        "type" : "typename",
         "a" : "b" 
     },
     "version": 2,
@@ -247,7 +250,8 @@ gets ignored if ***version*** is used.
 ```
 {
     "resource": {
-        "id": "/typename/T7UlxIk8miMQ",
+        "id": "T7UlxIk8miMQ",
+        "type" : "typename",
         "a" : "b"
     },        
     "dataset" : "none",
@@ -357,7 +361,8 @@ match the query and that the user is allowed to access.
     "results": [
         {
             "resource": {
-                "id": "/typename/T7UlxIk8miMQ",
+                "id": "T7UlxIk8miMQ",
+                "type" : "typename",
                 "a" : "b"
             },
             "version": 2,
@@ -379,7 +384,8 @@ match the query and that the user is allowed to access.
         },
         {
             "resource": {
-                "id": "/typename/MG6UPjCMKmk",
+                "id": "MG6UPjCMKmk",
+                "type" : "typename",
                 "a" : "d"
             },
             "dataset" : "dataset1",

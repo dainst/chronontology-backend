@@ -9,13 +9,12 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 
 import static org.dainst.chronontology.JsonTestUtils.jsonAssertEquals;
-import static org.dainst.chronontology.JsonTestUtils.*;
+import static org.dainst.chronontology.JsonTestUtils.sampleDocument;
 import static org.testng.Assert.assertEquals;
 
 
-
 /**
- * @author Daniel M. de Oliveira
+ * @author Daniel de Oliveira
  */
 public class StorageIntegrationTest extends IntegrationTest {
 
@@ -46,10 +45,11 @@ public class StorageIntegrationTest extends IntegrationTest {
 
     @Test
     public void storeAndRetrieveOneDocument() {
+        System.out.println(client.post(TYPE_ROUTE, JsonTestUtils.sampleDocument("b")));
 
         String id= idOf(client.post(TYPE_ROUTE, JsonTestUtils.sampleDocument("b")));
         jsonAssertEquals(
-                client.get(id),
+                client.get(TYPE_ROUTE+id),
                 JsonTestUtils.sampleDocument("b"));
     }
 
@@ -60,7 +60,7 @@ public class StorageIntegrationTest extends IntegrationTest {
         String id= idOf(client.post(TYPE_ROUTE, JsonTestUtils.sampleDocument("a")));
 
         jsonAssertEquals(
-                client.get(id),
+                client.get(TYPE_ROUTE+id),
                 JsonTestUtils.sampleDocument("a"));
     }
 
@@ -69,9 +69,9 @@ public class StorageIntegrationTest extends IntegrationTest {
     public void changeADocument() {
 
         String id= idOf(client.post(TYPE_ROUTE, JsonTestUtils.sampleDocument("a")));
-        client.put(id, JsonTestUtils.sampleDocument("b"));
+        client.put(TYPE_ROUTE+id, JsonTestUtils.sampleDocument("b"));
         jsonAssertEquals(
-                client.get(id),
+                client.get(TYPE_ROUTE+id),
                 JsonTestUtils.sampleDocument("b")); // check also with direct = true
     }
 

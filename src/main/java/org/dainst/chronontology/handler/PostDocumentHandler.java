@@ -12,7 +12,7 @@ import java.io.IOException;
 import static org.dainst.chronontology.Constants.*;
 
 /**
- * @author Daniel M. de Oliveira
+ * @author Daniel de Oliveira
  */
 public class PostDocumentHandler extends DocumentHandler {
 
@@ -28,7 +28,7 @@ public class PostDocumentHandler extends DocumentHandler {
         Document dm= makeDocumentModel(req,res,true);
         if (dm==null) return JsonUtils.json();
 
-        if (!dispatcher.dispatchPost(req.pathInfo(),dm.getId().replace(req.pathInfo(),""),dm.j())) {
+        if (!dispatcher.dispatchPost(req.pathInfo(),dm.getId(),dm.j())) {
 
             res.status(HTTP_INTERNAL_SERVER_ERROR);
             return JsonUtils.json();
