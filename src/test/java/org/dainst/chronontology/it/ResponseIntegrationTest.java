@@ -12,9 +12,12 @@ import static org.dainst.chronontology.it.ResponseUtil.*;
 import static org.testng.Assert.assertEquals;
 
 /**
+ * A test suite of tests covering jeremy's
+ * response metadata behaviour, i.e. status codes, headers ...
+ *
  * @author Daniel de Oliveira
  */
-public class StatusCodesIntegrationTest extends IntegrationTest {
+public class ResponseIntegrationTest extends IntegrationTest {
 
     @Test
     public void putUnauthorized() throws IOException {
