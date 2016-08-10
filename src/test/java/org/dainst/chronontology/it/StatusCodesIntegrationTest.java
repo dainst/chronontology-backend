@@ -13,11 +13,11 @@ import static org.testng.Assert.assertEquals;
 
 /**
  * A test suite of tests covering jeremy's
- * response metadata behaviour, i.e. status codes, headers ...
+ * status codes.
  *
  * @author Daniel de Oliveira
  */
-public class ResponseIntegrationTest extends IntegrationTest {
+public class StatusCodesIntegrationTest extends IntegrationTest {
 
     @Test
     public void putUnauthorized() throws IOException {

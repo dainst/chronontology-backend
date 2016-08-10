@@ -1,8 +1,5 @@
 package org.dainst.chronontology;
 
-import static spark.Spark.*;
-import static org.dainst.chronontology.Constants.*;
-
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.config.AppConfig;
 import org.dainst.chronontology.handler.*;
@@ -12,6 +9,9 @@ import spark.Request;
 import spark.Response;
 
 import java.util.Arrays;
+
+import static org.dainst.chronontology.Constants.*;
+import static spark.Spark.*;
 
 
 /**
@@ -48,7 +48,7 @@ public class Controller {
         });
 
         get( "/" + typeName + "/" + ID, (req,res) -> {
-            setHeader(req,res);
+            setHeader(req,res,typeName);
             return getDocumentHandler.handle(req,res);
         });
 
@@ -62,7 +62,7 @@ public class Controller {
         });
 
         put( "/" + typeName + "/" + ID, (req, res) -> {
-            setHeader(req,res);
+            setHeader(req,res,typeName);
             return putDocumentHandler.handle(req,res);
         });
 
@@ -72,9 +72,9 @@ public class Controller {
         res.header(HEADER_CT, HEADER_JSON);
     }
 
-    private void setHeader(Request req, Response res) {
+    private void setHeader(Request req, Response res,String typeName) {
         res.header(HEADER_CT, HEADER_JSON);
-        res.header(HEADER_LOC, req.params(ID));
+        res.header(HEADER_LOC, "/"+typeName+"/"+req.params(ID));
     }
 
     private void setUpAuthorization(String[] credentials) {

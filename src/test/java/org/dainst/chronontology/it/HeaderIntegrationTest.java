@@ -12,7 +12,10 @@ import static org.dainst.chronontology.util.JsonUtils.json;
 import static org.testng.Assert.*;
 
 /**
- * @author Daniel M. de Oliveira
+ * A test suite of tests covering jeremy's
+ * response headers.
+ *
+ * @author Daniel de Oliveira
  */
 public class HeaderIntegrationTest extends IntegrationTest {
 
@@ -25,7 +28,7 @@ public class HeaderIntegrationTest extends IntegrationTest {
         );
         assertEquals(
                 res.header(HEADER_LOC),
-                "1"
+                TYPE_ROUTE+"1"
         );
     }
 
@@ -50,7 +53,7 @@ public class HeaderIntegrationTest extends IntegrationTest {
         );
         assertEquals(
                 res.header(HEADER_LOC),
-                "1"
+                TYPE_ROUTE+"1"
         );
     }
 
