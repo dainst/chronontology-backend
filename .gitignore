@@ -10,3 +10,4 @@ datastore
 config.properties
 embedded_es_data
 datastore
+.DS_Store
