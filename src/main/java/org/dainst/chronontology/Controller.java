@@ -15,7 +15,7 @@ import static spark.Spark.*;
 
 
 /**
- * @author Daniel M. de Oliveira
+ * @author Daniel de Oliveira
  */
 public class Controller {
 

@@ -36,7 +36,7 @@ public class PostDocumentHandler extends DocumentHandler {
         } else {
 
             res.status(HTTP_CREATED);
-            res.header("location", dm.getId());
+            res.header(HEADER_LOC, "/"+dm.getType()+"/"+dm.getId());
             return dm;
         }
     }

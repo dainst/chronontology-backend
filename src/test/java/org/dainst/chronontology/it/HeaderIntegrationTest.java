@@ -1,7 +1,9 @@
 package org.dainst.chronontology.it;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.Response;
+import org.dainst.chronontology.JsonTestUtils;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
@@ -35,13 +37,13 @@ public class HeaderIntegrationTest extends IntegrationTest {
     @Test
     public void postHeaders() throws IOException {
         Response res = getResponse(TYPE_ROUTE, "POST", json());
+
         assertEquals(
                 res.header(HEADER_CT),
                 HEADER_JSON
         );
-        assertNotNull(
-                res.header(HEADER_LOC)
-        );
+        assertTrue(res.header(HEADER_LOC).startsWith(TYPE_ROUTE));
+        assertFalse(res.header(HEADER_LOC).replace(TYPE_ROUTE,"").equals(""));
     }
 
     @Test
