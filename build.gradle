@@ -1,9 +1,12 @@
-group 'de.dainst.idai'
-version '0.0.2-SNAPSHOT'
-
-apply plugin: 'java'
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '1.2.3'
+}
 
 sourceCompatibility = 1.8
+
+mainClassName = 'org.dainst.chronontology.App'
 
 repositories {
     mavenCentral()
@@ -15,7 +18,7 @@ dependencies {
     compile 'log4j:log4j:1.2.17'
     compile 'com.fasterxml.jackson.core:jackson-core:2.6.3'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
-    compile group: 'com.sparkjava', name: 'spark-core', version: '2.3'
+    compile 'com.sparkjava:spark-core:2.3'
     testCompile 'org.testng:testng:6.9.9'
     testCompile 'org.mockito:mockito-all:1.8.4'
     compile 'org.elasticsearch:elasticsearch:1.7.3'
@@ -24,39 +27,14 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.4'
 }
 
-//create a single Jar with all dependencies
-jar {
-
-    archiveName 'jeremy.jar'
-
-    doFirst {
-        def serviceDir = file("$buildDir/META-INF/services")
-        serviceDir.deleteDir()
-        serviceDir.mkdirs()
-
-        // copy all service files from deps to buildDir
-        for(file in configurations.runtime) {
-            zipTree(file).matching{ include 'META-INF/services/*' }.each { f ->
-                new File(serviceDir, f.name) << f.getText("UTF-8")
-            }
-        }
-    }
-
-    manifest {
-        attributes 'Implementation-Title': project.name,
-                'Main-Class': "org.dainst.chronontology.App"
-        // etc ...
-    }
-
-    from(configurations.runtime.collect{ it.isDirectory() ? it : zipTree(it) }) {
-        exclude 'META-INF/**' // Don't let Gradle merge service files
-    }
-
-    // include service files from the buildDir
-    from fileTree(buildDir).matching{ include 'META-INF/services/*' }
+shadowJar {
+    baseName = 'jeremy'
+    classifier = null
+    version = null
+    mergeServiceFiles()
 }
 
-jar.dependsOn test
+shadowJar.dependsOn test
 
 test {
     useTestNG()
