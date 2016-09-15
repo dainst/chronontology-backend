@@ -14,13 +14,13 @@ gradle clean test
 To build the application, type in
 
 ```
-gradle clean jar
+gradle clean shadowJar
 ```
 
 The binary with dependencies can be found here:
 
 ```
-build/libs/jeremy-0.1.0-SNAPSHOT.jar
+build/libs/jeremy.jar
 ```
 
 ## Using the server
