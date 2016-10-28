@@ -27,6 +27,18 @@ useEmbeddedES=true
 
 # # # # #
 #
+# It is possible to serve single page applications from ./public
+# relative to the working dir. When using this, ./public gets served
+# as / and all the other routes will get served under /data/.
+# GET /object/ will be GET /data/object for example.
+# This functionality is turned off by default and can get activated by
+# using
+#
+# SPASupport=true
+
+
+# # # # #
+#
 # typeNames=<type_name>[,...]
 #
 # the typenames to be used. Use , to separat them. Don't use whitespaces in between.
