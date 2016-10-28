@@ -27,7 +27,8 @@ public class AppConfigurator implements Configurator<App,AppConfig> {
                 new DispatcherConfigurator().configure(config.getDispatcherConfig()),
                 getTypes(config.getTypeNames()),
                 config.getCredentials(),
-                new RightsValidatorConfigurator().configure(config.getRightsValidatorConfig()));
+                new RightsValidatorConfigurator().configure(config.getRightsValidatorConfig()),
+                config.getSPASupport());
 
         return new App(controller);
     }

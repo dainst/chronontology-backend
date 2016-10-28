@@ -7,6 +7,7 @@ import org.dainst.chronontology.handler.dispatch.Dispatcher;
 import org.dainst.chronontology.handler.model.RightsValidator;
 import spark.Request;
 import spark.Response;
+import spark.Spark;
 
 import java.util.Arrays;
 
@@ -30,38 +31,39 @@ public class Controller {
     private final GetDocumentHandler getDocumentHandler;
 
     private void setUpTypeRoutes(
+            final String routePrefix,
             final String typeName
     ) {
 
-        get( "/", (req,res) -> {
+        get( routePrefix, (req,res) -> {
             setHeader(res);
             return serverStatusHandler.handle(req,res);
         });
 
-        get( "/" + typeName, (req,res) -> {
+        get( routePrefix + typeName, (req,res) -> {
             setHeader(res);
             return searchDocumentHandler.handle(req,res);
         });
-        get( "/" + typeName + "/", (req,res) -> {
+        get( routePrefix + typeName + "/", (req,res) -> {
             setHeader(res);
             return searchDocumentHandler.handle(req,res);
         });
 
-        get( "/" + typeName + "/" + ID, (req,res) -> {
+        get( routePrefix + typeName + "/" + ID, (req,res) -> {
             setHeader(req,res,typeName);
             return getDocumentHandler.handle(req,res);
         });
 
-        post("/" + typeName, (req, res) ->  {
+        post(routePrefix + typeName, (req, res) ->  {
             setHeader(res);
             return postDocumentHandler.handle(req,res);
         });
-        post("/" + typeName + "/", (req, res) ->  {
+        post(routePrefix + typeName + "/", (req, res) ->  {
             setHeader(res);
             return postDocumentHandler.handle(req,res);
         });
 
-        put( "/" + typeName + "/" + ID, (req, res) -> {
+        put( routePrefix + typeName + "/" + ID, (req, res) -> {
             setHeader(req,res,typeName);
             return putDocumentHandler.handle(req,res);
         });
@@ -77,9 +79,9 @@ public class Controller {
         res.header(HEADER_LOC, "/"+typeName+"/"+req.params(ID));
     }
 
-    private void setUpAuthorization(String[] credentials) {
+    private void setUpAuthorization(final String routePrefix,String[] credentials) {
 
-        before("/*", (req, res) -> {
+        before(routePrefix+"*", (req, res) -> {
 
             boolean authenticated=
                     (requestHeaderAuth(req)) && isAuthenticatedRequest(req,credentials);
@@ -127,7 +129,8 @@ public class Controller {
             final Dispatcher dispatcher,
             final String[] typeNames,
             final String[] credentials,
-            final RightsValidator rightsValidator
+            final RightsValidator rightsValidator,
+            final boolean SPASupport
             ){
 
         this.dispatcher = dispatcher;
@@ -137,13 +140,21 @@ public class Controller {
         this.putDocumentHandler = new PutDocumentHandler(dispatcher,rightsValidator);
         this.getDocumentHandler = new GetDocumentHandler(dispatcher,rightsValidator);
 
+        String routePrefix = "/";
+        if (SPASupport) {
+            logger.info("Single Page Application Support enabled. Will server ./public folder as /.");
+            Spark.externalStaticFileLocation("./public");
+            logger.info("The api routes will be accessible under /data/.");
+            routePrefix = "/data/";
+        }
+
         logger.info("initializing endpoints for types: " + Arrays.toString(typeNames));
 
         for (String typeName:typeNames)
-            setUpTypeRoutes(typeName);
+            setUpTypeRoutes(routePrefix,typeName);
 
         validateCredentials(credentials);
-        setUpAuthorization(credentials);
+        setUpAuthorization(routePrefix,credentials);
     }
 
     private void validateCredentials(String[] credentials) {

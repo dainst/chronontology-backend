@@ -145,4 +145,26 @@ public class AppConfigTest {
         assertTrue(appConfig.getConstraintViolations().contains(
                 ConfigConstants.MSG_CONSTRAINT_VIOLATION+AppConfig.MSG_RESERVED_USER_ANONYMOUS));
     }
+
+
+    @Test
+    public void withSPASupportEnabled() {
+        props.put("typeNames","period");
+        props.put("credentials","anonymous:def");
+        props.put("useConnect","false");
+        props.put("SPASupport","true");
+
+        assertFalse(appConfig.validate(props));
+        assertEquals(appConfig.getSPASupport(), true);
+    }
+
+    @Test
+    public void SPASupportDefaultValue() {
+        props.put("typeNames","period");
+        props.put("credentials","anonymous:def");
+        props.put("useConnect","false");
+
+        assertFalse(appConfig.validate(props));
+        assertEquals(appConfig.getSPASupport(), false);
+    }
 }

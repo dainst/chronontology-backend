@@ -14,13 +14,16 @@ public class AppConfig extends Config {
     final static String MSG_SERVER_PORT_NAN= "Server port must be a number, but is: ";
     public final static String MSG_RESERVED_USER_ANONYMOUS=
             "The user name \""+Constants.USER_NAME_ANONYMOUS+"\" is reserved for internal use and therefore cannot be used.";
+    public final static String SPA_SUPPORT_TRUE_OR_FALSE=
+            "SPASupport must be eiter \"true\" or \"false\").";
 
-    private String serverPort= null;
+    private String serverPort = null;
     private String[] credentials = null;
     private String typeNames = null;
     private ElasticsearchServerConfig elasticsearchServerConfig = null;
     private RightsValidatorConfig rightsValidatorConfig= new RightsValidatorConfig();
     private DispatcherConfig dispatcherConfig = new DispatcherConfig();
+    private boolean SPASupport = false;
     private Properties props = null;
 
     /**
@@ -38,6 +41,7 @@ public class AppConfig extends Config {
             rightsValidatorConfig.validate(props) &
             _validate(props,"serverPort",ConfigConstants.SERVER_PORT) &
             _validate(props,"useEmbeddedES", "false") &
+            _validate(props,"SPASupport", "false") &
             _validate(props,"credentials") &
             _validate(props,"typeNames")
             );
@@ -98,6 +102,10 @@ public class AppConfig extends Config {
         }
     }
 
+    void setSPASupport(String SPASupport) {
+        this.SPASupport = SPASupport.equals("true") ? true : false;
+    }
+
     public ElasticsearchServerConfig getElasticsearchServerConfig() {
         return elasticsearchServerConfig;
     }
@@ -108,5 +116,9 @@ public class AppConfig extends Config {
 
     public RightsValidatorConfig getRightsValidatorConfig() {
         return rightsValidatorConfig;
+    }
+
+    public boolean getSPASupport() {
+        return SPASupport;
     }
 }

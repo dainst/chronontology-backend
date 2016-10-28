@@ -33,7 +33,7 @@ public class SearchDocumentHandler extends DocumentHandler {
             }
         }
 
-        Results results = dispatcher.dispatchSearch(req.pathInfo(), query);
+        Results results = dispatcher.dispatchSearch(type(req), query);
         return results;
     }
 }

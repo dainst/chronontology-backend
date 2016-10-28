@@ -28,7 +28,7 @@ public class PostDocumentHandler extends DocumentHandler {
         Document dm= makeDocumentModel(req,res,true);
         if (dm==null) return JsonUtils.json();
 
-        if (!dispatcher.dispatchPost(req.pathInfo(),dm.getId(),dm.j())) {
+        if (!dispatcher.dispatchPost(type(req),dm.getId(),dm.j())) {
 
             res.status(HTTP_INTERNAL_SERVER_ERROR);
             return JsonUtils.json();
