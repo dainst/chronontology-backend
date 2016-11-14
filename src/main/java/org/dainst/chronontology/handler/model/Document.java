@@ -25,10 +25,11 @@ public class Document {
     public static final String ID = "id";
     public static final String TYPE = "type";
     public static final String DATASET = "dataset";
+    public static final String DERIVED = "derived";
     public static final String NONE = "none";
 
     private static final String[] supportedProperties = new String[] {
-        VERSION,MODIFIED,CREATED,DATASET, RESOURCE
+        VERSION,MODIFIED,CREATED,DATASET,RESOURCE,DERIVED
     };
 
     private final ObjectNode node;
