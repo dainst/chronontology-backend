@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dainst.chronontology.Constants;
 
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -122,8 +122,8 @@ public class Document {
      * @return ISO 8601 formatted date.
      */
     private String date() {
-        LocalDateTime currentDateTime = LocalDateTime.now();
-        return currentDateTime.format(DateTimeFormatter.ISO_DATE_TIME)+"Z";
+        ZonedDateTime currentDateTime = ZonedDateTime.now();
+        return currentDateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 
 
