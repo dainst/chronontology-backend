@@ -101,8 +101,9 @@ public class Document {
      * of this document. The created value of the current document gets
      * overwritten by the created value from the old one.
      *
-     * The values of the modified array get merged with the modified date
-     * of the current document.
+     * The values of the modified array get merged with the created date
+     * of the current document. Additional modified dates in the current
+     * document are not expected and will be overwritten.
      *
      * @param oldDm
      * @return
@@ -137,7 +138,6 @@ public class Document {
         created.put("date",date());
         node.put(CREATED, created);
         ArrayNode a = node.putArray(MODIFIED);
-        a.add(created);
     }
 
     public JsonNode j() {

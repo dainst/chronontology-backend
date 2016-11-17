@@ -35,8 +35,7 @@ public class DocumentTest {
     private JsonNode nodeWithModifiedDates(JsonNode old, JsonNode niew) {
         ObjectNode example= (ObjectNode) json();
         ArrayNode a = example.putArray(Document.MODIFIED);
-        a.add(old.get(Document.MODIFIED).get(0));
-        a.add(niew.get(Document.MODIFIED).get(0));
+        a.add(niew.get(Document.CREATED));
         return example;
     }
 
@@ -145,11 +144,11 @@ public class DocumentTest {
     }
 
     @Test
-    public void setModifiedUserOnCreate() throws IOException {
+    public void doNotSetModifiedUserOnCreate() throws IOException {
         jsonAssertEquals(
                 new Document("1",TestConstants.TEST_TYPE,json(), ADMIN).j().
-                        get(Document.MODIFIED).get(0),
-                single("user",ADMIN));
+                        get(Document.MODIFIED),
+                json("[]"));
     }
 
     @Test
@@ -160,7 +159,7 @@ public class DocumentTest {
 
         jsonAssertEquals(
                 dm.merge(old).j().
-                        get(Document.MODIFIED).get(1),
+                        get(Document.MODIFIED).get(0),
                 single("user","ove"));
     }
 
