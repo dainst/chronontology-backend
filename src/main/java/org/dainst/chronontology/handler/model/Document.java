@@ -26,6 +26,7 @@ public class Document {
     public static final String TYPE = "type";
     public static final String DATASET = "dataset";
     public static final String DERIVED = "derived";
+    public static final String RELATED = "related";
     public static final String NONE = "none";
 
     private static final String[] supportedProperties = new String[] {
