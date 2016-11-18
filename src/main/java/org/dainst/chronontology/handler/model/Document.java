@@ -29,7 +29,7 @@ public class Document {
     public static final String NONE = "none";
 
     private static final String[] supportedProperties = new String[] {
-        VERSION,MODIFIED,CREATED,DATASET,RESOURCE,DERIVED
+        VERSION,MODIFIED,CREATED,DATASET,RESOURCE,DERIVED,RELATED
     };
 
     private final ObjectNode node;
