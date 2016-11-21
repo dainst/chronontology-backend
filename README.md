@@ -23,6 +23,11 @@ The binary with dependencies can be found here:
 build/libs/jeremy.jar
 ```
 
+For development the application can be run with
+```
+gradle run
+```
+
 ## Using the server
 
 The application can be used in two modes. In "connect" and in "single" mode.
