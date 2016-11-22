@@ -29,15 +29,51 @@ public class Controller {
     private final PostDocumentHandler postDocumentHandler;
     private final PutDocumentHandler putDocumentHandler;
     private final GetDocumentHandler getDocumentHandler;
+    private final UserHandler userHandler;
+
+    private void setUpStatusRoute(
+            final String routePrefix
+    ) {
+        logger.info("initializing endpoint for server status at " + routePrefix);
+
+        get(routePrefix, (req, res) -> {
+            setHeader(res);
+            return serverStatusHandler.handle(req, res);
+        });
+    }
+
+    private void setUpUserRoute(
+            final String routePrefix,
+            String[] credentials
+    ) {
+        final String userRoute = routePrefix+"user";
+
+        logger.info("initializing endpoints for user handling at " + userRoute + "/*");
+
+        before(userRoute + "/*", (req, res) -> {
+            boolean authenticated = (hasAuthHeader(req)) && isAuthenticated(req, credentials);
+            //if(!authenticated)
+                //handleAnonymousTypeRouteRequest(req, res);
+        });
+
+        get(userRoute, (req, res) -> {
+            setHeader(res);
+            return userHandler.handle(req,res);
+        });
+    }
 
     private void setUpTypeRoutes(
             final String routePrefix,
-            final String typeName
-    ) {
+            final String typeName,
+            String[] credentials
 
-        get( routePrefix, (req,res) -> {
-            setHeader(res);
-            return serverStatusHandler.handle(req,res);
+    ) {
+        logger.info("initializing endpoints for type: " + typeName + " at " + routePrefix+typeName+"/*");
+
+        before(routePrefix+typeName+"/*", (req, res) -> {
+            boolean authenticated = (hasAuthHeader(req)) && isAuthenticated(req, credentials);
+            if(!authenticated)
+                handleAnonymousTypeRouteRequest(req, res, typeName);
         });
 
         get( routePrefix + typeName, (req,res) -> {
@@ -79,22 +115,20 @@ public class Controller {
         res.header(HEADER_LOC, "/"+typeName+"/"+req.params(ID));
     }
 
-    private void setUpAuthorization(final String routePrefix,String[] credentials) {
-
-        before(routePrefix+"*", (req, res) -> {
-
-            boolean authenticated=
-                    (requestHeaderAuth(req)) && isAuthenticatedRequest(req,credentials);
-            if(!authenticated) anonymousRequest(req,res);
-        });
+    private void handleAnonymousTypeRouteRequest(Request req, Response res, final String typeName) {
+        req.attribute("user", Constants.USER_NAME_ANONYMOUS);
+        if (!req.requestMethod().equals("GET")) {
+            res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
+            res.status(HTTP_UNAUTHORIZED);
+            halt(HTTP_UNAUTHORIZED);
+        }
     }
 
-    private boolean requestHeaderAuth(Request req) {
-        return req.headers(HEADER_AUTH) != null
-                && req.headers(HEADER_AUTH).startsWith("Basic");
+    private boolean hasAuthHeader(Request req) {
+        return req.headers(HEADER_AUTH) != null && req.headers(HEADER_AUTH).startsWith("Basic");
     }
 
-    private boolean isAuthenticatedRequest(Request req,String[] credentials) {
+    private boolean isAuthenticated(Request req, String[] credentials) {
         boolean authenticated= false;
         for (String cred:credentials) {
             if (decode(req.headers(HEADER_AUTH)).equals(cred)) {
@@ -105,14 +139,6 @@ public class Controller {
         return authenticated;
     }
 
-    private void anonymousRequest(Request req,Response res) {
-        req.attribute("user", Constants.USER_NAME_ANONYMOUS);
-        if (!req.requestMethod().equals("GET")) {
-            res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
-            res.status(HTTP_UNAUTHORIZED);
-            halt(HTTP_UNAUTHORIZED);
-        }
-    }
 
 
     /**
@@ -136,6 +162,7 @@ public class Controller {
         this.dispatcher = dispatcher;
         this.searchDocumentHandler = new SearchDocumentHandler(dispatcher,rightsValidator);
         this.serverStatusHandler= new ServerStatusHandler(dispatcher);
+        this.userHandler = new UserHandler(dispatcher);
         this.postDocumentHandler = new PostDocumentHandler(dispatcher,rightsValidator);
         this.putDocumentHandler = new PutDocumentHandler(dispatcher,rightsValidator);
         this.getDocumentHandler = new GetDocumentHandler(dispatcher,rightsValidator);
@@ -148,13 +175,14 @@ public class Controller {
             routePrefix = "/data/";
         }
 
-        logger.info("initializing endpoints for types: " + Arrays.toString(typeNames));
+        setUpStatusRoute(routePrefix);
+        setUpUserRoute(routePrefix, credentials);
 
-        for (String typeName:typeNames)
-            setUpTypeRoutes(routePrefix,typeName);
+        for (String typeName:typeNames) {
+            setUpTypeRoutes(routePrefix, typeName, credentials);
+        }
 
         validateCredentials(credentials);
-        setUpAuthorization(routePrefix,credentials);
     }
 
     private void validateCredentials(String[] credentials) {
