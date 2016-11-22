@@ -1,18 +1,21 @@
 package org.dainst.chronontology;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.config.AppConfig;
 import org.dainst.chronontology.handler.*;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
 import org.dainst.chronontology.handler.model.RightsValidator;
+import org.dainst.chronontology.util.JsonUtils;
 import spark.Request;
 import spark.Response;
 import spark.Spark;
 
-import java.util.Arrays;
-
 import static org.dainst.chronontology.Constants.*;
 import static spark.Spark.*;
+
+import static org.dainst.chronontology.util.JsonUtils.json;
 
 
 /**
@@ -34,7 +37,7 @@ public class Controller {
     private void setUpStatusRoute(
             final String routePrefix
     ) {
-        logger.info("initializing endpoint for server status at " + routePrefix);
+        logger.info("initializing endpoint for server status at '" + routePrefix +"'...");
 
         get(routePrefix, (req, res) -> {
             setHeader(res);
@@ -42,22 +45,22 @@ public class Controller {
         });
     }
 
-    private void setUpUserRoute(
+    private void setUpUserRoutes(
             final String routePrefix,
             String[] credentials
     ) {
-        final String userRoute = routePrefix+"user";
+        final String userRoute = routePrefix + "user/";
 
-        logger.info("initializing endpoints for user handling at " + userRoute + "/*");
+        logger.info("initializing endpoints for user handling at '" + userRoute + "*'...");
 
-        before(userRoute + "/*", (req, res) -> {
-            boolean authenticated = (hasAuthHeader(req)) && isAuthenticated(req, credentials);
-            //if(!authenticated)
-                //handleAnonymousTypeRouteRequest(req, res);
-        });
-
-        get(userRoute, (req, res) -> {
+        get(userRoute + "login", (req, res) -> {
             setHeader(res);
+
+            boolean authenticated = (hasAuthHeader(req)) && authenticate(req, credentials);
+
+            if(!authenticated){
+                return handleFailedAuthentication(req, res);
+            }
             return userHandler.handle(req,res);
         });
     }
@@ -68,10 +71,10 @@ public class Controller {
             String[] credentials
 
     ) {
-        logger.info("initializing endpoints for type: " + typeName + " at " + routePrefix+typeName+"/*");
+        logger.info("initializing endpoints for type: " + typeName + " at '" + routePrefix+typeName+"/*'...");
 
-        before(routePrefix+typeName+"/*", (req, res) -> {
-            boolean authenticated = (hasAuthHeader(req)) && isAuthenticated(req, credentials);
+        before(routePrefix + typeName + "/*", (req, res) -> {
+            boolean authenticated = (hasAuthHeader(req)) && authenticate(req, credentials);
             if(!authenticated)
                 handleAnonymousTypeRouteRequest(req, res, typeName);
         });
@@ -124,11 +127,21 @@ public class Controller {
         }
     }
 
+    private Object handleFailedAuthentication(Request req, Response res) {
+        req.attribute("user", Constants.USER_NAME_ANONYMOUS);
+        res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
+        res.status(HTTP_BAD_REQUEST);
+
+        JsonNode n= JsonUtils.json();
+        ((ObjectNode)n).put("status","failure");
+        return n;
+    }
+
     private boolean hasAuthHeader(Request req) {
         return req.headers(HEADER_AUTH) != null && req.headers(HEADER_AUTH).startsWith("Basic");
     }
 
-    private boolean isAuthenticated(Request req, String[] credentials) {
+    private boolean authenticate(Request req, String[] credentials) {
         boolean authenticated= false;
         for (String cred:credentials) {
             if (decode(req.headers(HEADER_AUTH)).equals(cred)) {
@@ -176,7 +189,7 @@ public class Controller {
         }
 
         setUpStatusRoute(routePrefix);
-        setUpUserRoute(routePrefix, credentials);
+        setUpUserRoutes(routePrefix, credentials);
 
         for (String typeName:typeNames) {
             setUpTypeRoutes(routePrefix, typeName, credentials);
