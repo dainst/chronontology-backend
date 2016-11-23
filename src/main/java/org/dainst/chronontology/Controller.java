@@ -76,7 +76,7 @@ public class Controller {
         before(routePrefix + typeName + "/*", (req, res) -> {
             boolean authenticated = (hasAuthHeader(req)) && authenticate(req, credentials);
             if(!authenticated)
-                handleAnonymousTypeRouteRequest(req, res, typeName);
+                handleAnonymousTypeRouteRequest(req, res);
         });
 
         get( routePrefix + typeName, (req,res) -> {
@@ -106,8 +106,23 @@ public class Controller {
             setHeader(req,res,typeName);
             return putDocumentHandler.handle(req,res);
         });
-
     }
+
+    private void setUpAllTypesRoute(
+            final String routePrefix,
+            final String[] credentials
+    ) {
+        get( routePrefix + '_' + "/", (req,res) -> {
+            boolean authenticated = (hasAuthHeader(req)) && authenticate(req, credentials);
+            if(!authenticated)
+                handleAnonymousTypeRouteRequest(req, res);
+
+            setHeader(res);
+            return searchDocumentHandler.handle(req,res);
+        });
+    }
+
+
 
     private void setHeader(Response res) {
         res.header(HEADER_CT, HEADER_JSON);
@@ -118,7 +133,7 @@ public class Controller {
         res.header(HEADER_LOC, "/"+typeName+"/"+req.params(ID));
     }
 
-    private void handleAnonymousTypeRouteRequest(Request req, Response res, final String typeName) {
+    private void handleAnonymousTypeRouteRequest(Request req, Response res) {
         req.attribute("user", Constants.USER_NAME_ANONYMOUS);
         if (!req.requestMethod().equals("GET")) {
             res.header("WWW-Authenticate", "Basic realm=\"Restricted\"");
@@ -191,6 +206,7 @@ public class Controller {
         setUpStatusRoute(routePrefix);
         setUpUserRoutes(routePrefix, credentials);
 
+        setUpAllTypesRoute(routePrefix,credentials);
         for (String typeName:typeNames) {
             setUpTypeRoutes(routePrefix, typeName, credentials);
         }

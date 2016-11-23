@@ -87,8 +87,15 @@ public class ElasticsearchDatastore implements Datastore {
             final String type,
             Query query) {
 
+        String searchSegment;
+        if (type.equals("_")) {
+            searchSegment = "_search";
+        } else {
+            searchSegment = type + "/_search";
+        }
+
         JsonNode json = JsonUtils.json(buildESRequest(query));
-        final JsonNode response = client.post("/" + indexName + "/" + type + "/_search", json);
+        final JsonNode response = client.post("/" + indexName + "/" + searchSegment, json);
 
         return makeResultsFrom(searchHits(response), response.get("hits").get("total").asInt());
     }
