@@ -79,6 +79,12 @@ public class Controller {
                 handleAnonymousTypeRouteRequest(req, res);
         });
 
+        before(routePrefix + typeName, (req, res) -> {
+            boolean authenticated = (hasAuthHeader(req)) && authenticate(req, credentials);
+            if(!authenticated)
+                handleAnonymousTypeRouteRequest(req, res, typeName);
+        });
+
         get( routePrefix + typeName, (req,res) -> {
             setHeader(res);
             return searchDocumentHandler.handle(req,res);
