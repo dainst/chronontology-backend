@@ -82,7 +82,7 @@ public class Controller {
         before(routePrefix + typeName, (req, res) -> {
             boolean authenticated = (hasAuthHeader(req)) && authenticate(req, credentials);
             if(!authenticated)
-                handleAnonymousTypeRouteRequest(req, res, typeName);
+                handleAnonymousTypeRouteRequest(req, res);
         });
 
         get( routePrefix + typeName, (req,res) -> {
