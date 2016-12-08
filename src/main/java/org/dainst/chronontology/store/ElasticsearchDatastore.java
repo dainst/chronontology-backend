@@ -127,8 +127,6 @@ public class ElasticsearchDatastore implements Datastore {
                 .size(query.getSize());
 
         QueryBuilder qb = QueryBuilders.queryStringQuery(query.getQ());
-        System.out.println("q:"+query.getQ());
-
         sb.query(qb);
 
         if (!query.getDatasets().isEmpty()) {
