@@ -31,7 +31,7 @@ public class Query {
      *             (default 10)
      */
     public Query(String q, int from, int size) {
-        this.q = q.isEmpty() ? "*" : q;
+        this.q = q.isEmpty() ? "*" : stripQuotes(q);
         this.from = from;
         this.size = size;
     }
@@ -46,6 +46,15 @@ public class Query {
         int from = params.containsKey("from") ? Integer.parseInt(params.get("from")[0]) : DEFAULT_FROM;
         int size = params.containsKey("size") ? Integer.parseInt(params.get("size")[0]) : DEFAULT_SIZE;
         return new Query(q, from, size);
+    }
+
+    private String stripQuotes(final String q) {
+        String ret = q;
+        if (q.startsWith("\"") && q.endsWith("\"")) {
+            ret = ret.substring(1);
+            ret = ret.substring(0,ret.length()-1);
+        }
+        return ret;
     }
 
     public String getQ() {

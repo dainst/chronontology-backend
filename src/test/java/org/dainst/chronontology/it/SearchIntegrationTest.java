@@ -152,4 +152,30 @@ public class SearchIntegrationTest extends IntegrationTest {
                     .get("results")).size()
             ,1);
     }
+
+    @Test
+    public void quotesOnComplexSearches() throws IOException, InterruptedException {
+        postSampleData("ds1","a","b","a");
+        postSampleData("ds2","a","b","a");
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
+
+        assertEquals(
+                ((ArrayNode) client.get(TYPE_ROUTE + "?q=\"sampleField:a AND dataset:ds1\"")
+                        .get("results")).size()
+                ,2);
+    }
+
+    @Test
+    public void quotesOnComplexSearchesWorkWithSizeAndOFrom() throws IOException, InterruptedException {
+        postSampleData("ds1","a","a","a");
+        postSampleData("ds2","a","b","a");
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
+
+        assertEquals(
+                ((ArrayNode) client.get(TYPE_ROUTE + "?q=\"sampleField:a AND dataset:ds1\"&size=4&from=1")
+                        .get("results")).size()
+                ,2);
+    }
 }
