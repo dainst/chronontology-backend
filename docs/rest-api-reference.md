@@ -124,6 +124,63 @@ in the rest of the document.
   like missing access to a datastore.
 ```
 
+## POST /update_mapping
+Post a new Elastic Search mapping. The datastore configuration has to be set to **connected mode**. See [here](datastore-configuration-reference.md) for information on how to configure the datastores. 
+
+The request body must contain the mapping in valid JSON. Example:
+
+```
+{
+  "period": {
+    "dynamic" : "true",
+    "properties": {
+      "@id": {
+        "type": "string"
+      },
+      "resource" : {
+        "properties":{
+          "types":{
+            "type": "string",
+            "index": "not_analyzed"
+          },
+          "provenance":
+          {
+            "type":"string",
+            "index": "not_analyzed"
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+### Response body
+
+In case of a successful update:
+
+```
+{
+    "status": "success"
+}
+```
+
+In case of errors:.
+
+```
+{
+    "status": "failure"
+}
+```
+
+### Status codes: 
+
+```
+200 if mapping was updated successfully.
+400 if either the server is running in the wrong datastore mode or the mapping is missing.
+401 if authorization is missing 
+```
+
 ## PUT /:type/:id
 
 Used to update an existing document or to create 

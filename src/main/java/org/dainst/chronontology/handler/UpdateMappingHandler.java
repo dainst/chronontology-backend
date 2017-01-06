@@ -37,12 +37,26 @@ public class UpdateMappingHandler implements Handler {
         JsonNode mapping = JsonUtils.json(req.body());
         JsonNode result= JsonUtils.json();
 
-        ElasticsearchDatastore esDatastore = (ElasticsearchDatastore) dispatcher.getDatastoreByClass(ElasticsearchDatastore.class);
-        FilesystemDatastore fsDatastore = (FilesystemDatastore) dispatcher.getDatastoreByClass(FilesystemDatastore.class);
-
-        if(esDatastore == null || fsDatastore == null) {
+        if(mapping == null) {
             res.status(HTTP_BAD_REQUEST);
-            ((ObjectNode)result).put("status","failure, simple dispatcher mode active.");
+            ((ObjectNode)result).put("status","failure");
+            logger.info("User tried to update mapping, but not provide any in POST request.");
+            return result;
+        }
+
+        ElasticsearchDatastore esDatastore = (ElasticsearchDatastore) dispatcher.getDatastoreByClass(ElasticsearchDatastore.class);
+        if(esDatastore == null) {
+            res.status(HTTP_BAD_REQUEST);
+            ((ObjectNode)result).put("status","failure");
+            logger.info("No elastic search datastore found for mapping update.");
+            return result;
+        }
+
+        FilesystemDatastore fsDatastore = (FilesystemDatastore) dispatcher.getDatastoreByClass(FilesystemDatastore.class);
+        if(fsDatastore == null) {
+            res.status(HTTP_BAD_REQUEST);
+            ((ObjectNode)result).put("status","failure");
+            logger.info("No filesystem datastore found for mapping update.");
             return result;
         }
 
@@ -56,6 +70,7 @@ public class UpdateMappingHandler implements Handler {
         rebuildElasticSearchIndexFromFilesystem(fsDatastore, esDatastore);
 
         res.status(HTTP_OK);
+
         ((ObjectNode)result).put("status","success");
 
         return result;
