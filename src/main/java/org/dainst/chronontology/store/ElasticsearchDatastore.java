@@ -120,12 +120,6 @@ public class ElasticsearchDatastore implements Datastore {
         return searchHits;
     }
 
-    private JsonNode trimFacetOutOfAggregations(JsonNode aggregation){
-        JsonNode result = null;
-        // TODO: Remove noisy elasticsearch data
-        return result;
-    }
-
     private Results makeResultsFrom(final ArrayNode searchHits, int total, final JsonNode facets) {
         if (searchHits==null) return null;
 
@@ -152,11 +146,20 @@ public class ElasticsearchDatastore implements Datastore {
             sb.aggregation(AggregationBuilders.terms(facet).field(facet));
         }
 
+
         if (!query.getDatasets().isEmpty()) {
             BoolFilterBuilder fb = FilterBuilders.boolFilter();
             for (String dataset : query.getDatasets()) {
                 fb.should(FilterBuilders.termFilter("dataset", dataset));
             }
+            sb.postFilter(fb);
+        }
+
+        for (Map.Entry<String, String> entry : query.getFacetQueries().entrySet())
+        {
+            BoolFilterBuilder fb = FilterBuilders.boolFilter();
+            fb.must(FilterBuilders.termFilter(entry.getKey(), entry.getValue()));
+            // TODO: Parse for possible integer values?
             sb.postFilter(fb);
         }
 

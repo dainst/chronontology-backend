@@ -317,6 +317,14 @@ can be used in the same query.
 GET /typename/?q=*&facet=field1&facet=field2
 ```
 
+The **fq** query parameter is used to restrict the results, returning only results with the specified value in the 
+specified field. Multiple **fq** parameters can be used in the same query.
+ 
+```
+GET /typename/?q=*&fq=field1::valueField1&fq=fq=field1::valueField2
+```
+
+
 Another means of narrowing down the result set is by use of **query terms**.
 The provided features and the syntax of the query language depends on the datastore implementation.
 The elasticsearch datastore supports [the query string mini language](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax)
@@ -428,7 +436,7 @@ including the number of documents that did not have the respective field.
                 {
                     "key": "field2_value1",
                     "doc_count": 1
-                },g
+                },
                 {
                     "key": "field2_value2",
                     "doc_count": 3
