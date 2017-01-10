@@ -321,7 +321,7 @@ The **fq** query parameter is used to restrict the results, returning only resul
 specified field. Multiple **fq** parameters can be used in the same query.
  
 ```
-GET /typename/?q=*&fq=field1::valueField1&fq=fq=field1::valueField2
+GET /typename/?q=*&fq=field1:valueField1&fq=fq=field1:valueField2
 ```
 
 

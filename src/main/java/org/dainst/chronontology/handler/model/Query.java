@@ -27,7 +27,7 @@ public class Query {
     private static final int DEFAULT_SIZE = 10;
     private static final String[] DEFAULT_FACETS = new String[0];
     private static final String[] DEFAULT_FACET_QUERY = new String[0];
-    private static final String FACET_QUERY_SPLIT_REGEX = "::";
+    private static final String FACET_QUERY_SPLIT_REGEX = ":";
 
     private final String q;
 
@@ -64,8 +64,11 @@ public class Query {
 
         this.facetQueries = new HashMap<>();
         for(String facetQuery : facetQueries) {
-            String[] parts = facetQuery.split(FACET_QUERY_SPLIT_REGEX);
-            this.facetQueries.put(stripQuotes(parts[0]), stripQuotes(parts[1]));
+            String[] parts = facetQuery.split(FACET_QUERY_SPLIT_REGEX,2);
+            this.facetQueries.put(
+                    stripQuotes(parts[0]),
+                    stripQuotes(parts[1]).replace("\\:", ":")
+            );
         }
     }
 

@@ -197,10 +197,24 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
 
-        JsonNode results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField::a");
+        JsonNode results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:a");
         assertEquals(results.get("total").asInt(), 4);
 
-        results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField::b");
+        results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:b");
+        assertEquals(results.get("total").asInt(), 1);
+    }
+
+    @Test
+    public void searchFacetQueryWithEscapedColon() throws IOException, InterruptedException {
+        postSampleData("ds1","a:b","a:b","a");
+        postSampleData("ds2","b:a","b","c");
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
+
+        JsonNode results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:a\\:b");
+        assertEquals(results.get("total").asInt(), 2);
+
+        results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:b\\:a");
         assertEquals(results.get("total").asInt(), 1);
     }
 }
