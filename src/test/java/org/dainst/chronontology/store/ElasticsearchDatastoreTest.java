@@ -67,18 +67,21 @@ public class ElasticsearchDatastoreTest {
     public void findDocsMatchingTermWithFromAndSizeAndDatasetNone() {
 
         Query query = new Query("a", 0, 1);
+        query.setSortField("resource.id");
         query.addDataset("none");
         JsonTestUtils.assertResultsAreFound(
                 store.search(TEST_TYPE, query).j(),
                 Arrays.asList("1"));
 
         query = new Query("a", 1, 1);
+        query.setSortField("resource.id");
         query.addDataset("none");
         JsonTestUtils.assertResultsAreFound(
                 store.search(TEST_TYPE, query).j(),
                 Arrays.asList("3"));
 
         query = new Query("a", 1, 2);
+        query.setSortField("resource.id");
         query.addDataset("none");
         JsonTestUtils.assertResultsAreFound(
                 store.search(TEST_TYPE, query).j(),
@@ -100,6 +103,7 @@ public class ElasticsearchDatastoreTest {
     public void findAllDocsWithDifferentDatasetsAndSizeAndFrom() {
 
         Query query = new Query("", 1, 2);
+        query.setSortField("resource.id");
         query.addDataset("none");
         query.addDataset("dataset1");
         JsonTestUtils.assertResultsAreFound(
@@ -120,11 +124,13 @@ public class ElasticsearchDatastoreTest {
     public void findWithSizeAndFromWithoutOtherSearchTerms() {
 
         Query query = new Query("", 0, 1);
+        query.setSortField("resource.id");
         JsonTestUtils.assertResultsAreFound(
                 store.search(TEST_TYPE, query).j(),
                 Arrays.asList("1"));
 
         query = new Query("", 2, 1);
+        query.setSortField("resource.id");
         JsonTestUtils.assertResultsAreFound(
                 store.search(TEST_TYPE, query).j(),
                 Arrays.asList("3"));

@@ -2,7 +2,7 @@ package org.dainst.chronontology.store;
 
 import org.apache.commons.io.FileUtils;
 import org.dainst.chronontology.TestConstants;
-import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.node.Node;
 
 import java.io.File;
@@ -19,6 +19,7 @@ public class ESServerTestUtil {
     private static final String HTTP_PORT = "9201";
     private static final String ES_URL= "http://localhost:"+HTTP_PORT;
     private static final String TEST_ES_DATA = TestConstants.TEST_FOLDER+"/test_es_data";
+    private static final String TEST_ES_HOME = TestConstants.TEST_FOLDER+"/test_es_home";
 
     public static String getUrl() {
         return ES_URL;
@@ -26,10 +27,11 @@ public class ESServerTestUtil {
 
     public static void startElasticSearchServer() {
 
-        ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings.settingsBuilder()
+        Settings.Builder elasticsearchSettings = Settings.settingsBuilder()
                 .put("cluster.name", "chronontology_connected_unit_testing_cluster")
                 .put("http.port",HTTP_PORT)
-                .put("path.data", TEST_ES_DATA);
+                .put("path.data", TEST_ES_DATA)
+                .put("path.home", TEST_ES_HOME);
 
         esNode = nodeBuilder()
                 .local(true)

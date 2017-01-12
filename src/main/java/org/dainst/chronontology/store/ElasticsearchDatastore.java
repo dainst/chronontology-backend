@@ -139,29 +139,31 @@ public class ElasticsearchDatastore implements Datastore {
                 .from(query.getFrom())
                 .size(query.getSize());
 
-        QueryBuilder qb = QueryBuilders.queryStringQuery(query.getQ());
-        sb.query(qb);
+        if (query.getSortField() != null) {
+            sb.sort(query.getSortField());
+        }
 
-        for(String facet : query.getFacets()){
+        BoolQueryBuilder qb = QueryBuilders.boolQuery();
+        qb.must(QueryBuilders.queryStringQuery(query.getQ()));
+
+        for (String facet : query.getFacets()) {
             sb.aggregation(AggregationBuilders.terms(facet).field(facet));
         }
 
-
         if (!query.getDatasets().isEmpty()) {
-            BoolFilterBuilder fb = FilterBuilders.boolFilter();
+            BoolQueryBuilder fq = QueryBuilders.boolQuery();
             for (String dataset : query.getDatasets()) {
-                fb.should(FilterBuilders.termFilter("dataset", dataset));
+                fq = fq.should(QueryBuilders.termQuery("dataset", dataset));
             }
-            sb.postFilter(fb);
+            qb = qb.filter(fq);
         }
 
-        for (Map.Entry<String, String> entry : query.getFacetQueries().entrySet())
-        {
-            BoolFilterBuilder fb = FilterBuilders.boolFilter();
-            fb.must(FilterBuilders.termFilter(entry.getKey(), entry.getValue()));
+        for (Map.Entry<String, String> entry : query.getFacetQueries().entrySet()) {
+            qb = qb.filter(QueryBuilders.termQuery(entry.getKey(), entry.getValue()));
             // TODO: Parse for possible integer values?
-            sb.postFilter(fb);
         }
+
+        sb.query(qb);
 
         return sb.toString();
     }

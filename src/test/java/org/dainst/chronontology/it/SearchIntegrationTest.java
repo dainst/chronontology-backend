@@ -40,7 +40,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         ids.remove(1);
 
         assertResultsAreFound(
-                client.get(TYPE_ROUTE + "?q=sampleField:%22%2Ftype%2F1%22")
+                client.get(TYPE_ROUTE + "?q=sampleField:\"%2Ftype%2F1\"")
                 ,ids);
     }
 

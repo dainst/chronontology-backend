@@ -27,8 +27,7 @@ public class ESClientTestUtil {
     }
 
     public static void deleteESTypeAndMapping() {
-        esClient.delete("/"+ TEST_INDEX +"/"+TestConstants.TEST_TYPE);
-        esClient.delete("/"+ TEST_INDEX +"/"+TestConstants.TEST_TYPE);
+        esClient.delete("/"+ TEST_INDEX);
     }
 
     public static void refreshES() {

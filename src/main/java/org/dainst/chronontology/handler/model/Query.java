@@ -35,6 +35,8 @@ public class Query {
 
     private final int size;
 
+    private String sortField = null;
+
     private final String[] facets;
 
     private final Map<String, String> facetQueries;
@@ -129,6 +131,14 @@ public class Query {
 
     public List<String> getDatasets() {
         return datasets;
+    }
+
+    public String getSortField() {
+        return sortField;
+    }
+
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
     }
 
 }

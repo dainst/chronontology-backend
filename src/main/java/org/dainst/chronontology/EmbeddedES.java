@@ -1,8 +1,7 @@
 package org.dainst.chronontology;
 
-import org.dainst.chronontology.Constants;
 import org.dainst.chronontology.config.ElasticsearchServerConfig;
-import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
 
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
@@ -15,10 +14,11 @@ public class EmbeddedES {
 
     public EmbeddedES(ElasticsearchServerConfig config) {
 
-        ImmutableSettings.Builder elasticsearchSettings = ImmutableSettings.settingsBuilder()
+        Settings.Builder elasticsearchSettings = Settings.settingsBuilder()
                 .put("cluster.name", config.getClusterName())
                 .put("http.port", config.getPort())
-                .put("path.data", config.getDataPath());
+                .put("path.data", config.getDataPath())
+                .put("path.home", config.getHomePath());
 
         nodeBuilder()
                 .local(true)

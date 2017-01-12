@@ -14,6 +14,7 @@ public class ElasticsearchServerConfig extends Config {
 
     private String port= null;
     private String dataPath= null;
+    private String homePath= null;
     private String clusterName= null;
 
     public ElasticsearchServerConfig() {
@@ -27,6 +28,7 @@ public class ElasticsearchServerConfig extends Config {
         return (
             _validate(props,"port", ConfigConstants.EMBEDDED_ES_PORT) &&
             _validate(props,"dataPath", ConfigConstants.ES_SERVER_DATA_PATH) &&
+            _validate(props,"homePath", ConfigConstants.ES_SERVER_HOME_PATH) &&
             _validate(props,"clusterName", ConfigConstants.ES_SERVER_CLUSTER_NAME)
         );
     }
@@ -53,6 +55,10 @@ public class ElasticsearchServerConfig extends Config {
         this.dataPath= dataPath;
     }
 
+    void setHomePath(String homePath) {
+        this.homePath= homePath;
+    }
+
     void setClusterName(String clusterName) {
         this.clusterName= clusterName;
     }
@@ -63,5 +69,9 @@ public class ElasticsearchServerConfig extends Config {
 
     public String getDataPath() {
         return dataPath;
+    }
+
+    public String getHomePath() {
+        return homePath;
     }
 }
