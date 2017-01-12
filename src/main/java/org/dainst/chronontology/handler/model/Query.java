@@ -1,6 +1,17 @@
 package org.dainst.chronontology.handler.model;
 
+import org.elasticsearch.common.xcontent.ToXContent;
+import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.search.aggregations.*;
+import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.filters.FiltersAggregationBuilder;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregator;
+import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregatorFactory;
+
+import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +25,9 @@ public class Query {
     private static final String DEFAULT_Q = "*";
     private static final int DEFAULT_FROM = 0;
     private static final int DEFAULT_SIZE = 10;
+    private static final String[] DEFAULT_FACETS = new String[0];
+    private static final String[] DEFAULT_FACET_QUERY = new String[0];
+    private static final String FACET_QUERY_SPLIT_REGEX = ":";
 
     private final String q;
 
@@ -21,7 +35,12 @@ public class Query {
 
     private final int size;
 
+    private final String[] facets;
+
+    private final Map<String, String> facetQueries;
+
     private List<String> datasets = new ArrayList<String>();
+
 
     /**
      * @param q the query string (default "*")
@@ -29,11 +48,32 @@ public class Query {
      *             the total result set (default 0)
      * @param size the maximum number results to be returned
      *             (default 10)
+     * @param facets list of facets which are to be returned with the query
+     * @param facetQueries list of facet queries, restricting the search result
      */
-    public Query(String q, int from, int size) {
+
+    public Query(String q, int from, int size, String[] facets, String[] facetQueries){
         this.q = q.isEmpty() ? "*" : stripQuotes(q);
         this.from = from;
         this.size = size;
+
+        for(int i = 0; i < facets.length; i++){
+            facets[i] = stripQuotes(facets[i]);
+        }
+        this.facets = facets;
+
+        this.facetQueries = new HashMap<>();
+        for(String facetQuery : facetQueries) {
+            String[] parts = facetQuery.split(FACET_QUERY_SPLIT_REGEX,2);
+            this.facetQueries.put(
+                    stripQuotes(parts[0]),
+                    stripQuotes(parts[1]).replace("\\:", ":")
+            );
+        }
+    }
+
+    public Query(String q, int from, int size) {
+        this(q, from, size, DEFAULT_FACETS, DEFAULT_FACET_QUERY);
     }
 
     /**
@@ -45,7 +85,9 @@ public class Query {
         String q = params.containsKey("q") ? params.get("q")[0] : DEFAULT_Q;
         int from = params.containsKey("from") ? Integer.parseInt(params.get("from")[0]) : DEFAULT_FROM;
         int size = params.containsKey("size") ? Integer.parseInt(params.get("size")[0]) : DEFAULT_SIZE;
-        return new Query(q, from, size);
+        String[] facets = params.containsKey("facet") ? params.get("facet") : DEFAULT_FACETS;
+        String[] facetQueries = params.containsKey("fq") ? params.get("fq") : DEFAULT_FACET_QUERY;
+        return new Query(q, from, size, facets, facetQueries);
     }
 
     private String stripQuotes(final String q) {
@@ -67,6 +109,14 @@ public class Query {
 
     public int getSize() {
         return size;
+    }
+
+    public String[] getFacets() {
+        return facets;
+    }
+
+    public Map<String, String> getFacetQueries(){
+        return facetQueries;
     }
 
     /**

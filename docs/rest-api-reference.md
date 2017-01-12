@@ -310,6 +310,21 @@ GET /typename?size=3
 
 The first example will return the 10 results starting from the 10th result.
 
+The **facet** query parameter is used to retrieve associated facets for the specified field. Multiple **facet** parameters 
+can be used in the same query.
+ 
+```
+GET /typename/?q=*&facet=field1&facet=field2
+```
+
+The **fq** query parameter is used to restrict the results, returning only results with the specified value in the 
+specified field. Multiple **fq** parameters can be used in the same query.
+ 
+```
+GET /typename/?q=*&fq=field1:valueField1&fq=fq=field1:valueField2
+```
+
+
 Another means of narrowing down the result set is by use of **query terms**.
 The provided features and the syntax of the query language depends on the datastore implementation.
 The elasticsearch datastore supports [the query string mini language](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax)
@@ -350,11 +365,10 @@ search results for datasets he is allowed to see. For more information on datase
 
 ### Response body 
 
-The response body is a json object with a top level array 
-field named "results" which
-contains the json for the search hits and an attribute "total"
-that gives the total number of resources in the datastore that
-match the query and that the user is allowed to access.
+The response body is a json object with a top level array field named "results" which contains the json for the 
+search hits. The attribute "total" gives the total number of resources in the datastore that match the query and 
+that the user is allowed to access. The "facets" object contains the results for the requested field facets, 
+including the number of documents that did not have the respective field.
 
 ```
 {
@@ -398,7 +412,39 @@ match the query and that the user is allowed to access.
         },
         ...
     ],
-    "total": 23
+    "total": 23,
+    "facets": {
+        "field1": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 3,
+            "buckets": [
+                {
+                    "key": "field1_value1",
+                    "doc_count": 5
+                },
+                {
+                    "key": "field1_value2",
+                    "doc_count": 4
+                },
+                ...
+            ]
+        },
+        "field2": {
+            "doc_count_error_upper_bound": 0,
+            "sum_other_doc_count": 7,
+            "buckets": [
+                {
+                    "key": "field2_value1",
+                    "doc_count": 1
+                },
+                {
+                    "key": "field2_value2",
+                    "doc_count": 3
+                },
+                ...
+            ]
+        }
+    }
 }
 ```
 

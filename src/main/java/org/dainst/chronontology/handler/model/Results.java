@@ -4,9 +4,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.Controller;
 
+import javax.management.ObjectName;
 import java.io.IOException;
 
 /**
@@ -21,14 +23,14 @@ public class Results {
     public Results(String arrayName) {
         this.arrayName = arrayName;
         try {
-            json = new ObjectMapper().readTree("{\""+this.arrayName+"\":[]}");
+            json = new ObjectMapper().readTree("{\""+this.arrayName+"\":[], \"facets\":{} }");
         } catch (IOException e) {} // WILL NOT HAPPEN
     }
 
     public Results(String arrayName, int total) {
         this.arrayName = arrayName;
         try {
-            json = new ObjectMapper().readTree("{\""+this.arrayName+"\":[], \"total\":" + String.valueOf(total) + "}");
+            json = new ObjectMapper().readTree("{\""+this.arrayName+"\":[], \"total\":" + String.valueOf(total) + ", \"facets\":{} }");
         } catch (IOException e) {} // WILL NOT HAPPEN
     }
 
@@ -40,6 +42,12 @@ public class Results {
         logger.info(json);
         ArrayNode data=(ArrayNode) json.get(this.arrayName);
         data.add(jsonToAdd);
+        return this;
+    }
+
+    public Results addFacet(final JsonNode jsonToAdd) {
+        logger.info(json);
+        ((ObjectNode)json.get("facets")).setAll((ObjectNode) jsonToAdd);
         return this;
     }
 

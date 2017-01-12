@@ -1,16 +1,21 @@
 package org.dainst.chronontology.store;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.dainst.chronontology.handler.model.Query;
 import org.dainst.chronontology.handler.model.Results;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.dainst.chronontology.util.JsonUtils;
 import org.elasticsearch.index.query.*;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Accesses elastic search via its rest api.
@@ -97,7 +102,12 @@ public class ElasticsearchDatastore implements Datastore {
         JsonNode json = JsonUtils.json(buildESRequest(query));
         final JsonNode response = client.post("/" + indexName + "/" + searchSegment, json);
 
-        return makeResultsFrom(searchHits(response), response.get("hits").get("total").asInt());
+        return makeResultsFrom(
+                searchHits(response),
+                response.get("hits").get("total").asInt(),
+                response.get("aggregations")
+                // trimFacetOutOfAggregations(response.get("aggregations"))
+        );
     }
 
     private ArrayNode searchHits(JsonNode response) {
@@ -110,12 +120,15 @@ public class ElasticsearchDatastore implements Datastore {
         return searchHits;
     }
 
-    private Results makeResultsFrom(final ArrayNode searchHits, int total) {
+    private Results makeResultsFrom(final ArrayNode searchHits, int total, final JsonNode facets) {
         if (searchHits==null) return null;
 
         Results results = new Results("results", total);
         for (JsonNode o:searchHits) {
             results.add(o.get("_source"));
+        }
+        if(facets != null){
+            results.addFacet(facets);
         }
         return results;
     }
@@ -129,11 +142,24 @@ public class ElasticsearchDatastore implements Datastore {
         QueryBuilder qb = QueryBuilders.queryStringQuery(query.getQ());
         sb.query(qb);
 
+        for(String facet : query.getFacets()){
+            sb.aggregation(AggregationBuilders.terms(facet).field(facet));
+        }
+
+
         if (!query.getDatasets().isEmpty()) {
             BoolFilterBuilder fb = FilterBuilders.boolFilter();
             for (String dataset : query.getDatasets()) {
                 fb.should(FilterBuilders.termFilter("dataset", dataset));
             }
+            sb.postFilter(fb);
+        }
+
+        for (Map.Entry<String, String> entry : query.getFacetQueries().entrySet())
+        {
+            BoolFilterBuilder fb = FilterBuilders.boolFilter();
+            fb.must(FilterBuilders.termFilter(entry.getKey(), entry.getValue()));
+            // TODO: Parse for possible integer values?
             sb.postFilter(fb);
         }
 

@@ -1,5 +1,6 @@
 package org.dainst.chronontology.it;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import org.dainst.chronontology.TestConstants;
 import org.dainst.chronontology.handler.model.Document;
@@ -48,10 +49,8 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         List<String> ids= postSampleData(null,"abc","def");
         ids.remove(0);
-
-        assertResultsAreFound(
-                client.get(TYPE_ROUTE + "?q=def")
-                ,ids);
+        JsonNode result = client.get(TYPE_ROUTE + "?q=def");
+        assertResultsAreFound( result, ids);
     }
 
     @Test
@@ -177,5 +176,45 @@ public class SearchIntegrationTest extends IntegrationTest {
                 ((ArrayNode) client.get(TYPE_ROUTE + "?q=\"sampleField:a AND dataset:ds1\"&size=4&from=1")
                         .get("results")).size()
                 ,2);
+    }
+
+    @Test
+    public void searchWithFacet() throws IOException, InterruptedException {
+        postSampleData("ds1","a","a","a");
+        postSampleData("ds2","a","b","a");
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
+
+        JsonNode facets = client.get(TYPE_ROUTE + "?q=*&facet=sampleField").get("facets");
+        assertEquals(facets.get("sampleField").get("buckets").get(0).get("doc_count").asInt(), 5);
+        assertEquals(facets.get("sampleField").get("buckets").get(1).get("doc_count").asInt(), 1);
+    }
+
+    @Test
+    public void searchFacetQuery() throws IOException, InterruptedException {
+        postSampleData("ds1","a","a","a");
+        postSampleData("ds2","a","b","c");
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
+
+        JsonNode results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:a");
+        assertEquals(results.get("total").asInt(), 4);
+
+        results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:b");
+        assertEquals(results.get("total").asInt(), 1);
+    }
+
+    @Test
+    public void searchFacetQueryWithEscapedColon() throws IOException, InterruptedException {
+        postSampleData("ds1","a:b","a:b","a");
+        postSampleData("ds2","b:a","b","c");
+
+        client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
+
+        JsonNode results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:a\\:b");
+        assertEquals(results.get("total").asInt(), 2);
+
+        results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:b\\:a");
+        assertEquals(results.get("total").asInt(), 1);
     }
 }
