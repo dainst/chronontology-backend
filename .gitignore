@@ -13,3 +13,4 @@ datastore
 .DS_Store
 public
 classes
+*.srctrl*
