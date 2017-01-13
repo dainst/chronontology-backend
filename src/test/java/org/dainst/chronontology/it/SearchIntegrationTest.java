@@ -40,7 +40,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         ids.remove(1);
 
         assertResultsAreFound(
-                client.get(TYPE_ROUTE + "?q=sampleField:\"%2Ftype%2F1\"")
+                    client.get(TYPE_ROUTE + "?q=resource.sampleField:%22%2Ftype%2F1%22")
                 ,ids);
     }
 
@@ -59,7 +59,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         List<String> ids= postSampleData(null,"b","b");
 
         assertResultsAreFound(
-                client.get(TYPE_ROUTE + "?q=sampleField:b")
+                client.get(TYPE_ROUTE + "?q=resource.sampleField:b")
                 ,ids);
     }
 
@@ -81,7 +81,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         ids.remove(0);
 
         assertResultsAreFound(
-                client.get(TYPE_ROUTE + "?q=sampleField:a&size=1")
+                client.get(TYPE_ROUTE + "?q=resource.sampleField:a&size=1")
                 ,ids);
     }
 
@@ -91,7 +91,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         postSampleData(null,"b","b","a");
 
         assertResultsAreFound(
-                client.get(TYPE_ROUTE + "?sampleField:b&size=0")
+                client.get(TYPE_ROUTE + "?q=resource.sampleField:b&size=0")
                 ,new ArrayList<String>());
     }
 
@@ -105,7 +105,7 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         client.authenticate(TestConstants.USER_NAME_ADMIN,TestConstants.PASS_WORD);
 
-        assertResultsAreFound(client.get(TYPE_ROUTE + "?sampleField:a"),ids);
+        assertResultsAreFound(client.get(TYPE_ROUTE + "?q=resource.sampleField:a"),ids);
     }
 
     @Test
@@ -116,7 +116,7 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         client.authenticate(TestConstants.USER_NAME_3,TestConstants.PASS_WORD);
 
-        assertResultsAreFound(client.get(TYPE_ROUTE + "?sampleField:a"),ids);
+        assertResultsAreFound(client.get(TYPE_ROUTE + "?q=resource.sampleField:a"),ids);
     }
 
     @Test
@@ -127,7 +127,7 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         client.authenticate(null,null);
 
-        assertResultsAreFound(client.get(TYPE_ROUTE + "?q=sampleField:a&size=3"),ids);
+        assertResultsAreFound(client.get(TYPE_ROUTE + "?q=resource.sampleField:a&size=3"),ids);
     }
 
     @Test
@@ -139,15 +139,15 @@ public class SearchIntegrationTest extends IntegrationTest {
         client.authenticate(null,null);
 
         assertEquals(
-            ((ArrayNode) client.get(TYPE_ROUTE + "?q=sampleField:a&size=3&from=1")
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q=resource.sampleField:a&size=3&from=1")
                     .get("results")).size()
             ,2);
         assertEquals(
-            ((ArrayNode) client.get(TYPE_ROUTE + "?q=sampleField:a&size=1&from=1")
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q=resource.sampleField:a&size=1&from=1")
                     .get("results")).size()
             ,1);
         assertEquals(
-            ((ArrayNode) client.get(TYPE_ROUTE + "?q=sampleField:a&from=2")
+            ((ArrayNode) client.get(TYPE_ROUTE + "?q=resource.sampleField:a&from=2")
                     .get("results")).size()
             ,1);
     }
@@ -160,7 +160,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
 
         assertEquals(
-                ((ArrayNode) client.get(TYPE_ROUTE + "?q=\"sampleField:a AND dataset:ds1\"")
+                ((ArrayNode) client.get(TYPE_ROUTE + "?q=\"resource.sampleField:a AND dataset:ds1\"")
                         .get("results")).size()
                 ,2);
     }
@@ -173,7 +173,7 @@ public class SearchIntegrationTest extends IntegrationTest {
         client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
 
         assertEquals(
-                ((ArrayNode) client.get(TYPE_ROUTE + "?q=\"sampleField:a AND dataset:ds1\"&size=4&from=1")
+                ((ArrayNode) client.get(TYPE_ROUTE + "?q=\"resource.sampleField:a AND dataset:ds1\"&size=4&from=1")
                         .get("results")).size()
                 ,2);
     }
@@ -185,9 +185,9 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
 
-        JsonNode facets = client.get(TYPE_ROUTE + "?q=*&facet=sampleField").get("facets");
-        assertEquals(facets.get("sampleField").get("buckets").get(0).get("doc_count").asInt(), 5);
-        assertEquals(facets.get("sampleField").get("buckets").get(1).get("doc_count").asInt(), 1);
+        JsonNode facets = client.get(TYPE_ROUTE + "?q=*&facet=resource.sampleField").get("facets");
+        assertEquals(facets.get("resource.sampleField").get("buckets").get(0).get("doc_count").asInt(), 5);
+        assertEquals(facets.get("resource.sampleField").get("buckets").get(1).get("doc_count").asInt(), 1);
     }
 
     @Test
@@ -197,10 +197,10 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
 
-        JsonNode results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:a");
+        JsonNode results = client.get(TYPE_ROUTE + "?q=*&fq=resource.sampleField:a");
         assertEquals(results.get("total").asInt(), 4);
 
-        results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:b");
+        results = client.get(TYPE_ROUTE + "?q=*&fq=resource.sampleField:b");
         assertEquals(results.get("total").asInt(), 1);
     }
 
@@ -211,10 +211,10 @@ public class SearchIntegrationTest extends IntegrationTest {
 
         client.authenticate(TestConstants.USER_NAME_ADMIN, TestConstants.PASS_WORD);
 
-        JsonNode results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:a\\:b");
+        JsonNode results = client.get(TYPE_ROUTE + "?q=*&fq=resource.sampleField:a\\:b");
         assertEquals(results.get("total").asInt(), 2);
 
-        results = client.get(TYPE_ROUTE + "?q=*&fq=sampleField:b\\:a");
+        results = client.get(TYPE_ROUTE + "?q=*&fq=resource.sampleField:b\\:a");
         assertEquals(results.get("total").asInt(), 1);
     }
 }
