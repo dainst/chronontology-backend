@@ -18,7 +18,8 @@ public class EmbeddedES {
                 .put("cluster.name", config.getClusterName())
                 .put("http.port", config.getPort())
                 .put("path.data", config.getDataPath())
-                .put("path.home", config.getHomePath());
+                .put("path.home", config.getHomePath())
+                .put("mapper.allow_dots_in_name", true);
 
         nodeBuilder()
                 .local(true)
