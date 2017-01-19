@@ -72,12 +72,22 @@ public class ConnectDispatcher extends Dispatcher {
         return connectDatastore.search(bucket, query);
     }
 
-
-
-    public Datastore[] getDatatores() {
+    @Override
+    public Datastore[] getDatastores() {
         Datastore[] datastores = new Datastore[2];
         datastores[0] = connectDatastore;
         datastores[1] = mainDatastore;
         return datastores;
+    }
+
+    @Override
+    public Datastore getDatastoreByClass(Class c) {
+        if(c.isInstance(mainDatastore)){
+            return mainDatastore;
+        }
+        if(c.isInstance(connectDatastore)){
+            return connectDatastore;
+        }
+        return null;
     }
 }

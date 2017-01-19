@@ -98,12 +98,12 @@ public class FilesystemDatastore implements Datastore {
      * @return null if no files matching the pattern are found.
      */
     private File getLatest(File dir) {
-        File[] files=
+        File[] files =
             dir.listFiles(new FilenameFilter() {
-                    public boolean accept( File dir, String name ) {
-                        return name.matches( "\\d+\\"+EXT );
-                    }}
-                );
+                public boolean accept( File dir, String name ) {
+                    return name.matches( "\\d+\\"+EXT );
+                }
+            });
 
         Arrays.sort(files, new Comparator<File>() {
 
@@ -174,5 +174,7 @@ public class FilesystemDatastore implements Datastore {
         return true;
     }
 
-
+    public String getBaseFolderName() {
+        return baseFolder;
+    }
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.handler.ServerStatusHandler;
 import org.dainst.chronontology.handler.model.Query;
 import org.dainst.chronontology.handler.model.Results;
+import org.dainst.chronontology.store.Datastore;
 import org.dainst.chronontology.store.ElasticsearchDatastore;
 
 import java.io.IOException;
@@ -56,6 +57,21 @@ public class SimpleDispatcher extends Dispatcher {
     @Override
     public Results dispatchSearch(final String bucket, final Query query) {
         return datastore.search(bucket, query);
+    }
+
+    @Override
+    public Datastore[] getDatastores() {
+        Datastore[] datastores = new Datastore[1];
+        datastores[0] = datastore;
+        return datastores;
+    }
+
+    @Override
+    public Datastore getDatastoreByClass(Class c) {
+        if(c.isInstance(datastore)){
+            return datastore;
+        }
+        return null;
     }
 }
 

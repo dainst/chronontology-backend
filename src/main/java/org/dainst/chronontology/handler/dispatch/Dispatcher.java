@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.dainst.chronontology.handler.ServerStatusHandler;
 import org.dainst.chronontology.handler.model.Query;
 import org.dainst.chronontology.handler.model.Results;
+import org.dainst.chronontology.store.Datastore;
 import spark.Request;
 
 import java.io.IOException;
@@ -31,4 +32,7 @@ public abstract class Dispatcher {
 
     abstract public void addDatatoreStatus(ServerStatusHandler handler, Results r) throws IOException;
 
+    abstract public Datastore[] getDatastores();
+
+    abstract public Datastore getDatastoreByClass(Class c);
 }

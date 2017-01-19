@@ -29,6 +29,7 @@ public class Controller {
     private final Dispatcher dispatcher;
     private final SearchDocumentHandler searchDocumentHandler;
     private final ServerStatusHandler serverStatusHandler;
+    private final RebuildIndexHandler rebuildIndexHandler;
     private final PostDocumentHandler postDocumentHandler;
     private final PutDocumentHandler putDocumentHandler;
     private final GetDocumentHandler getDocumentHandler;
@@ -42,6 +43,23 @@ public class Controller {
         get(routePrefix, (req, res) -> {
             setHeader(res);
             return serverStatusHandler.handle(req, res);
+        });
+    }
+
+    private void setUpRebuildIndexRoute(final String routePrefix, String[] credentials){
+        final String rebuildRoute = routePrefix + "rebuild_index";
+
+        logger.info("initializing endpoint for elastic search reindex at '" + routePrefix + "'...");
+
+        get(rebuildRoute, (req, res) -> {
+            setHeader(res);
+
+            boolean authenticated = (hasAuthHeader(req)) && authenticate(req, credentials);
+            if(!authenticated){
+                return handleFailedAuthentication(req, res);
+            }
+
+            return rebuildIndexHandler.handle(req, res);
         });
     }
 
@@ -196,10 +214,12 @@ public class Controller {
         this.dispatcher = dispatcher;
         this.searchDocumentHandler = new SearchDocumentHandler(dispatcher,rightsValidator);
         this.serverStatusHandler= new ServerStatusHandler(dispatcher);
+        this.rebuildIndexHandler = new RebuildIndexHandler(dispatcher, typeNames);
         this.userHandler = new UserHandler(dispatcher);
         this.postDocumentHandler = new PostDocumentHandler(dispatcher,rightsValidator);
         this.putDocumentHandler = new PutDocumentHandler(dispatcher,rightsValidator);
         this.getDocumentHandler = new GetDocumentHandler(dispatcher,rightsValidator);
+
 
         String routePrefix = "/";
         if (SPASupport) {
@@ -210,6 +230,8 @@ public class Controller {
         }
 
         setUpStatusRoute(routePrefix);
+
+        setUpRebuildIndexRoute(routePrefix, credentials);
         setUpUserRoutes(routePrefix, credentials);
 
         setUpAllTypesRoute(routePrefix,credentials);

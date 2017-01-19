@@ -7,6 +7,9 @@ import org.dainst.chronontology.handler.model.Query;
 import org.dainst.chronontology.handler.model.Results;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.dainst.chronontology.util.JsonUtils;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
+import org.elasticsearch.action.delete.DeleteRequestBuilder;
+import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -108,6 +111,18 @@ public class ElasticsearchDatastore implements Datastore {
                 response.get("aggregations")
                 // trimFacetOutOfAggregations(response.get("aggregations"))
         );
+    }
+
+    public JsonNode clearIndex() {
+        return client.delete("/" + indexName);
+    }
+
+    public JsonNode initializeIndex() {
+        return client.put("/" + indexName, JsonUtils.json());
+    }
+
+    public JsonNode postMapping(String type, JsonNode mapping) {
+        return client.post("/" + indexName + "/" + type + "/_mapping", mapping);
     }
 
     private ArrayNode searchHits(JsonNode response) {
