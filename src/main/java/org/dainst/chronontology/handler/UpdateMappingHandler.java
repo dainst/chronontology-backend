@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.log4j.Logger;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
-import org.dainst.chronontology.store.Datastore;
 import org.dainst.chronontology.store.ElasticsearchDatastore;
 import org.dainst.chronontology.store.FilesystemDatastore;
 import org.dainst.chronontology.util.JsonUtils;
@@ -19,27 +18,24 @@ import java.io.IOException;
 import static org.dainst.chronontology.Constants.*;
 
 /**
- * Created by Simon Hohl on 04.07.17.
+ * @author Simon Hohl
+ *
  */
-public class RebuildIndexHandler implements Handler {
+public class UpdateMappingHandler implements Handler {
 
     protected final Dispatcher dispatcher;
     private final String[] types;
-    private final static Logger logger = Logger.getLogger(RebuildIndexHandler.class);
+    private final static Logger logger = Logger.getLogger(UpdateMappingHandler.class);
 
-    public RebuildIndexHandler(Dispatcher dispatcher, String[] types) {
+    public UpdateMappingHandler(Dispatcher dispatcher, String[] types) {
         this.dispatcher= dispatcher;
         this.types = types;
     }
 
     @Override
     public Object handle(Request req, Response res) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        ClassLoader classLoader = getClass().getClassLoader();
-
+        JsonNode mapping = JsonUtils.json(req.body());
         JsonNode result= JsonUtils.json();
-        //Results datastores= new Results("datastores");
-        Datastore[] datastores = dispatcher.getDatastores();
 
         ElasticsearchDatastore esDatastore = (ElasticsearchDatastore) dispatcher.getDatastoreByClass(ElasticsearchDatastore.class);
         FilesystemDatastore fsDatastore = (FilesystemDatastore) dispatcher.getDatastoreByClass(FilesystemDatastore.class);
@@ -54,8 +50,6 @@ public class RebuildIndexHandler implements Handler {
         esDatastore.initializeIndex();
 
         for(String type : types){
-            // TODO: mapping.json in resources folder per Type?
-            JsonNode mapping = mapper.readTree(new File(classLoader.getResource("mapping.json").getFile()));
             esDatastore.postMapping(type, mapping);
         }
 

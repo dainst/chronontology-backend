@@ -15,9 +15,6 @@ import spark.Spark;
 import static org.dainst.chronontology.Constants.*;
 import static spark.Spark.*;
 
-import static org.dainst.chronontology.util.JsonUtils.json;
-
-
 /**
  * @author Daniel de Oliveira
  */
@@ -29,7 +26,7 @@ public class Controller {
     private final Dispatcher dispatcher;
     private final SearchDocumentHandler searchDocumentHandler;
     private final ServerStatusHandler serverStatusHandler;
-    private final RebuildIndexHandler rebuildIndexHandler;
+    private final UpdateMappingHandler updateMappingHandler;
     private final PostDocumentHandler postDocumentHandler;
     private final PutDocumentHandler putDocumentHandler;
     private final GetDocumentHandler getDocumentHandler;
@@ -46,12 +43,12 @@ public class Controller {
         });
     }
 
-    private void setUpRebuildIndexRoute(final String routePrefix, String[] credentials){
-        final String rebuildRoute = routePrefix + "rebuild_index";
+    private void updateMappingRoute(final String routePrefix, String[] credentials){
+        final String updateMappingRoute = routePrefix + "update_mapping";
 
-        logger.info("initializing endpoint for elastic search reindex at '" + routePrefix + "'...");
+        logger.info("initializing endpoint for elastic search reindex at '" + updateMappingRoute + "'...");
 
-        get(rebuildRoute, (req, res) -> {
+        post(updateMappingRoute, (req, res) -> {
             setHeader(res);
 
             boolean authenticated = (hasAuthHeader(req)) && authenticate(req, credentials);
@@ -59,7 +56,7 @@ public class Controller {
                 return handleFailedAuthentication(req, res);
             }
 
-            return rebuildIndexHandler.handle(req, res);
+            return updateMappingHandler.handle(req, res);
         });
     }
 
@@ -214,7 +211,7 @@ public class Controller {
         this.dispatcher = dispatcher;
         this.searchDocumentHandler = new SearchDocumentHandler(dispatcher,rightsValidator);
         this.serverStatusHandler= new ServerStatusHandler(dispatcher);
-        this.rebuildIndexHandler = new RebuildIndexHandler(dispatcher, typeNames);
+        this.updateMappingHandler = new UpdateMappingHandler(dispatcher, typeNames);
         this.userHandler = new UserHandler(dispatcher);
         this.postDocumentHandler = new PostDocumentHandler(dispatcher,rightsValidator);
         this.putDocumentHandler = new PutDocumentHandler(dispatcher,rightsValidator);
@@ -231,7 +228,7 @@ public class Controller {
 
         setUpStatusRoute(routePrefix);
 
-        setUpRebuildIndexRoute(routePrefix, credentials);
+        updateMappingRoute(routePrefix, credentials);
         setUpUserRoutes(routePrefix, credentials);
 
         setUpAllTypesRoute(routePrefix,credentials);
