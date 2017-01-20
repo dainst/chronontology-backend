@@ -94,8 +94,8 @@ public abstract class IntegrationTest {
         App app=  new AppConfigurator().configure(makeAppConfig());
         ConnectDispatcher controller= (ConnectDispatcher) app.getController().getDispatcher();
 
-        mainDatastore= (FilesystemDatastore) controller.getDatatores()[1];
-        connectDatastore= (ElasticsearchDatastore) controller.getDatatores()[0];
+        mainDatastore= (FilesystemDatastore) controller.getDatastores()[1];
+        connectDatastore= (ElasticsearchDatastore) controller.getDatastores()[0];
 
         Thread.sleep(1000);
     }
