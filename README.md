@@ -36,6 +36,8 @@ are used, one for storing the authoritative versions and one for sharing these
 data with other applications, so that they can get enriched by the yet to be developed
 "connect" component.
 
+Also make sure to check out the Rest Api [Reference](docs/rest-api-reference.md)!
+
 ### Configuring the application
 
 Depending on which configuration you want, and also for configuring other application details,
@@ -59,8 +61,6 @@ on how to configure the application can be found at the
 
 Note that you may need type mappings for every type used. So make sure 
 you didn't forget to add the mapping to the period type!
- 
-You'll find it [here](src/main/resources/mapping.json).
 
 ### Starting the application
 
