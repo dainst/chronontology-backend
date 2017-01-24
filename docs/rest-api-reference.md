@@ -58,8 +58,8 @@ as in
   "resource" : {
     "key" : "value"
   }
-    "derived" : {
-      "key" : "value"
+  "derived" : {
+    "key" : "value"
   }
   "related" : {
     "key" : "value"
@@ -109,16 +109,15 @@ In case of status 400 errors the response body is an empty JSON.
 
 ### Response header
 
-The location response header will contain the `id` of
-the created element, if successful. It is the same
-as the `id field of the response body. It will be a string like
+The location response header will contain the `type`and `id` of
+the created element, if successful. The `type` and `id` are the same
+as the `type` and `id` fields in the response body. It will be a string like
 
 ```
-/typename/T7UlxIk8miMQ
-```  
+/period/T7UlxIk8miMQ
+```
 
-It contains both the type name as well as an id, which consists of 12 random
-letters and cyphers, i.e. `[a-zA-Z0-9]{12}`.
+The `id` consists of 12 random letters and cyphers, i.e. `[a-zA-Z0-9]{12}`.
 
 ### Status codes:
 
