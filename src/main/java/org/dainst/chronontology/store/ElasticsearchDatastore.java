@@ -159,7 +159,7 @@ public class ElasticsearchDatastore implements Datastore {
         }
 
         if (query.getPart() != "") {
-            sb.fetchSource(query.getPart(), null);
+            sb.fetchSource(query.getPart().split(","), null);
         }
 
         BoolQueryBuilder qb = QueryBuilders.boolQuery();
