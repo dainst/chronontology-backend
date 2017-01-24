@@ -293,14 +293,14 @@ GET /typename/x1Xz
 In **connected** mode there are two optional :queryParams, which are ignored
 in **single** mode:
 
-* **direct**: When used with the value true, as in
+**direct**: When used with the value true, as in
 
 ```
 GET /typename/x1Xz?direct=true
 ```
 the document is fetched from the main datastore instead of Elasticsearch.
 
-* **version**: This parameter can be used to fetch a specific version
+**version**: This parameter can be used to fetch a specific version
 of a document, as in
 
 ```
@@ -355,20 +355,13 @@ The simplest version, which returns all documents, looks like this
 GET /typename
 ```
 
-which can also be written as
-
-```
-GET /typename?q=*
-```
-
-However due to potentially large result sets, one can and should narrow
-down the search with the use of :queryParams. If no size is specified,
-the first 10 hits are delivered.
-
 ### from, size
+Due to potentially large result sets, one can and should narrow
+down the search with the use of :queryParams.
+
 The **size** and **from** query params
 are used to only show a result set of size ***size***, starting with the document with the
-offset ***from*** of the ordered result set. These params can be used solo or together, but you'll
+offset ***from*** of the ordered result set. These params can be used individually or together, but you'll
 probably find it most useful when used together, for example for paginating through a result
 set. Here are some valid examples of its usage:
 
@@ -381,6 +374,8 @@ GET /typename?size=3
 
 The first example will return the 10 results starting with the result number 10
 (the first result has the number 0).
+
+If no size is specified, the default value is 10, i.e. 10 hits are delivered.
 
 ### facet, fq
 The **facet** query parameter is used to retrieve associated facets for the specified field. Multiple **facet** parameters
@@ -403,6 +398,12 @@ The provided features and the syntax of the query language depends on the datast
 The elasticsearch datastore supports [the query string mini language](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax)
 
 Here are some examples:
+
+```
+GET /typename?q=*
+```
+
+matches all documents, i.e. is the same as `GET /typename`.
 
 ```
 GET /typename/?q=adoption
