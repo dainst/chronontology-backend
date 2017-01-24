@@ -289,16 +289,16 @@ This is a simple example without :queryParams:
 GET /typename/x1Xz
 ```
 
-In **connected** mode there are two optional :queryParams  
-which are ignored in **single** mode:
+### direct, version
+In **connected** mode there are two optional :queryParams, which are ignored
+in **single** mode:
 
 * **direct**: When used with the value true, as in
 
 ```
 GET /typename/x1Xz?direct=true
 ```
-the document is fetched from the main datastore instead of the getting it from
-Elasticsearch.
+the document is fetched from the main datastore instead of Elasticsearch.
 
 * **version**: This parameter can be used to fetch a specific version
 of a document, as in
@@ -362,25 +362,27 @@ GET /typename?q=*
 ```
 
 However due to potentially large result sets, one can and should narrow
-down the search with the use of :queryParams.
+down the search with the use of :queryParams. If no size is specified,
+the first 10 hits are delivered.
 
+### from, size
 The **size** and **from** query params
 are used to only show a result set of size ***size***, starting with the document with the
 offset ***from*** of the ordered result set. These params can be used solo or together, but you'll
 probably find it most useful when used together, for example for paginating through a result
 set. Here are some valid examples of its usage:
 
-
 ```
-GET /typename?size=10&offset=10
-GET /typename?from=0&size=10
 GET /typename?from=10&size=10
+GET /typename?from=0&size=10
 GET /typename?from=10
 GET /typename?size=3
 ```
 
-The first example will return the 10 results starting from the 10th result.
+The first example will return the 10 results starting with the result number 10
+(the first result has the number 0).
 
+### facet, fq
 The **facet** query parameter is used to retrieve associated facets for the specified field. Multiple **facet** parameters
 can be used in the same query.
 
@@ -392,10 +394,10 @@ The **fq** query parameter is used to restrict the results, returning only resul
 specified field. Multiple **fq** parameters can be used in the same query.
 
 ```
-GET /typename/?q=*&fq=field1:valueField1&fq=fq=field1:valueField2
+GET /typename/?q=*&fq=field1:valueField1&fq=field1:valueField2
 ```
 
-
+### q
 Another means of narrowing down the result set is by use of **query terms**.
 The provided features and the syntax of the query language depends on the datastore implementation.
 The elasticsearch datastore supports [the query string mini language](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-query-string-query.html#query-string-syntax)
@@ -403,19 +405,19 @@ The elasticsearch datastore supports [the query string mini language](https://ww
 Here are some examples:
 
 ```
-GET /typename/?q=a
+GET /typename/?q=adoption
 ```
 
-will match documents that have "a" as a value of some of their fields.
+will match documents that have "adoption" as a value of some of their fields.
 
 ```
-GET /typename/?q=user:karl
+GET /typename/?q=created.user:karl
 ```
 
-will match documents who have some "user" field where there is a "karl" value.
+will match documents that have some "user" field where there is a "karl" value.
 
 ```
-GET /typename/?q=user:karl+a:b
+GET /typename/?q=created.user:karl+a:b
 ```
 
 will combine the search by using a logical "or". It matches documents which
@@ -424,13 +426,12 @@ have either a "user" field with the value "karl" or an "a" field with the value 
 A search can combine both ***query terms*** and ***size*** params.
 For example
 
-
 ```
 GET /typename/?q=user:karl+a:b&size=1&from=2
 ```
 
-Please **note** no matter what search params you use, a user will always only see
-search results for datasets he is allowed to see. For more information on datasets see
+Please **note** no matter what search params you use, users will always only see
+search results for datasets they are allowed to see. For more information on datasets see
 [this](dataset-management.md) document.
 
 
