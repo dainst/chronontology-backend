@@ -109,8 +109,8 @@ In case of status 400 errors the response body is an empty JSON.
 
 ### Response header
 
-The location response header will contain the `type`and `id` of
-the created element, if successful. The `type` and `id` are the same
+The location response header will contain the `type` and `id` of
+the created element, if successful. `type` and `id` are the same
 as the `type` and `id` fields in the response body. It will be a string like
 
 ```
@@ -130,7 +130,9 @@ The `id` consists of 12 random letters and cyphers, i.e. `[a-zA-Z0-9]{12}`.
 ```
 
 ## POST /update_mapping
-Post a new Elastic Search mapping. The datastore configuration has to be set to **connected mode**. See [here](datastore-configuration-reference.md) for information on how to configure the datastores.
+Post a new or updated Elastic Search mapping. The datastore configuration has to
+be set to **connected mode**. See [here](datastore-configuration-reference.md)
+for information on how to configure the datastores.
 
 The request body must contain the mapping in valid JSON. Example:
 
@@ -139,7 +141,7 @@ The request body must contain the mapping in valid JSON. Example:
   "period": {
     "dynamic" : "true",
     "properties": {
-      "@id": {
+      "id": {
         "type": "string"
       },
       "resource" : {
@@ -189,7 +191,7 @@ In case of errors:.
 ## PUT /:type/:id
 
 Used to update an existing document or to create
-a document with a pre-determinded id. The request body must
+a document with a pre-determined id. The request body must
 be valid JSON, for example:
 
 ```
@@ -214,16 +216,16 @@ since the `id` gets set automatically by the system.
     "dataset" : "none",
     "created": {
         "user": "karl",
-        "date": "2016-02-09T10:21:15.721Z"
+        "date": "2017-05-29T10:25:37.142+02:00"
     },
     "modified": [
         {
             "user": "karl",
-            "date": "2016-02-09T10:21:15.721Z"
+            "date": "2017-05-29T10:30:15.151+02:00"
         },
         {
             "user": "ove",
-            "date": "2016-02-09T10:32:50.702Z"
+            "date": "2017-05-30T13:50:48.26+02:00"
         }
     ]
 }
@@ -254,7 +256,7 @@ In case of status 400 errors the response body is an empty JSON.
 ## GET /
 
 Get information regarding the server status.
-Also Lists information for each datastore individually.
+Also lists information for each datastore individually.
 
 See [here](datastore-configuration-reference.md) for information on how to configure the datastores.
 
@@ -278,34 +280,35 @@ The response body will look similiar to this:
 404 if Server is running but at least one datastore is not available.
 ```
 
-## GET /:type/\\:id\\:queryParams
+## GET /:type/:id?:queryParams
 
-Get json stored for type with name :type and id :id.
+Get the JSON that corresponds to the specified :type and :id.
 This is a simple example without :queryParams:
 
 ```
 GET /typename/x1Xz
 ```
 
-In **connected** mode, there are two possible optional :queryParams.
-These are ignored, if in **single** mode.
-The first query param is **direct**. When used with the value true, as in
+In **connected** mode there are two optional :queryParams  
+which are ignored in **single** mode:
+
+* **direct**: When used with the value true, as in
 
 ```
 GET /typename/x1Xz?direct=true
 ```
+the document is fetched from the main datastore instead of the getting it from
+Elasticsearch.
 
-the document is fetched from the main datastore.
-
-The second query param is **version**, which can be used to fetch a specific version
+* **version**: This parameter can be used to fetch a specific version
 of a document, as in
 
 ```
 GET /typename/x1Xz?version=2
 ```
 
-This specific version of a document gets fetched from the main datastore. The direct param
-gets ignored if ***version*** is used.
+This specific version of a document gets fetched from the main datastore. The
+direct param gets ignored if ***version*** is used.
 
 ### Response body
 
@@ -350,6 +353,12 @@ The simplest version, which returns all documents, looks like this
 
 ```
 GET /typename
+```
+
+which can also be written as
+
+```
+GET /typename?q=*
 ```
 
 However due to potentially large result sets, one can and should narrow
@@ -444,18 +453,13 @@ including the number of documents that did not have the respective field.
             "version": 2,
             "dataset" : "none",
             "created": {
-                "user": "karl",
-                "date": "2016-02-09T10:21:15.721Z"
+                ...
             },
             "modified": [
                 {
-                    "user": "karl",
-                    "date": "2016-02-09T10:21:15.721Z"
+                    ...
                 },
-                {
-                    "user": "ove",
-                    "date": "2016-02-10T11:30:16.423Z"
-                }
+                ...
             ]
         },
         {
