@@ -28,6 +28,7 @@ public class Query {
     private static final String[] DEFAULT_FACETS = new String[0];
     private static final String[] DEFAULT_FACET_QUERY = new String[0];
     private static final String FACET_QUERY_SPLIT_REGEX = ":";
+    private static final String DEFAULT_PART = "";
 
     private final String q;
 
@@ -43,6 +44,8 @@ public class Query {
 
     private List<String> datasets = new ArrayList<String>();
 
+    private final String part;
+
 
     /**
      * @param q the query string (default "*")
@@ -52,9 +55,10 @@ public class Query {
      *             (default 10)
      * @param facets list of facets which are to be returned with the query
      * @param facetQueries list of facet queries, restricting the search result
+     * @param part part(s) of the JSON that should be delivered
      */
 
-    public Query(String q, int from, int size, String[] facets, String[] facetQueries){
+    public Query(String q, int from, int size, String[] facets, String[] facetQueries, String part){
         this.q = q.isEmpty() ? "*" : stripQuotes(q);
         this.from = from;
         this.size = size;
@@ -72,11 +76,14 @@ public class Query {
                     stripQuotes(parts[1]).replace("\\:", ":")
             );
         }
+
+        this.part = part;
     }
 
     public Query(String q, int from, int size) {
-        this(q, from, size, DEFAULT_FACETS, DEFAULT_FACET_QUERY);
+        this(q, from, size, DEFAULT_FACETS, DEFAULT_FACET_QUERY, DEFAULT_PART);
     }
+
 
     /**
      * Factory method for constructing a query from a parameter map
@@ -89,7 +96,8 @@ public class Query {
         int size = params.containsKey("size") ? Integer.parseInt(params.get("size")[0]) : DEFAULT_SIZE;
         String[] facets = params.containsKey("facet") ? params.get("facet") : DEFAULT_FACETS;
         String[] facetQueries = params.containsKey("fq") ? params.get("fq") : DEFAULT_FACET_QUERY;
-        return new Query(q, from, size, facets, facetQueries);
+        String part = params.containsKey("part") ? params.get("part")[0] : DEFAULT_PART;
+        return new Query(q, from, size, facets, facetQueries, part);
     }
 
     private String stripQuotes(final String q) {
@@ -119,6 +127,10 @@ public class Query {
 
     public Map<String, String> getFacetQueries(){
         return facetQueries;
+    }
+
+    public String getPart() {
+        return part;
     }
 
     /**

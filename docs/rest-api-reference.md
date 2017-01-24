@@ -403,7 +403,7 @@ Here are some examples:
 GET /typename?q=*
 ```
 
-matches all documents, i.e. is the same as `GET /typename`.
+matches all documents, i.e. is the same as `GET /typename` without the **q** parameter.
 
 ```
 GET /typename/?q=adoption
@@ -435,6 +435,16 @@ Please **note** no matter what search params you use, users will always only see
 search results for datasets they are allowed to see. For more information on datasets see
 [this](dataset-management.md) document.
 
+### part
+The **part** parameter specifies which parts of the JSONs should be delivered.
+Examples are:
+
+```
+GET /period/?size=1000&part=resource.names,resource.types,resource.provenance
+GET /period/?size=1000&q=resource.provenance:chronontology&part=resource
+```
+
+By default, complete JSONs will be delivered.
 
 ### Response body
 

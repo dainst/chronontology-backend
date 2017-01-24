@@ -158,6 +158,10 @@ public class ElasticsearchDatastore implements Datastore {
             sb.sort(query.getSortField());
         }
 
+        if (query.getPart() != "") {
+            sb.fetchSource(query.getPart(), null);
+        }
+
         BoolQueryBuilder qb = QueryBuilders.boolQuery();
         qb.must(QueryBuilders.queryStringQuery(query.getQ()));
 
