@@ -8,7 +8,7 @@ management](dataset-management.md) with the connected backend.
 
 ## POST /:type/
 
-Post JSON to store a a document of type :type.
+Post JSON to store a document of type :type.
 The request body must be valid JSON. It can be empty
 
 ```
