@@ -40,14 +40,14 @@ public class FilesystemDatastoreTest {
     @Test
     public void putAndGetAndIgnoreNonParsableNumberedFiles() throws IOException {
         store.put(TYPE_NAME,"a", JsonTestUtils.sampleDocument("1"));
-        new File(BASE_FOLDER+TYPE_NAME+"/a/a.txt").createNewFile();
+        new File(BASE_FOLDER+TYPE_NAME+"/a/a.json").createNewFile();
         assertEquals(store.get(TYPE_NAME,"a"), JsonTestUtils.sampleDocument("1"));
     }
 
     @Test
     public void ignoredFile() throws IOException {
         new File(BASE_FOLDER+TYPE_NAME+"/a/").mkdirs();
-        new File(BASE_FOLDER+TYPE_NAME+"/a/a.txt").createNewFile();
+        new File(BASE_FOLDER+TYPE_NAME+"/a/a.json").createNewFile();
         assertEquals(store.get(TYPE_NAME,"a"), null);
     }
 

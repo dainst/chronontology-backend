@@ -25,7 +25,7 @@ public class FilesystemDatastore implements Datastore {
 
     final static Logger logger = Logger.getLogger(FilesystemDatastore.class);
 
-    private static final String EXT = ".txt";
+    private static final String EXT = ".json";
     private final String baseFolder;
 
     public FilesystemDatastore(String baseFolder) {
