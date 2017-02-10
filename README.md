@@ -50,6 +50,8 @@ config.properties
 You can find one [here](config.properties.template). 
 Make sure you revise the settings before startup!
 
+#### Datastore configurations
+
 For information on how to configure the abovementioned datastores, have a look at the
 [datastore configuration reference](docs/datastore-configuration-reference.md). 
 
@@ -61,6 +63,10 @@ on how to configure the application can be found at the
 
 Note that you may need type mappings for every type used. So make sure 
 you didn't forget to add the mapping to the period type!
+
+#### Logging to file system
+
+(Un-)comment the appropriate lines in `./src/main/resources/log4j.properties` and make sure the server has write access to the specified file.
 
 ### Starting the application
 
