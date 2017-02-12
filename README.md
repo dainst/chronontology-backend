@@ -3,6 +3,10 @@
 Jeremy provides access to underlying datastores via its REST api.
 Detailed information on the REST api can be found [here](docs/rest-api-reference.md).
 
+## Prerequisites
+
+Gradle Version 2
+
 ## Building and testing the application
 
 For the Component and Integration Tests to run, type in
