@@ -7,6 +7,7 @@ import org.dainst.chronontology.util.JsonUtils;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Daniel de Oliveira
@@ -33,6 +34,9 @@ public class JsonRestClient {
             final String url,
             final OkHttpClient client,
             final boolean returnNullOnError) {
+
+        client.setReadTimeout(15, TimeUnit.SECONDS);
+
         this.url = url;
         this.client = client;
         this.returnNullOnError = returnNullOnError;
