@@ -424,6 +424,15 @@ GET /typename/?q=created.user:karl+a:b
 will combine the search by using a logical "or". It matches documents which
 have either a "user" field with the value "karl" or an "a" field with the value "b" (or both).
 
+
+```
+GET /typename/?q=created.user:karl AND a:b
+```
+
+will combine the search by using a logical "and". It matches documents which
+have a "user" field with the value "karl" AND an "a" field with the value "b".
+
+
 A search can combine both ***query terms*** and ***size*** params.
 For example
 
