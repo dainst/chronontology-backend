@@ -8,7 +8,6 @@ import spark.Request;
 import spark.Response;
 import java.io.IOException;
 import static org.dainst.chronontology.Constants.*;
-import static org.dainst.chronontology.util.JsonUtils.json;
 
 /**
  * Created by Simon Hohl on 26.04.17.
