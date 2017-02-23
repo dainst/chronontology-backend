@@ -39,14 +39,14 @@ public class Results {
     }
 
     public Results add(final JsonNode jsonToAdd) {
-        logger.info(json);
+        logger.debug(json);
         ArrayNode data=(ArrayNode) json.get(this.arrayName);
         data.add(jsonToAdd);
         return this;
     }
 
     public Results addFacet(final JsonNode jsonToAdd) {
-        logger.info(json);
+        logger.debug(json);
         ((ObjectNode)json.get("facets")).setAll((ObjectNode) jsonToAdd);
         return this;
     }
