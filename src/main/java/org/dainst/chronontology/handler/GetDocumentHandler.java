@@ -10,6 +10,7 @@ import spark.Response;
 import java.io.IOException;
 
 import static org.dainst.chronontology.Constants.HTTP_FORBIDDEN;
+import static org.dainst.chronontology.Constants.HTTP_MOVED_PERMANENTLY;
 import static org.dainst.chronontology.Constants.HTTP_NOT_FOUND;
 
 /**
@@ -35,6 +36,13 @@ public class GetDocumentHandler extends DocumentHandler {
             res.status(HTTP_FORBIDDEN);
             return JsonUtils.json();
         }
+
+        if(result.getDeleted()){
+            String redirectPath = req.pathInfo().replace(simpleId(req),result.getReplacementId());
+            res.redirect(redirectPath, HTTP_MOVED_PERMANENTLY);
+            return "";
+        }
+
         return result;
     }
 
