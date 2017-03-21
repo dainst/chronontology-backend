@@ -28,9 +28,11 @@ public class Document {
     public static final String DERIVED = "derived";
     public static final String RELATED = "related";
     public static final String NONE = "none";
+    public static final String DELETED = "deleted";
+    public static final String REPLACED_BY = "replacedBy";
 
     private static final String[] supportedProperties = new String[] {
-        VERSION,MODIFIED,CREATED,DATASET,RESOURCE,DERIVED,RELATED
+        VERSION,MODIFIED,CREATED,DATASET,RESOURCE,DERIVED,RELATED,DELETED,REPLACED_BY
     };
 
     private final ObjectNode node;
@@ -176,6 +178,11 @@ public class Document {
         ((ObjectNode)node.get(RESOURCE)).put(TYPE, oldNode.get(RESOURCE).get(TYPE));
     }
 
+    public void mergeWithDataset(JsonNode replacementNode) {
+        node.put(DELETED, true);
+        node.put(REPLACED_BY, replacementNode.get(RESOURCE).get(ID));
+    }
+
     private void mergeModifiedDates(JsonNode oldNode) {
         ArrayNode modifiedDates= (ArrayNode) oldNode.get(MODIFIED);
         modifiedDates.add(node.get(CREATED));
@@ -192,6 +199,18 @@ public class Document {
 
     public String getType() {
         return toString(node.get(RESOURCE).get(TYPE));
+    }
+
+    public boolean getDeleted() {
+        JsonNode temp = node.get(DELETED);
+        if(temp == null){
+            return false;
+        }
+        return temp.booleanValue();
+    }
+
+    public String getReplacementId() {
+        return node.get(REPLACED_BY).asText();
     }
 
     /**

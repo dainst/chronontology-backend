@@ -17,11 +17,13 @@ import static spark.Spark.*;
 
 /**
  * @author Daniel de Oliveira
+ * @author Simon Hohl
  */
 public class Controller {
 
     private final static Logger logger = Logger.getLogger(Controller.class);
     public static final String ID = ":id";
+    public static final String REPLACED_BY_ID = ":replacedById";
 
     private final Dispatcher dispatcher;
     private final SearchDocumentHandler searchDocumentHandler;
@@ -30,6 +32,7 @@ public class Controller {
     private final PostDocumentHandler postDocumentHandler;
     private final PutDocumentHandler putDocumentHandler;
     private final GetDocumentHandler getDocumentHandler;
+    private final DeleteDocumentHandler deleteDocumentHandler;
     private final UserHandler userHandler;
 
     private void setUpStatusRoute(
@@ -112,6 +115,11 @@ public class Controller {
         get( routePrefix + typeName + "/" + ID, (req,res) -> {
             setHeader(req,res,typeName);
             return getDocumentHandler.handle(req,res);
+        });
+
+        delete(routePrefix + typeName + "/" + ID + "/" + REPLACED_BY_ID, (req, res) -> {
+            setHeader(res);
+            return deleteDocumentHandler.handle(req, res);
         });
 
         post(routePrefix + typeName, (req, res) ->  {
@@ -216,7 +224,7 @@ public class Controller {
         this.postDocumentHandler = new PostDocumentHandler(dispatcher,rightsValidator);
         this.putDocumentHandler = new PutDocumentHandler(dispatcher,rightsValidator);
         this.getDocumentHandler = new GetDocumentHandler(dispatcher,rightsValidator);
-
+        this.deleteDocumentHandler = new DeleteDocumentHandler(dispatcher, rightsValidator);
 
         String routePrefix = "/";
         if (SPASupport) {
