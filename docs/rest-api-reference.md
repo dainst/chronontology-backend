@@ -545,7 +545,7 @@ including the number of documents that did not have the respective field.
 ## DELETE /:type/:deletedId/:replacementId
 
 Used for removing duplicates. This marks the document specified by `:deletedId` as deleted and sets the document specified by 
-`:replacementId` as it replacement.
+`:replacementId` as its replacement.
 
 **Note** that in order to ignore documents marked as deleted while searching, you have to update your Elastic Search 
 mapping and define the fields `deleted` and `replacedBy`. 
