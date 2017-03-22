@@ -109,7 +109,6 @@ public class ElasticsearchDatastore implements Datastore {
                 searchHits(response),
                 response.get("hits").get("total").asInt(),
                 response.get("aggregations")
-                // trimFacetOutOfAggregations(response.get("aggregations"))
         );
     }
 
@@ -174,6 +173,7 @@ public class ElasticsearchDatastore implements Datastore {
             for (String dataset : query.getDatasets()) {
                 fq = fq.should(QueryBuilders.termQuery("dataset", dataset));
             }
+            fq = fq.mustNot(QueryBuilders.termQuery("deleted", true));
             qb = qb.filter(fq);
         }
 
