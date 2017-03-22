@@ -541,3 +541,87 @@ including the number of documents that did not have the respective field.
 200 if there are documents for the bucket.
 404 if the bucket does not exist yet.
 ```
+
+## DELETE /:type/:deletedId/:replacementId
+
+Used for removing duplicates. This marks the document specified by `:deletedId` as deleted and sets the document specified by 
+`:replacementId` as it replacement.
+
+**Note** that in order to ignore documents marked as deleted while searching, you have to update your Elastic Search 
+mapping and define the fields `deleted` and `replacedBy`. 
+
+For example:
+
+```
+{
+    "period": {
+        "dynamic" : false,
+        "properties": {
+
+            "resource" : {
+                "type": "object",
+                "properties":{
+                (..)
+                }
+            },
+            (..)
+            "created": {
+                (..)
+            },
+            "deleted": {
+                "type": "boolean"
+            },
+            "replacedBy": {
+                "type": "string"
+            },
+            "modified": {
+                (..)
+            }
+        }
+    }
+}
+```
+
+### Response body
+
+For the request `http://localhost:4567/period/0ORH5IjCY2oU/0vl9gt9NnfEs`, the document marked as deleted would be 
+returned as follows:
+ 
+```
+{
+    "resource": {
+        "names": {
+            "de": [
+                "Kreide"
+            ],
+            "en": [
+                "Cretaceous"
+            ]
+        },
+        (..)
+    },
+    "version": 2,
+    "created": {
+        "user": "admin",
+        "date": "2017-06-15T12:11:25.239+02:00"
+    },
+    "modified": [
+        {
+            "user": "admin",
+            "date": "2017-06-15T12:11:36.149+02:00"
+        }
+    ],
+    "deleted": true,
+    "replacedBy": "0vl9gt9NnfEs"
+}
+```
+
+## Status codes
+
+
+```
+200 if the document was successfully marked as deleted and the replacement was set.
+400 if both document IDs are equal (document replacing itself).
+400 if the replacement document is itself already marked as deleted.
+404 if one of the specified documents does not exist.
+```
