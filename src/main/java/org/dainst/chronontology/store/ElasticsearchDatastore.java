@@ -182,6 +182,10 @@ public class ElasticsearchDatastore implements Datastore {
             // TODO: Parse for possible integer values?
         }
 
+        for (String existsQuery : query.getExistsQueries()) {
+            qb = qb.filter(QueryBuilders.existsQuery(existsQuery));
+        }
+
         sb.query(qb);
 
         return sb.toString();

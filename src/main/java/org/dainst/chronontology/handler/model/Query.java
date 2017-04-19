@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Arrays;
 
 /**
  * The search query that is to be handled by the datastore
@@ -27,6 +28,7 @@ public class Query {
     private static final int DEFAULT_SIZE = 10;
     private static final String[] DEFAULT_FACETS = new String[0];
     private static final String[] DEFAULT_FACET_QUERY = new String[0];
+    private static final String[] DEFAULT_EXISTS_QUERY = new String[0];
     private static final String FACET_QUERY_SPLIT_REGEX = ":";
     private static final String DEFAULT_PART = "";
 
@@ -41,6 +43,8 @@ public class Query {
     private final String[] facets;
 
     private final Map<String, String> facetQueries;
+
+    private final List<String> existsQueries;
 
     private List<String> datasets = new ArrayList<String>();
 
@@ -58,7 +62,7 @@ public class Query {
      * @param part part(s) of the JSON that should be delivered
      */
 
-    public Query(String q, int from, int size, String[] facets, String[] facetQueries, String part){
+    public Query(String q, int from, int size, String[] facets, String[] facetQueries, String[] existsQueries, String part){
         this.q = q.isEmpty() ? "*" : stripQuotes(q);
         this.from = from;
         this.size = size;
@@ -77,11 +81,12 @@ public class Query {
             );
         }
 
+        this.existsQueries = Arrays.asList(existsQueries);
         this.part = part;
     }
 
     public Query(String q, int from, int size) {
-        this(q, from, size, DEFAULT_FACETS, DEFAULT_FACET_QUERY, DEFAULT_PART);
+        this(q, from, size, DEFAULT_FACETS, DEFAULT_FACET_QUERY, DEFAULT_EXISTS_QUERY, DEFAULT_PART);
     }
 
 
@@ -96,8 +101,9 @@ public class Query {
         int size = params.containsKey("size") ? Integer.parseInt(params.get("size")[0]) : DEFAULT_SIZE;
         String[] facets = params.containsKey("facet") ? params.get("facet") : DEFAULT_FACETS;
         String[] facetQueries = params.containsKey("fq") ? params.get("fq") : DEFAULT_FACET_QUERY;
+        String[] existsQueries = params.containsKey("exists") ? params.get("exists") : DEFAULT_EXISTS_QUERY;
         String part = params.containsKey("part") ? params.get("part")[0] : DEFAULT_PART;
-        return new Query(q, from, size, facets, facetQueries, part);
+        return new Query(q, from, size, facets, facetQueries, existsQueries, part);
     }
 
     private String stripQuotes(final String q) {
@@ -127,6 +133,10 @@ public class Query {
 
     public Map<String, String> getFacetQueries(){
         return facetQueries;
+    }
+
+    public List<String> getExistsQueries(){
+        return existsQueries;
     }
 
     public String getPart() {
