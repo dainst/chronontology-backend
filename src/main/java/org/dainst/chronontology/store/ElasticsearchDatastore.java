@@ -1,24 +1,25 @@
 package org.dainst.chronontology.store;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.dainst.chronontology.handler.model.Query;
 import org.dainst.chronontology.handler.model.Results;
 import org.dainst.chronontology.store.rest.JsonRestClient;
 import org.dainst.chronontology.util.JsonUtils;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequestBuilder;
-import org.elasticsearch.action.delete.DeleteRequestBuilder;
-import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.functionscore.FunctionScoreQueryBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilder;
+import org.elasticsearch.index.query.functionscore.ScoreFunctionBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
+
+import static java.lang.Math.sqrt;
 
 /**
  * Accesses elastic search via its rest api.
@@ -63,7 +64,9 @@ public class ElasticsearchDatastore implements Datastore {
 
     @Override
     public boolean put(final String typeName,final String key,final JsonNode value) {
-        return (client.post("/" + indexName + "/" + typeName + "/" + key, value)!=null);
+        ObjectNode doc = (ObjectNode) value;
+        doc.put("boost", this.calcBoost(value));
+        return (client.post("/" + indexName + "/" + typeName + "/" + key, doc)!=null);
     }
 
     @Override
@@ -122,6 +125,22 @@ public class ElasticsearchDatastore implements Datastore {
 
     public JsonNode postMapping(String type, JsonNode mapping) {
         return client.post("/" + indexName + "/" + type + "/_mapping", mapping);
+    }
+
+    private double calcBoost(JsonNode value) {
+        double boost = 1;
+        JsonNode resource = value.get("resource");
+        if (resource.has("hasTimespan")) boost *= 2;
+        if (resource.has("hasCoreArea")
+                || resource.has("isNamedAfter")
+                || resource.has("spatiallyPartOf"))
+            boost *= 2;
+        if (resource.has("relations"))
+            boost *= sqrt(resource.get("relations").size());
+        if (resource.has("provenacne")
+                && resource.get("provenance").toString().equals("aat"))
+            boost *= 0.5;
+        return boost;
     }
 
     private ArrayNode searchHits(JsonNode response) {
@@ -188,7 +207,10 @@ public class ElasticsearchDatastore implements Datastore {
             qb = qb.filter(QueryBuilders.existsQuery(existsQuery));
         }
 
-        sb.query(qb);
+        ScoreFunctionBuilder scoreFunction = ScoreFunctionBuilders.fieldValueFactorFunction("boost");
+        FunctionScoreQueryBuilder fqb = new FunctionScoreQueryBuilder(qb).add(scoreFunction);
+
+        sb.query(fqb);
 
         return sb.toString();
     }
