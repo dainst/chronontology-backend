@@ -163,6 +163,8 @@ public class ElasticsearchDatastore implements Datastore {
 
         BoolQueryBuilder qb = QueryBuilders.boolQuery();
         qb.must(QueryBuilders.queryStringQuery(query.getQ()));
+        qb.should(QueryBuilders.matchQuery("resource.names.en", query.getQ()).boost(2));
+        qb.should(QueryBuilders.matchQuery("resource.names.de", query.getQ()).boost(2));
 
         for (String facet : query.getFacets()) {
             sb.aggregation(AggregationBuilders.terms(facet).field(facet));
