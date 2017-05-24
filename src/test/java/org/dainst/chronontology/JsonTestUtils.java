@@ -51,6 +51,7 @@ public class JsonTestUtils {
         }
         if (dataset!=null)
             ((ObjectNode)json).put(Document.DATASET,dataset);
+        ((ObjectNode)json).put(Document.BOOST, 1.0);
         return json;
     }
 

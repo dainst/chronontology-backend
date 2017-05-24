@@ -30,9 +30,10 @@ public class Document {
     public static final String NONE = "none";
     public static final String DELETED = "deleted";
     public static final String REPLACED_BY = "replacedBy";
+    public static final String BOOST = "boost";
 
     private static final String[] supportedProperties = new String[] {
-        VERSION,MODIFIED,CREATED,DATASET,RESOURCE,DERIVED,RELATED,DELETED,REPLACED_BY
+        VERSION,MODIFIED,CREATED,DATASET,RESOURCE,DERIVED,RELATED,DELETED,REPLACED_BY,BOOST
     };
 
     private final ObjectNode node;
