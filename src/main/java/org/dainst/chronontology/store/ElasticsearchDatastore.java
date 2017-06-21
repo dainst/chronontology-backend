@@ -66,6 +66,7 @@ public class ElasticsearchDatastore implements Datastore {
     public boolean put(final String typeName,final String key,final JsonNode value) {
         ObjectNode doc = (ObjectNode) value;
         doc.put("boost", this.calcBoost(value));
+        if (doc.has("related")) this.expandRegions(doc);
         return (client.post("/" + indexName + "/" + typeName + "/" + key, doc)!=null);
     }
 
@@ -138,6 +139,27 @@ public class ElasticsearchDatastore implements Datastore {
         if (resource.has("relations"))
             boost *= sqrt(resource.get("relations").size());
         return boost;
+    }
+
+    private void expandRegions(ObjectNode doc) {
+        JsonNode resource = doc.get("resource");
+        JsonNode related = doc.get("related");
+        ArrayNode regions = doc.putArray("regions");
+        if (resource != null && resource.has("hasCoreArea")) {
+            for (JsonNode region : resource.get("hasCoreArea")) {
+                if (related.has(region.asText())) {
+                    this.createRegion(regions.addObject(), (ObjectNode) related.get(region.asText()));
+                }
+            }
+        }
+    }
+
+    private void createRegion(ObjectNode newRegion, ObjectNode oldRegion) {
+        JsonNode prefName = oldRegion.get("prefName");
+        if (prefName.has("language")
+                && prefName.get("language").asText().length() >= 2
+                && prefName.has("title"))
+            newRegion.put(prefName.get("language").asText().substring(0, 2), prefName.get("title").asText());
     }
 
     private ArrayNode searchHits(JsonNode response) {
