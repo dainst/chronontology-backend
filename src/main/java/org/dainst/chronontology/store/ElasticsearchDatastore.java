@@ -137,9 +137,6 @@ public class ElasticsearchDatastore implements Datastore {
             boost *= 2;
         if (resource.has("relations"))
             boost *= sqrt(resource.get("relations").size());
-        if (resource.has("provenacne")
-                && resource.get("provenance").toString().equals("aat"))
-            boost *= 0.5;
         return boost;
     }
 
