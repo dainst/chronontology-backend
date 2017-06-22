@@ -17,6 +17,7 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.sqrt;
@@ -217,9 +218,11 @@ public class ElasticsearchDatastore implements Datastore {
             qb = qb.filter(fq);
         }
 
-        for (Map.Entry<String, String> entry : query.getFacetQueries().entrySet()) {
-            qb = qb.filter(QueryBuilders.termQuery(entry.getKey(), entry.getValue()));
-            // TODO: Parse for possible integer values?
+        for (Map.Entry<String, List<String>> entry : query.getFacetQueries().entrySet()) {
+            for (String value : entry.getValue()) {
+                qb = qb.filter(QueryBuilders.termQuery(entry.getKey(), value));
+                // TODO: Parse for possible integer values?
+            }
         }
 
         for (String existsQuery : query.getExistsQueries()) {

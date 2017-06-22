@@ -1,20 +1,9 @@
 package org.dainst.chronontology.handler.model;
 
-import org.elasticsearch.common.xcontent.ToXContent;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.search.aggregations.*;
-import org.elasticsearch.search.aggregations.bucket.filter.FilterAggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.filters.FiltersAggregationBuilder;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregator;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregatorFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Arrays;
+import java.util.*;
 
 /**
  * The search query that is to be handled by the datastore
@@ -22,6 +11,8 @@ import java.util.Arrays;
  * @author Sebastian Cuy
  */
 public class Query {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(Query.class);
 
     private static final String DEFAULT_Q = "*";
     private static final int DEFAULT_FROM = 0;
@@ -42,7 +33,7 @@ public class Query {
 
     private final String[] facets;
 
-    private final Map<String, String> facetQueries;
+    private final Map<String, List<String>> facetQueries;
 
     private final List<String> existsQueries;
 
@@ -75,10 +66,13 @@ public class Query {
         this.facetQueries = new HashMap<>();
         for(String facetQuery : facetQueries) {
             String[] parts = facetQuery.split(FACET_QUERY_SPLIT_REGEX,2);
-            this.facetQueries.put(
-                    stripQuotes(parts[0]),
-                    stripQuotes(parts[1]).replace("\\:", ":")
-            );
+            if (this.facetQueries.containsKey(parts[0])) {
+                this.facetQueries.get(parts[0]).add(stripQuotes(parts[1]).replace("\\:", ":"));
+            } else {
+                List<String> list = new ArrayList<>();
+                list.add(stripQuotes(parts[1]).replace("\\:", ":"));
+                this.facetQueries.put(stripQuotes(parts[0]), list);
+            }
         }
 
         this.existsQueries = Arrays.asList(existsQueries);
@@ -131,7 +125,7 @@ public class Query {
         return facets;
     }
 
-    public Map<String, String> getFacetQueries(){
+    public Map<String, List<String>> getFacetQueries(){
         return facetQueries;
     }
 
