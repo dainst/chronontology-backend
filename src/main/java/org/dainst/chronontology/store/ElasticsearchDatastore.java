@@ -18,7 +18,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
+import java.util.HashSet;
+import java.util.HashMap;
 
 import static java.lang.Math.sqrt;
 
@@ -145,30 +148,57 @@ public class ElasticsearchDatastore implements Datastore {
     private void expandRegions(ObjectNode doc) {
         JsonNode resource = doc.get("resource");
         JsonNode related = doc.get("related");
-        ArrayNode regions = doc.putArray("regions");
+        Set<Map<String,String>> regions = new HashSet<>();
         if (resource != null && resource.has("hasCoreArea")) {
-            for (JsonNode region : resource.get("hasCoreArea")) {
-                if (related.has(region.asText())) {
-                    this.createRegion(regions.addObject(), (ObjectNode) related.get(region.asText()));
+            for (JsonNode placeUrlNode : resource.get("hasCoreArea")) {
+                if (related.has(placeUrlNode.asText())) {
+                    regions.addAll(this.createRegions((ObjectNode) related.get(placeUrlNode.asText())));
                 }
             }
         }
+        ArrayNode regionsNode = doc.putArray("regions");
+        for (Map<String, String> region : regions) {
+            this.fillRegionNode(regionsNode.addObject(), region);
+        }
     }
 
-    private void createRegion(ObjectNode newRegion, ObjectNode oldRegion) {
-        createRegionName(newRegion, oldRegion.get("prefName"));
-        if (oldRegion.has("parentNames")) {
-            for (JsonNode parentName : oldRegion.get("parentNames")) {
-                this.createRegionName(newRegion, parentName);
+    private Set<Map<String, String>> createRegions(ObjectNode placeNode) {
+        Set<Map<String, String>> regions = new HashSet<>();
+        regions.add(this.createRegion(placeNode));
+        if (placeNode.has("parents")) {
+            for (JsonNode parentNode : placeNode.get("parents")) {
+                regions.add(this.createRegion((ObjectNode) parentNode));
+            }
+        }
+        return regions;
+    }
+
+    private Map<String, String> createRegion(ObjectNode placeNode) {
+        Map<String, String> region = new HashMap<>();
+        this.addName(region, placeNode.get("prefName"));
+        if (placeNode.has("names")) {
+            for (JsonNode name : placeNode.get("names")) {
+                this.addName(region, name);
+            }
+        }
+        return region;
+    }
+
+    private void addName(Map<String, String> result, JsonNode name) {
+        if (name.has("language")
+                && name.get("language").asText().length() >= 2
+                && name.has("title")) {
+            String lang = name.get("language").asText().substring(0, 2);
+            if (!result.containsKey(lang) && (lang.equals("en") || lang.equals("de")) ) {
+                result.put(lang, name.get("title").asText());
             }
         }
     }
 
-    private void createRegionName(ObjectNode newRegion, JsonNode prefName) {
-        if (prefName.has("language")
-                && prefName.get("language").asText().length() >= 2
-                && prefName.has("title"))
-            newRegion.put(prefName.get("language").asText().substring(0, 2), prefName.get("title").asText());
+    private void fillRegionNode(ObjectNode regionNode, Map<String, String> region) {
+        for (Map.Entry<String, String> entry : region.entrySet()) {
+            regionNode.put(entry.getKey(), entry.getValue());
+        }
     }
 
     private ArrayNode searchHits(JsonNode response) {
