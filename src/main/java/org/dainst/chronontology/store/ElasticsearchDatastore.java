@@ -156,7 +156,15 @@ public class ElasticsearchDatastore implements Datastore {
     }
 
     private void createRegion(ObjectNode newRegion, ObjectNode oldRegion) {
-        JsonNode prefName = oldRegion.get("prefName");
+        createRegionName(newRegion, oldRegion.get("prefName"));
+        if (oldRegion.has("parentNames")) {
+            for (JsonNode parentName : oldRegion.get("parentNames")) {
+                this.createRegionName(newRegion, parentName);
+            }
+        }
+    }
+
+    private void createRegionName(ObjectNode newRegion, JsonNode prefName) {
         if (prefName.has("language")
                 && prefName.get("language").asText().length() >= 2
                 && prefName.has("title"))
