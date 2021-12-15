@@ -2,7 +2,8 @@ package org.dainst.chronontology;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.dainst.chronontology.config.AppConfig;
 import org.dainst.chronontology.handler.*;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
@@ -21,7 +22,7 @@ import static spark.Spark.*;
  */
 public class Controller {
 
-    private final static Logger logger = Logger.getLogger(Controller.class);
+    private final static Logger logger = LogManager.getLogger(Controller.class);
     public static final String ID = ":id";
     public static final String REPLACED_BY_ID = ":replacedById";
 

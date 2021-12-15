@@ -2,7 +2,8 @@ package org.dainst.chronontology.store.rest;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.squareup.okhttp.*;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.dainst.chronontology.util.JsonUtils;
 
 import java.io.IOException;
@@ -14,7 +15,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class JsonRestClient {
 
-    private final static Logger logger = Logger.getLogger(JsonRestClient.class);
+    private final static Logger logger = LogManager.getLogger(JsonRestClient.class);
 
     private final String url;
     private final OkHttpClient client;

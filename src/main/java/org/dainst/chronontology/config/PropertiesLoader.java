@@ -1,6 +1,7 @@
 package org.dainst.chronontology.config;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,7 +13,7 @@ import java.util.Properties;
  */
 public class PropertiesLoader {
 
-    final static Logger logger = Logger.getLogger(PropertiesLoader.class);
+    final static Logger logger = LogManager.getLogger(PropertiesLoader.class);
 
     public static Properties loadConfiguration(String propertiesFilePath) {
         Properties props = new Properties();

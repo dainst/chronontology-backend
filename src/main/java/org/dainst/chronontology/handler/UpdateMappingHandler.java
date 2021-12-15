@@ -4,7 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.dainst.chronontology.handler.dispatch.Dispatcher;
 import org.dainst.chronontology.store.ElasticsearchDatastore;
 import org.dainst.chronontology.store.FilesystemDatastore;
@@ -25,7 +26,7 @@ public class UpdateMappingHandler implements Handler {
 
     protected final Dispatcher dispatcher;
     private final String[] types;
-    private final static Logger logger = Logger.getLogger(UpdateMappingHandler.class);
+    private final static Logger logger = LogManager.getLogger(UpdateMappingHandler.class);
 
     public UpdateMappingHandler(Dispatcher dispatcher, String[] types) {
         this.dispatcher= dispatcher;

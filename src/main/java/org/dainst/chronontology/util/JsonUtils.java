@@ -2,7 +2,8 @@ package org.dainst.chronontology.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
 
@@ -11,7 +12,7 @@ import java.io.IOException;
  */
 public class JsonUtils {
 
-    private final static Logger logger = Logger.getLogger(JsonUtils.class);
+    private final static Logger logger = LogManager.getLogger(JsonUtils.class);
 
     /**
      * @param s

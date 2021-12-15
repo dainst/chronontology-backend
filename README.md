@@ -5,7 +5,11 @@ Detailed information on the REST api can be found [here](docs/rest-api-reference
 
 ## Prerequisites
 
-Gradle Version 2
+[SDKMAN!|https://sdkman.io/]
+
+```
+sdk env install
+```
 
 ## Building and testing the application
 

@@ -3,7 +3,8 @@ package org.dainst.chronontology.store;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
@@ -23,7 +24,7 @@ import java.util.Comparator;
  */
 public class FilesystemDatastore implements Datastore {
 
-    final static Logger logger = Logger.getLogger(FilesystemDatastore.class);
+    final static Logger logger = LogManager.getLogger(FilesystemDatastore.class);
 
     private static final String EXT = ".json";
     private final String baseFolder;

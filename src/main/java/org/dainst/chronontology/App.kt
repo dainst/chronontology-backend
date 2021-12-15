@@ -1,6 +1,6 @@
 package org.dainst.chronontology
 
-import org.apache.log4j.Logger
+import org.apache.logging.log4j.LogManager
 import org.dainst.chronontology.config.*
 
 import java.util.Properties
@@ -20,7 +20,7 @@ class App(controller: Controller) {
 
     companion object {
 
-        internal val logger = Logger.getLogger(App::class.java)
+        internal val logger = LogManager.getLogger(App::class.java)
         private val DEFAULT_PROPERTIES_FILE_PATH = "config.properties"
 
         @JvmStatic

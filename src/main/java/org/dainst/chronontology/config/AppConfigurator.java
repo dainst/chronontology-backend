@@ -1,6 +1,7 @@
 package org.dainst.chronontology.config;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.dainst.chronontology.App;
 import org.dainst.chronontology.Controller;
 import org.dainst.chronontology.EmbeddedES;
@@ -12,7 +13,7 @@ import static spark.Spark.port;
  */
 public class AppConfigurator implements Configurator<App,AppConfig> {
 
-    final static Logger logger = Logger.getLogger(AppConfigurator.class);
+    final static Logger logger = LogManager.getLogger(AppConfigurator.class);
 
     @Override
     public App configure(AppConfig config) {

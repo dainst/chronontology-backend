@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import org.dainst.chronontology.Controller;
 
 import javax.management.ObjectName;
@@ -16,7 +17,7 @@ import java.io.IOException;
  */
 public class Results {
 
-    private final static Logger logger = Logger.getLogger(Results.class);
+    private final static Logger logger = LogManager.getLogger(Results.class);
     private final String arrayName;
     private JsonNode json;
 
