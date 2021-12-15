@@ -14,3 +14,5 @@ datastore
 public
 classes
 *.srctrl*
+
+local.properties
